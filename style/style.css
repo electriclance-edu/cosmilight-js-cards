@@ -1,0 +1,65 @@
+@font-face {
+  font-family: 'Heebo';
+  font-weight: 400;
+  src: url("../resources/fonts/Heebo.ttf");
+}
+@font-face {
+  font-family: 'Raleway';
+  font-weight: 700;
+  src: url("../resources/fonts/Raleway.ttf");
+}
+@font-face {
+  font-family: 'Ralethicc';
+  font-weight: 1000;
+  src: url("../resources/fonts/Raleway.ttf");
+}
+@font-face {
+  font-family: 'Rubik';
+  font-weight: 400;
+  src: url("../resources/fonts/Rubik.ttf");
+}
+:root {
+
+}
+body {
+  margin:0;
+  width:100vw;
+  height:100vh;
+  overflow:hidden;
+  background-image:linear-gradient(rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url("../resources/img/void-bg.png");
+  background-size:cover;
+  background-position:center;
+  overflow-anchor:none;
+}
+p, span {
+  color:rgb(230,230,230);
+  font-family:Heebo;
+  font-size:18px;
+}
+hr {
+  margin-left:0;
+  margin-right:0;
+}
+body *.hidden {
+  display:none;
+}
+.invis {
+  opacity:0;
+}
+.header {
+  color:rgb(230,230,230);
+  font-family:Raleway;
+  font-size:21px;
+}
+.stylizedHeader:before {
+  content:"🙢 ";
+  display:inline-block;
+  margin-right:5px;
+  color:rgb(200,200,200);
+}
+.stylizedHeader:after {
+  content:" 🙠";
+  display:inline-block;
+  margin-left:5px;
+  color:rgb(200,200,200);
+}
