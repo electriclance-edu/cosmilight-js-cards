@@ -1,15 +1,15 @@
 @font-face {
-  font-family: 'Heebo';
+  font-family: 'Raleway Light';
   font-weight: 400;
-  src: url("../resources/fonts/Heebo.ttf");
+  src: url("../resources/fonts/Raleway.ttf");
 }
 @font-face {
-  font-family: 'Raleway';
+  font-family: 'Raleway Bold';
   font-weight: 700;
   src: url("../resources/fonts/Raleway.ttf");
 }
 @font-face {
-  font-family: 'Ralethicc';
+  font-family: 'Raleway Heavy';
   font-weight: 1000;
   src: url("../resources/fonts/Raleway.ttf");
 }
@@ -18,48 +18,552 @@
   font-weight: 400;
   src: url("../resources/fonts/Rubik.ttf");
 }
+@font-face {
+  font-family: 'Overpass';
+  font-weight: 400;
+  src: url("../resources/fonts/Overpass.ttf");
+}
+@font-face {
+  font-family: 'Overpass Heavy';
+  font-weight: 700;
+  src: url("../resources/fonts/Overpass.ttf");
+}
 :root {
-
+  --bg-main: #1F3042;
+  --bg-accent: #0F171F;
+  --color-harvest: #2FD5AA;
+  --color-harvest-accent: #3a90a9;
+  --color-water: #4AA7FC;
+  --color-fire: #ff4664;
+  --color-light: #ffd864;
+  --color-text: rgb(230,230,230);
+  --color-world: #6798c0;
+  --color-darkness: #533364;
+  --color-dark: #69666f;
+  --color-text-accent: rgb(200, 200, 200);
+  --card-width: calc(var(--card-height) / 1.4);
+  --card-height: 30vh;
+}
+/*###########
+TAG SELECTORS
+###########*/
+* {
+  margin: 0;
+  font-family: "Overpass";
+  font-size:20px;
 }
 body {
-  margin:0;
-  width:100vw;
-  height:100vh;
-  overflow:hidden;
-  background-image:linear-gradient(rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url("../resources/img/void-bg.png");
-  background-size:cover;
-  background-position:center;
-  overflow-anchor:none;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-image: linear-gradient(rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.3) 100%), url("../resources/img/void-bg.png");
+  background-size: cover;
+  background-position: center;
+  overflow-anchor: none;
+}
+h1, h2, h3, h4, .headerFont {
+  font-family: "Raleway Bold";
+}
+.headerFont-thin {
+  font-family: "Raleway Light";
+  font-weight: 100;
 }
 p, span {
-  color:rgb(230,230,230);
-  font-family:Heebo;
-  font-size:18px;
+  color: var(--color-text);
+  font-family: Overpass;
+  font-size: var(--txtSize-default);
 }
 hr {
-  margin-left:0;
-  margin-right:0;
+  margin-left: 0;
+  margin-right: 0;
 }
 body *.hidden {
-  display:none;
+  display: none;
 }
 .invis {
+  opacity: 0;
+}
+.accentText {
+  color: var(--color-text-accent);
+}
+.stylizedText:before {
+  content: "🙢";
+  display: inline-block;
+  margin-right: 5px;
+  color: var(--color-text-accent);
+}
+.stylizedText:after {
+  content: "🙠";
+  display: inline-block;
+  margin-left: 5px;
+  color: var(--color-text-accent);
+}
+/*###############
+GENERAL SELECTORS
+###############*/
+.fillWindow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+.fillWidth {
+  width: 100%;
+}
+.flex {
+  display: flex;
+}
+.flex-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-break {
+  flex-basis: 100%;
+  height: 0;
+}
+.txt-harvest {
+  color: var(--color-harvest);
+}
+.txt-italic {
+  font-style: italic;
+}
+.pos-absolute {
+  position:absolute;
+}
+.centered-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.hidden {
+  display:none;
+}
+/*############
+CARD SELECTORS
+############*/
+.CardGrid .cardRow {
+  margin-top:10px;
+  justify-content:center;
+}
+.card {
+  width: var(--card-width);
+  height: var(--card-height);
+  background-color:var(--bg-accent);
+  position: relative;
+  user-select: none;
+  transition: box-shadow 0.2s, filter 0s;
+  margin-right: 5px;
+  margin-left: 5px;
+  box-shadow: 0 0 15px var(--bg-accent);
+  border-radius: 10px;
+}
+.card * {
+  pointer-events:none;
+}
+body .card:active {
+  filter: brightness(1.5);
+}
+.card:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 0 20px var(--bg);
+  z-index:100;
+}
+.card.onCooldown {
+  opacity:0.6;
+}
+.card.onCooldown::before {
+  --border-width-internal: calc(var(--border-width) * 0.5);
+  border-radius: calc(var(--border-radius) * 0.8);
+}
+.card-content {
+  z-index: 10;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+.card-img-container {
+  flex-grow:1;
+  height:100%;
+  width:100%;
+  border:10px solid transparent;
+  box-sizing:border-box;
+  background: var(--image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter:drop-shadow(0 0 10px var(--bg-accent));
+  pointer-events:none;
+}
+.card.structure .card-img-container {
+  background-position: bottom;
+  transform:scale(1.5) translatey(-15%);
+  filter:drop-shadow(0 0 10px var(--bg-accent))
+  drop-shadow(0 10px 10px var(--bg-accent));
+}
+.card-title-container {
+  z-index:1;
+  margin-top:-20px;
+  padding: 7px;
+  border-bottom-left-radius:10px;
+  border-bottom-right-radius:10px;
+  background-image: linear-gradient(180deg, transparent 0%, var(--bg-main) 60%);
+}
+.card.darkness .card-title-container {
+  display:none;
+}
+.card-title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.card-title * {
+  flex-grow: 1;
+  text-align: center;
+}
+.card-title .card-title-char {
+  font-size:1.5em;
+  color:var(--bg);
+}
+.card.structure .card-title .card-title-char {
+  color:var(--color-text);
+}
+.card.darkness .card-title .card-title-char {
+  color:var(--color-dark);
+}
+.card-title .card-subtitle-char {
+  color: var(--color-text);
+  font-size: 0.7em
+}
+.card-desc {
+  position:absolute;
+  top:calc(100% - 10px);
+  width:100%;
+  color:var(--color-text);
+  word-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
+  font-style:italic;
+  pointer-events:none;
+  transition:0.3s;
+  opacity:0;
+  filter:drop-shadow(0 0 5px var(--bg-accent));
+}
+.CardGrid .last-row .card-desc {
+  top:10px;
+}
+.CardGrid .last-row .card:hover .card-desc {
+  top:-10px;
+  transform:translatey(-100%);
+}
+.card:hover .card-desc {
+  opacity:1;
+  top:calc(100% + 10px);
+}
+.card-bg {
+  width:100%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.card-bg::before {
+  content:"";
+  display:block;
+  width:100%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  background-color:var(--bg);
+  opacity:0.3;
+}
+.card.darkness .card-bg::before {
+  opacity:0 !important;
+}
+.card.structure .card-bg::before {
+  opacity:0 !important;
+}
+.card.darkness .card-bg-circle {
+  --finalDiameter:calc(120% - 30% * var(--index));
+  margin-top:0;
+}
+.card-bg .card-bg-circle {
+  --finalDiameter:calc(100% - 20% * var(--index));
+  width:var(--finalDiameter);
+  aspect-ratio:1 / 1;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  margin-top:50px;
+  background-color:var(--bg);
+  border-radius:10000px;
+  opacity:0.1;
+}
+/*####################
+MAGIC CIRCLE SELECTORS
+####################*/
+.MagicCircle {
+  --circle-width:300px;
+  --stroke-width:5px;
+  --circle-color:var(--color-harvest);
+  --color-selected:#F53E9A;
+  --color-completed:var(--color-harvest-accent);
+  --spin:360deg;
+  position:absolute;
+  z-index:100;
+  border:var(--stroke-width) solid var(--circle-color);
+  width:var(--circle-width);
+  height:var(--circle-width);
+  border-radius:var(--circle-width);
+  transition:1.5s;
+  opacity:1;
+  filter:drop-shadow(0 0 5px var(--circle-color)) drop-shadow(0 0 20px var(--bg-accent)) drop-shadow(0 0 20px var(--bg-accent));
+}
+.MagicCircle.magicCircle-auxiliary {
+  --aux-circle-extra:100px;
+  --aux-circle-width:calc(var(--circle-width) + var(--aux-circle-extra));
+  --transition:1s;
+  --stroke-width:3px;
+  width:var(--aux-circle-width);
+  height:var(--aux-circle-width);
+  border-radius:var(--aux-circle-width);
+  transition:var(--transition) cubic-bezier(0.075, 0.82, 0.165, 1), opacity 0s;
+  opacity:0.7;
+  filter:hue-rotate(20deg);
+  z-index:-1;
+  pointer-events:none;
+  --flicker-min:0.4;
+  --flicker-max:0.7;
+  --flicker-delay:0s;
+  animation:10s var(--flicker-delay) flicker infinite alternate;
+}
+/* .MagicCircle.magicCircle-auxiliary.oscillate {
+  --oscillation-max:50px;
+  --oscillation-duration:10s;
+  animation:var(--oscillation-duration) magicCircle-auxillary-oscillate infinite alternate;
+} */
+.MagicCircle.magicCircle-progress {
+  --stroke-width:0;
+  overflow:hidden;
+  z-index:-1;
+}
+.MagicCircle.magicCircle-progress .magicCircle-progress-fill {
+  top:calc(100% - (var(--runes-completed) / var(--total-runes)) * 100%);
+  width:100%;
+  height:100%;
+  opacity:0.1;
+  background-color:var(--circle-color);
+  transition-duration:1s;
+  position:absolute;
+}
+.MagicCircle .magicCircle-rune {
+  /* should have a unique fontstyle depending on the kind of rune */
+  --rune-diameter:60px;
+  --rotation:calc(var(--index) * (360 / var(--total-runes)) * 1deg);
+  --color:var(--color-selected);
+  font-size:25px;
+  color:white; 
+  padding:10px;
+  border:var(--stroke-width) solid var(--circle-color);
+  background-color:var(--bg-main);
+  border-radius:1000px;
+  width:var(--rune-diameter);
+  height:var(--rune-diameter);
+  line-height:calc(var(--rune-diameter) - 23px);
+  text-align:center;
+  box-sizing:border-box;
+  position:absolute;
+  left:calc(50% - var(--rune-diameter) / 2);
+  top:calc(50% - var(--rune-diameter) / 2);
+  transition:1.5s;
+  user-select:none;
+  filter:drop-shadow(0 0 5px black);
+  transform:rotate(var(--rotation)) translatey(calc(var(--circle-width) / -2)); /*rotate(calc(var(--rotation) * -1));*/
+}
+.MagicCircle .magicCircle-rune.state-selected {
+  --color:var(--color-selected);
+  border:var(--stroke-width) solid var(--color);
+  transition:0.1s border, 1.5s;
+  filter:drop-shadow(0 0 5px black);
+}
+.MagicCircle .magicCircle-rune.state-completed {
+  --color:var(--color-completed);
+  transition:3s;
+  border:var(--stroke-width) solid var(--color);
+  opacity:0.8;
+}
+.MagicCircle .magicCircle-rune.state-failed {
+  --color:var(--circle-color);
+  transition:3s;
+  border:var(--stroke-width) solid var(--color);
+  opacity:0.8;
+  filter:blur(1px);
+  color:transparent;
+}
+.MagicCircle .magicCircle-rune:before {
+  --stroke-width:3px;
+  border:var(--stroke-width) solid var(--color);
+  content:"";
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:calc(var(--rune-diameter) * 0.9);
+  height:calc(var(--rune-diameter) * 0.9);
+  border-radius:1000px;
+  transition:0.3s;
+  opacity:0;
+  filter:hue-rotate(0deg);
+}
+.MagicCircle .magicCircle-rune.state-selected:before {
+  width:calc(var(--rune-diameter) * 1.7);
+  height:calc(var(--rune-diameter) * 1.7);
+  opacity:0.8;
+}
+.MagicCircle .magicCircle-rune.state-completed:before {
+  --color:var(--color-completed);
+  transition:0.5s;
+  width:calc(var(--rune-diameter) * 5);
+  height:calc(var(--rune-diameter) * 5);
+  border:var(--stroke-width) solid var(--color);
+  filter:drop-shadow(0 0 5px transparent) hue-rotate(360deg);
   opacity:0;
 }
-.header {
-  color:rgb(230,230,230);
-  font-family:Raleway;
-  font-size:21px;
+.MagicCircle .magicCircle-rune.state-failed:before {
+  transition:3s;
+  width:calc(var(--rune-diameter) * 1.5);
+  height:calc(var(--rune-diameter) * 1.5);
+  border:var(--stroke-width) solid var(--color);
+  filter:drop-shadow(0 0 5px transparent);
+  opacity:0;
 }
-.stylizedHeader:before {
-  content:"🙢 ";
-  display:inline-block;
-  margin-right:5px;
-  color:rgb(200,200,200);
+.MagicCircle.state-initial {
+  transition:0s;
 }
-.stylizedHeader:after {
-  content:" 🙠";
-  display:inline-block;
-  margin-left:5px;
-  color:rgb(200,200,200);
+.MagicCircle.state-initial .magicCircle-auxiliary {
+  transition:0s;
+}
+.MagicCircle.state-initial .magicCircle-rune {
+  transition:0s;
+}
+.MagicCircle.state-vanished {
+  --circle-width:0px;
+  opacity:0;
+  pointer-events:none;
+  filter:drop-shadow(0 0 0 var(--circle-color)) drop-shadow(0 0 20px var(--color-color)) drop-shadow(0 0 10px var(--color-flame));
+}
+.MagicCircle.state-vanished .magicCircle-auxiliary {
+  --aux-circle-width:0px !important;
+}
+.MagicCircle.state-vanished .magicCircle-rune {
+  transform:rotate(calc(var(--rotation) + var(--spin))) translatey(calc(var(--circle-width) / -2)) rotate(calc(var(--rotation) * -1 - var(--spin)));
+}
+.MagicCircle.state-vanished .MagicCircle.magicCircle-progress .magicCircle-progress-fill {
+  transition:0.5s;
+  opacity:0;
+}
+.MagicCircle .magicCircle-rune-graphic {
+  box-shadow:0 0 3px black;
+}
+.MagicCircle .magicCircle-rune-graphic .circle {
+  --diameter:var(--rune-diameter);
+  --top:0;
+  --left:0;
+  top:calc(50% + var(--top) * 1%);
+  left:calc(50% + var(--left) * 1%);
+  position:absolute;
+  border:solid;
+  border-width:var(--stroke-width);
+  border-color:var(--color);
+  box-sizing:border-box;
+  transform:translate(-50%,-50%);
+}
+.MagicCircle .magicCircle-rune-graphic .circle.solid {
+  --bg-color:var(--color);
+  background-color:var(--bg-color);
+}
+.MagicCircle .magicCircle-rune-graphic .line {
+  --length:100;
+  --width:var(--stroke-width);
+  --rotation:0deg;
+  top:50%;
+  left:50%;
+  position:absolute;
+  width:calc(var(--length) * 1%);
+  height:var(--width);
+  background-color:var(--color);
+  border-radius:10000px;
+  box-sizing:border-box;
+  transform:translate(-50%,-50%) rotate(var(--rotation));
+}
+.circle {
+  --diameter:50px;
+  width:var(--diameter);
+  height:var(--diameter);
+  border-radius:10000px;
+}
+/*###########
+DEBUG SELECTORS
+###########*/
+.draggable {
+  position:absolute;
+  transform:translate(-50%,-50%) scale(1.2);
+  top:var(--drag-top);
+  left:var(--drag-left);
+}
+/*############
+Animations
+#############*/
+@keyframes flicker {
+  0% { opacity: var(--flicker-max); }
+  2% { opacity: var(--flicker-min); }
+  7% { opacity: var(--flicker-max); }
+  7.5% { opacity: var(--flicker-min); }
+  8% { opacity: var(--flicker-max); }
+  9% { opacity: var(--flicker-min); }
+  9.5% { opacity: var(--flicker-max); }
+  10.5% { opacity: var(--flicker-min); }
+  12% { opacity: var(--flicker-max); }
+  25% { opacity: var(--flicker-min); }
+  29% { opacity: var(--flicker-max); }
+  29.5% { opacity: var(--flicker-min); }
+  30% { opacity: var(--flicker-max); }
+  35% { opacity: var(--flicker-min); }
+  48% { opacity: var(--flicker-max); }
+  55% { opacity: var(--flicker-min); }
+  69% { opacity: var(--flicker-max); }
+  73% { opacity: var(--flicker-min); }
+  81% { opacity: var(--flicker-max); }
+  81.5% { opacity: var(--flicker-min); }
+  83% { opacity: var(--flicker-max); }
+  83.5% { opacity: var(--flicker-min); }
+  84% { opacity: var(--flicker-max); }
+  85% { opacity: var(--flicker-min); }
+  90% { opacity: var(--flicker-min); }
+  93% { opacity: var(--flicker-max); }
+  95% { opacity: var(--flicker-min); }
+  95.5% { opacity: var(--flicker-max); }
+  97% { opacity: var(--flicker-min); }
+  100% { opacity: var(--flicker-max); }
 }

@@ -3,186 +3,78 @@
   <head>
     <meta charset="utf-8">
     <title>Cosmilight</title>
-    <link rel="stylesheet" href="style/animations.css">
     <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/txt.css">
-    <link rel="stylesheet" href="style/room.css">
-    <link rel="stylesheet" href="style/isotile.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
-    <script src="settings.js"></script>
-    <script src="resources/lib/perlin.js"></script>
-    <script src="classes/Consequence.js"></script>
-    <script src="classes/SituationChoice.js"></script>
-    <script src="classes/Situation.js"></script>
-    <script src="classes/Player.js"></script>
-    <script src="classes/Resource.js"></script>
-    <script src="classes/Condition.js"></script>
-    <script src="classes/Biome.js"></script>
-    <script src="classes/Tile.js"></script>
-    <script src="classes/World.js"></script>
+    <!-- <script src="classes/World.js"></script> -->
+    <script src="class/Card.js"></script>
     <script src="script/main.js" defer></script>
   </head>
   <body class="bg-darkblue">
-    <div class="glass-bg debugMenuHidden hidden" id="debugMenuHidden" onclick="toggleDebugMenu(true)">
-
-    </div>
-    <div class="debugMenu glass-bg hidden" id="debugMenu">
-      <p class="header" style="margin:0" onclick="toggleDebugMenu(false)">Debug Menu</p>
-      <p class="button" onclick="World.world.debugDisplay()">Generate world map</p>
-      <p class="smallText txt-grey noMargin">(click map to hide)</p>
-      <p class="button" onclick="triggerSituation('flowerPatch')">Trigger situation</p> <br>
-      <p class="button" onclick="displayDisplay('roomDisplay')">Room Display</p> <br>
-      <p class="button" onclick="displayDisplay('mapDisplay')">Map Display</p> <br>
-      <p class="button" onclick="displayDisplay('cardDisplay')">Map Display</p> <br>
-      <p class="button" onclick="displayDisplay('expeditionDisplay')">Expedition Display</p> <br>
-      <p class="smallText txt-grey noMargin">adjust sightRadius</p>
-      <p class="button" onclick="sightRadius++;revealRadius = sightRadius - 1;">+</p>
-      <p class="button" onclick="sightRadius = 2;revealRadius = 1">-</p> <br>
-      <p class="smallText txt-grey noMargin">adjust cullRadius</p>
-      <p class="button" onclick="cullRadius++;">+</p>
-      <p class="button" onclick="cullRadius--;">-</p> <br>
-      <p class="button" onclick="godMode = !godMode">Toggle Fly</p><br>
-      <p class="button" onclick="mute = !mute;this.children[0].innerHTML = mute ? 'unmute' : 'mute';"><span id="debug_muteState"></span></p>
-      <div class="debugMenuData">
-        <span id="debug_position-x">x:</span>
-        <span id="debug_position-y">y:</span>
-        <p id="debug_worldSeed">seed:</p>
-      </div>
-    </div>
-    <div class="debug fill">
-      <table id="debug_world" class="debugTable" onclick="this.innerHTML = '';"></table>
-    </div>
-    <div class="content">
-      <div class="logParent">
-        <div class="chatlog hiddenScrollbar" id="chatlog"></div>
-      </div>
-      <div class="resourceParent hiddenScrollbar">
-        <div class="resources" id="resources">
-          <div class="resourceDiamonds" id="resourceDiamonds"></div>
-          <div class="resourceBars" id="resourceBars"></div>
-        </div>
-      </div>
-       <div class="center">
-        <div class="moonParent">
-          <div class="moon">
-            <div class="shifter"></div>
-            <div class="disc"></div>
-          </div>
-          <p class="godHeader txt-glow txt-center noMargin">FULL　MOON</p>
-          <p class="txt-grey noMargin txt-center header">UNRIVALED EMINENCE</p>
-        </div>
-        <div class="fill darken" id="darkenedScreen">
-          <p class="header" id="darkenedScreenMsg"></p>
-          <div class="progressBar">
-            <div class="progressBarFill"  id="darkenedScreenProgress"></div>
-          </div>
-        </div>
-        <div id="displayParent" class="displayParent">
-          <div class="cardDisplay fill flex-center hidden">
-            <div class="card">
-              <div></div>
+    <div class="Content fillWindow">
+      <div class="ScreenContainer fillWindow" id="ScreenContainer">
+        <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-GameBoard">
+          <div id="magicCircle" class="hidden MagicCircle centered-absolute state-initial" style="--runes-completed:0; --total-runes:6">
+            <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--aux-circle-extra:30px; --flicker-delay:1.3s;"></div>
+            <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--transition:2s"></div>
+            <div class="MagicCircle magicCircle-progress centered-absolute">
+              <div class="magicCircle-progress-fill"></div>
             </div>
-          </div>
-          <div class="mapDisplay fill flex-center hidden" id="mapDisplay">
-            <div class="positioner" id="isotilePositioner"></div>
-          </div>
-          <div class="expeditionDisplay fill flex-center hidden" id="expeditionDisplay">
-            <div class="leftExpeditionDisplay flex-center">
-              <div id="situationContainer"></div>
-            </div>
-            <div class="rightExpeditionDisplay flex-center hidden">
-              <p class="header stylizedHeader smallMargin">Map</p>
-              <p class="txt-grey noMargin textAlignCenter">Click on a location to move to it.<br>You may move to past locations at an increased cost.</p>
-              <div class="locationDisplay flex-column">
-                <div class="flex-row flex-center">
-                  <p class="header headerLarge">1</p>
-                  <hr>
-                  <div class="location flex-row">
-                    <img src="resources/img/areas/forest.png" class="bgImage">
-                    <p class="locationCost txt-water char-big">🌢</p>
-                    <div class="flex-column">
-                      <p class="txt-shadow header">Old Amougs</p>
-                      <p>Ancient god of the underworld</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex-row flex-center">
-                  <p class="header headerLarge">2</p>
-                  <hr>
-                  <div class="location flex-row">
-                    <img src="resources/img/areas/mountain.jpg" class="bgImage">
-                    <p class="locationCost txt-water char-big">🌢🌢</p>
-                    <div class="flex-column">
-                      <p class="txt-shadow header">Mountain</p>
-                      <p>Big pile of rocks</p>
-                    </div>
-                  </div>
-                  <div class="location flex-row">
-                    <img src="resources/img/areas/grove.png" class="bgImage">
-                    <p class="locationCost txt-water char-big">🌢</p>
-                    <div class="flex-column">
-                      <p class="txt-shadow header">Grove</p>
-                      <p>Full of wonder</p>
-                    </div>
-                  </div>
+            <div id="magicCircle-runeParent">
+              <div class="magicCircle-rune" style="--index:0">
+                <div class="magicCircle-rune-graphic">
+                  <div class="circle" style="--top:-170; --stroke-width:9px; "></div>
+                  <div class="circle" style="--top:-170; --stroke-width:3px; --diameter:150%"></div>
+                  <div class="circle" style="--diameter:50%; --stroke-width:3px; --top:-75;"></div>
+                  <div class="circle solid" style="--diameter:0; --top:75; --left:-25;"></div>
+                  <div class="circle solid" style="--diameter:0; --top:60; --left:-55;"></div>
+                  <div class="circle solid" style="--diameter:0; --top:30; --left:-70;"></div>
+                  <div class="circle solid" style="--diameter:0; --top:75; --left:25;"></div>
+                  <div class="circle solid" style="--diameter:0; --top:60; --left:55;"></div>
+                  <div class="circle solid" style="--diameter:0; --top:30; --left:70;"></div>
+                  <div class="circle solid" style="--diameter:50%; --top:-170"></div>
+                  <div class="circle solid" style="--diameter:25%; --top:0"></div>
+                  <div class="circle solid" style="--diameter:25%; --top:170"></div>
+                  <div class="line" style="--length:340; --rotation:90deg"></div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="introDisplay hidden" id="introDisplay">
-          </div>
-          <div class="roomDisplay fill flex-center flex-column hidden" id="roomDisplay">
-            <div class="roomInfoDisplay glass-bg hidden">
-              <p class="header">Amoung</p>
-              <hr>
-              <p>Ancient holder of the Imposter Susser</p>
-            </div>
-            <div class="positioner flex-center" id="roomPositioner" style="top:0;left:0;">
-              <div class="flex-column">
-                <div class="flex-row">
-                  <div class="room invis" style="--width:1"></div>
-                  <div class="flex-column">
-                    <div class="flex-row">
-                      <div class="flex-column">
-                        <div class="room invis" style="--width:2"></div>
-                        <div class="room uninteractableRoom titleParent" style="--width:2">
-                          <p class="header headerTwo title">Leaves</p>
-                          <div class="roomGraphic room-leaf"></div>
-                        </div>
-                      </div>
-                      <div class="room uninteractableRoom titleParent" style="--width:4;--height:2">
-                        <p class="header headerTwo title">Leaves</p>
-                        <div class="roomGraphic room-leaf"></div>
-                      </div>
-                    </div>
-                    <div class="flex-row">
-                      <div class="room invis" style="--width:1"></div>
-                      <div class="room titleParent" style="--width:3">
-                        <p class="header headerTwo title">Branches</p>
-                        <div class="roomGraphic room-bark"></div>
-                      </div>
-                      <div class="room uninteractableRoom titleParent" style="--width:3">
-                        <p class="header headerTwo title">Leaves</p>
-                        <div class="roomGraphic room-leaf"></div>
-                      </div>
-                    </div>
-                    <div class="room titleParent" style="--width:2">
-                      <p class="header headerTwo title">Body</p>
-                      <div class="roomGraphic room-bark"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="room titleParent" style="--width:4;--height:1">
-                  <p class="header headerTwo title">Base</p>
-                  <div class="roomGraphic room-bark"></div>
-                </div>
-                <div class="room titleParent" style="--width:4;--height:2">
-                  <p class="header headerTwo title">Root</p>
-                  <div class="roomGraphic room-root room-openDepths"></div>
+              <div class="magicCircle-rune" style="--index:1">
+                <div class="magicCircle-rune-graphic">
+                  <div class="circle solid" style="--diameter:25%; --left:80;"></div>
+                  <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
+                  <div class="circle solid" style="--diameter:50%"></div>
                 </div>
               </div>
+              <div class="magicCircle-rune" style="--index:2">
+                <div class="magicCircle-rune-graphic">
+                  <div class="line" style="--length:300; --rotation:90deg"></div>
+                </div>
+              </div>
+              <div class="magicCircle-rune" style="--index:3">
+                <div class="magicCircle-rune-graphic">
+                  <div class="circle solid" style="--diameter:25%; --left:80;"></div>
+                  <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
+                  <div class="circle solid" style="--diameter:50%"></div>
+                </div>
+              </div>
+              <div class="magicCircle-rune" style="--index:4">
+                <div class="magicCircle-rune-graphic">
+                  <div class="line" style="--length:300; --rotation:90deg"></div>
+                </div>
+              </div>
+              <div class="magicCircle-rune" style="--index:5">
+                <div class="magicCircle-rune-graphic">
+                  <div class="circle solid" style="--diameter:25%; --left:80;"></div>
+                  <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
+                  <div class="circle solid" style="--diameter:50%"></div>
+                </div>
+              </div>
+              <!-- filled with runes by initializeMagicCircle() -->
             </div>
-        </div>
+          </div>
+          <div class="CardGrid flex-column">
+            <div class="cardRow flex-row" id="cardRow,-1"></div>
+            <div class="cardRow flex-row" id="cardRow,0"></div>
+            <div class="cardRow flex-row last-row" id="cardRow,1"></div>
+          </div>
         </div>
       </div>
     </div>
