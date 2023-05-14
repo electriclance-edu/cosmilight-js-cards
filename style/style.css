@@ -549,6 +549,7 @@ DEBUG SELECTORS
   top:var(--drag-top);
   left:var(--drag-left);
   z-index:100 !important;
+  opacity:0.6;
 }
 .card.dragging .card-desc {
   display:none;

@@ -189,11 +189,11 @@ CARD FUNCTIONS
 */
 function debug_generateCardscape() {
   console.log("RSDCSDFHDSGF");
-  var boardHeight = Math.floor(windowHeight / cardHeight);
-  var boardWidth = Math.floor(windowWidth / cardWidth);
+  var boardHeight = Math.floor(windowHeight / cardHeight) - 2;
+  var boardWidth = Math.floor(windowWidth / cardWidth) - 2;
 
   for (var y = Math.floor(boardHeight / 2) - boardHeight; y < Math.floor(boardHeight / 2) + 1; y++) {
-    for (var x = Math.floor(boardWidth / 2) - boardWidth; x < Math.floor(boardWidth / 2) + 1; x++) {
+    for (var x = Math.floor(boardWidth / 2) - boardWidth; x < Math.floor(boardWidth / 2) + 2; x++) {
       generateCard(randElem(cards),x,y);
     }
   }
