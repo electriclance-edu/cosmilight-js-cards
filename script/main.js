@@ -5,7 +5,10 @@ var magicCircleActivated = false;
 var currentRune = 0;
 const magicCircle = getElem("magicCircle");
 const magicCircleRunes = getElem("magicCircle-runeParent");
-
+var cardWidth = undefined;
+var cardHeight = undefined;
+var windowHeight = undefined;
+var windowWidth = undefined;
 /*
 --------------
 LISTENERS
@@ -18,14 +21,27 @@ document.addEventListener('keypress', (e) => {
     magicCircleProcessKey(code);
   }
 }, false);
+function onresize() {
+  windowHeight = window.innerHeight;
+  windowWidth = window.innerWidth;
+}
 /*
 --------------
 ONLOAD FUNCTIONS
 --------------
 */
+function onload() {
+  getCardProperties();
+  debug_generateCardscape();
+}
+function getCardProperties() {
+  var style = getComputedStyle(document.body);
+  cardWidth = parseInt(removePx(style.getPropertyValue('--card-width'))) + 10;
+  cardHeight = parseInt(removePx(style.getPropertyValue('--card-height'))) + 10;
 
-
-
+  windowHeight = window.innerHeight;
+  windowWidth = window.innerWidth;
+}
 /*
 --------------
 GENERAL GUI FUNCTIONS
@@ -103,6 +119,14 @@ function initializeMagicCircle(runes, position) {
 
   setRuneState(0,"selected");
 }
+function debug_activateMagicCircle() {
+  magicCircle.classList.add("state-initial");
+  magicCircle.classList.add("state-vanished");
+  magicCircle.classList.remove("state-initial");
+  setTimeout(() => {
+    magicCircle.classList.remove("state-vanished");
+  },100);
+}
 function shutdownMagicCircle() {
   magicCircleActivated = false;
   magicCircle.classList.add("state-vanished");
@@ -127,49 +151,59 @@ DRAG FUNCTIONS
 --------------
 */
 function makeDraggable(elem) {
+  elem.classList.add("draggable");
   elem.addEventListener("mousedown", function(e) {setDrag(elem, true, e)});
   document.addEventListener("mouseup", function(e) {setDrag(elem, false, e)});
 }
 const movementManager = function(e) {manageDrag(e)};
+
+// state may be either True (denoting mousedown) or False (denoting mouseup)
 function setDrag(elem, state, event) {
   if (state) {  
       manageDrag(event);
-      elem.classList.add("draggable");
+      elem.classList.add("dragging");
       document.addEventListener("mousemove", manageDrag, true);
-      document.body.appendChild(elem);
   } else {
-      elem.classList.remove("draggable");
+      elem.classList.remove("dragging");
       document.removeEventListener("mousemove", manageDrag, true);
-      getElem(elem.getAttribute("data-row")).appendChild(elem);
+
+      var x = event.clientX - windowWidth/2;
+      var y = event.clientY - windowHeight/2;
+
+      x = Math.round(x / cardWidth);
+      y = Math.round(y / cardHeight);
+
+      event.target.style.setProperty("--x",x);
+      event.target.style.setProperty("--y",y);
   }
 }
 function manageDrag(e) {
   elem = e.target;
   elem.style.setProperty("--drag-top", e.clientY + "px"); 
   elem.style.setProperty("--drag-left", e.clientX + "px");
-
-  windowSection = window.innerHeight / 3;
-  if (e.clientY < windowSection) {
-    elem.setAttribute("data-row","cardRow,-1");
-  } else if (e.clientY < windowSection * 2) {
-    elem.setAttribute("data-row","cardRow,0");
-  } else {
-    elem.setAttribute("data-row","cardRow,1");
-  }
 }
 /*
 --------------
 CARD FUNCTIONS
 --------------
 */
-cards.forEach((card) => {
-  if (card.type == "spell") {
-    getElem("cardRow,0").appendChild(generateCardElement(card));
-  } else {
-    getElem("cardRow,-1").appendChild(generateCardElement(card));
-    getElem("cardRow,1").appendChild(generateCardElement(card));
+function debug_generateCardscape() {
+  console.log("RSDCSDFHDSGF");
+  var boardHeight = Math.floor(windowHeight / cardHeight);
+  var boardWidth = Math.floor(windowWidth / cardWidth);
+
+  for (var y = Math.floor(boardHeight / 2) - boardHeight; y < Math.floor(boardHeight / 2) + 1; y++) {
+    for (var x = Math.floor(boardWidth / 2) - boardWidth; x < Math.floor(boardWidth / 2) + 1; x++) {
+      generateCard(randElem(cards),x,y);
+    }
   }
-}); 
+}
+function generateCard(cardData,x,y) {
+  var card = generateCardElement(cardData);
+  card.style.setProperty("--x",x);
+  card.style.setProperty("--y",y);
+  getElem("CardGrid").appendChild(card);
+} 
 function generateCardElement(cardData) {  
   var card = elem("div","card");
   card.style = `--bg:var(--color-${cardData.colorName})`;
@@ -204,9 +238,9 @@ function generateCardElement(cardData) {
   
   if (cardData.type == "spell") {
     cardImgContainer.style = `--image:url('../resources/img/cards/${cardData.type}/${cardData.title}.png')`;
-  } else if (cardData.type == "structure") {
+  } else if (cardData.type == "castable") {
     cardImgContainer.style = `--image:url('../resources/img/cards/${cardData.type}/${cardData.colorName}/${cardData.title}.png')`;
-    card.classList.add("structure");
+    card.classList.add("castable");
   } else if (cardData.type == "darkness") {
     card.classList.add("darkness");
   }
@@ -244,10 +278,27 @@ TEXT DISPLAY FUNCTIONS
 
 
 /*
+--------------
+DEBUG FUNCTIONS
+--------------
+*/
+function createDot(x = windowWidth/2, y=windowHeight/2,borderColor = "red") {
+  var dot = elem("div","debug-dot");
+  dot.style.left = x + "px";
+  dot.style.top = y + "px";
+  dot.style.borderColor = borderColor;
+  document.body.appendChild(dot);
+}
+
+
+/*
 -----------------
 UTILITY FUNCTIONS
 -----------------
 */
+function removePx(str) {
+  return str.substring(0,str.length - 2);
+}
 function randInt(max) {
   return Math.floor(Math.random()*(max));
 }
@@ -263,6 +314,9 @@ function clamp(num,min,max) {
 }
 function getElem(id) {
   return document.getElementById(id);
+}
+function glhelm (tag, className = false, innerHTML = false) {
+  return elem(tag, className, innerHTML);
 }
 function elem(tag, className = false, innerHTML = false) {
   var element = document.createElement(tag);

@@ -7,6 +7,15 @@ class Card {
         this.desc = desc;
     }
 }
+/*
+##### CARD TYPES:
+# Spell
+- created from Instruments
+# Instrument
+- creates Spells, immovable
+# Castable
+- OnDrop of a compatible Spell card, starts a Runecast
+*/
 var cards = [
     new Card(
         "harvest","resource","harvest","spell",
@@ -29,23 +38,39 @@ var cards = [
         "The eye that discerns all fates cannot see its own."
     ),
     new Card(
-        "tree","","world","structure",
+        "tree","","world","castable",
         "One that has watched a thousand eras."
     ),
     new Card(
         "darkness","","darkness","darkness",
-        "Forever present darkness."
-    ),
-    new Card(
-        "boulder","","world","structure",
-        "Bearing scratches that have seen eons."
+        ""
     ),
     new Card(
         "darkness","","darkness","darkness",
-        "Forever present darkness."
+        ""
     ),
     new Card(
         "darkness","","darkness","darkness",
-        "Forever present darkness."
+        ""
+    ),
+    new Card(
+        "darkness","","darkness","darkness",
+        ""
+    ),
+    new Card(
+        "boulder","","world","castable",
+        "Bearing cracks that have seen eons."
+    ),
+    new Card(
+        "tree","","world","castable",
+        "One that has watched a thousand eras."
+    ),
+    new Card(
+        "darkness","","darkness","darkness",
+        ""
+    ),
+    new Card(
+        "boulder","","world","castable",
+        "Bearing cracks that have seen eons."
     ),
 ];

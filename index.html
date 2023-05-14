@@ -8,18 +8,18 @@
     <script src="class/Card.js"></script>
     <script src="script/main.js" defer></script>
   </head>
-  <body class="bg-darkblue">
+  <body class="bg-darkblue" onload="onload()" onresize="onresize()">
     <div class="Content fillWindow">
       <div class="ScreenContainer fillWindow" id="ScreenContainer">
         <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-GameBoard">
-          <div id="magicCircle" class="hidden MagicCircle centered-absolute state-initial" style="--runes-completed:0; --total-runes:6">
+          <div id="magicCircle" class="MagicCircle centered-absolute state-vanished" style="--runes-completed:0; --total-runes:6">
             <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--aux-circle-extra:30px; --flicker-delay:1.3s;"></div>
             <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--transition:2s"></div>
             <div class="MagicCircle magicCircle-progress centered-absolute">
               <div class="magicCircle-progress-fill"></div>
             </div>
             <div id="magicCircle-runeParent">
-              <div class="magicCircle-rune" style="--index:0">
+              <!-- <div class="magicCircle-rune" style="--index:0">
                 <div class="magicCircle-rune-graphic">
                   <div class="circle" style="--top:-170; --stroke-width:9px; "></div>
                   <div class="circle" style="--top:-170; --stroke-width:3px; --diameter:150%"></div>
@@ -66,11 +66,11 @@
                   <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
                   <div class="circle solid" style="--diameter:50%"></div>
                 </div>
-              </div>
+              </div> -->
               <!-- filled with runes by initializeMagicCircle() -->
             </div>
           </div>
-          <div class="CardGrid flex-column">
+          <div class="CardGrid flex-column" id="CardGrid">
             <div class="cardRow flex-row" id="cardRow,-1"></div>
             <div class="cardRow flex-row" id="cardRow,0"></div>
             <div class="cardRow flex-row last-row" id="cardRow,1"></div>
