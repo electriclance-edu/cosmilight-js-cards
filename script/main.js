@@ -11,6 +11,13 @@ var windowHeight = undefined;
 var windowWidth = undefined;
 /*
 --------------
+GLOBALS (GAME WORLD)
+--------------
+*/
+var gameBoard = {};
+var player = new Player();
+/*
+--------------
 LISTENERS
 --------------
 */
@@ -33,6 +40,7 @@ ONLOAD FUNCTIONS
 function onload() {
   getCardProperties();
   debug_generateCardscape();
+  renderBoard();
 }
 function getCardProperties() {
   var style = getComputedStyle(document.body);
@@ -150,68 +158,187 @@ function magicCircleProcessKey(code) {
 DRAG FUNCTIONS
 --------------
 */
+
+var dragManager = (e) => {onDragMove(e)};
+var dragEnder = (e) => {endDrag(e)};
+var dragStartingCoords = {x:undefined,y:undefined};
+var dragGhost = undefined;
+
+document.addEventListener('mousedown', (e) => {
+  //if target is an eleemnt of class draggable
+  if (e.target.classList.contains("draggable")) {
+    onDragStart(e);
+    document.addEventListener('mousemove', dragManager, true);
+    document.addEventListener('mouseup', dragEnder, true);
+  }
+});
+function endDrag(e) {
+  dragGhost.remove();
+  dragGhost = undefined;
+  
+  document.removeEventListener("mousemove", dragManager, true);
+  document.removeEventListener('mouseup', dragEnder, true);
+
+  onDragEnd(e);
+}
+function onDragStart(e) {
+  var coords = mouseToWorldCoordinates(e);
+
+  dragStartingCoords = coords;
+
+  const cardData = retrieveCardDataAt(coords.x,coords.y).type;
+  var ghost = generateRawCardElement(cardData);
+  ghost.classList.add("drag_ghost");
+  ghost.classList.add(".state-vanished");
+  setTimeout(() => {
+    ghost.classList.remove("state-vanished");
+  },500);
+
+  dragGhost = ghost;
+  dragGhost.style.setProperty("--drag-top", e.clientY + "px"); 
+  dragGhost.style.setProperty("--drag-left", e.clientX + "px");
+
+  document.body.appendChild(ghost);
+}
+function onDragMove(e) {
+  dragGhost.style.setProperty("--drag-top", e.clientY + "px"); 
+  dragGhost.style.setProperty("--drag-left", e.clientX + "px");
+}
+function onDragEnd(e) {
+  var coords = mouseToWorldCoordinates(e);
+  //target and actor
+  var data = retrieveCardDataAt(coords.x,coords.y);
+  var draggerData = retrieveCardDataAt(dragStartingCoords.x,dragStartingCoords.y);
+
+  if (coords.x == dragStartingCoords.x && coords.y == dragStartingCoords.y) {
+    //do nothing because this is the same coordinate
+  } else if (data.type == undefined) {
+    //basic movement function --- 
+    // temporary, because different cards have different reactions depending on what they are
+    // it may be better to just have a stored "expectedDragResolution" variable or smth 
+    // that stores what to do in this part of hte function, but for now, hardcoded its movement
+    updateCardDataAt(coords.x,coords.y,draggerData);
+    updateCardDataAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
+    renderCard(coords.x,coords.y);
+  } else if (data.type != undefined) {
+    console.log(data.type.type);
+    if (draggerData.type.title == "harvest" && data.type.type == "castable") {
+      updateCardTypeAt(coords.x,coords.y,CardType.getById("resource"));
+      updateCardTypeAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
+      renderCard(coords.x,coords.y);
+      renderCard(dragStartingCoords.x,dragStartingCoords.y);
+    } else if (draggerData.type.type == "spell" && data.type.type == "castable") {
+      updateCardTypeAt(coords.x,coords.y,CardType.getById("amogs"));
+      updateCardTypeAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
+      renderCard(coords.x,coords.y);
+      renderCard(dragStartingCoords.x,dragStartingCoords.y);
+    } else if (draggerData.type.title == "tree" && data.type.title == "tree") {
+      updateCardTypeAt(coords.x,coords.y,CardType.getById("bigTree"));
+      updateCardTypeAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
+      renderCard(coords.x,coords.y);
+      renderCard(dragStartingCoords.x,dragStartingCoords.y);
+    }
+  }
+  
+}
 function makeDraggable(elem) {
   elem.classList.add("draggable");
-  elem.addEventListener("mousedown", function(e) {setDrag(elem, true, e)});
-  document.addEventListener("mouseup", function(e) {setDrag(elem, false, e)});
 }
-const movementManager = function(e) {manageDrag(e)};
+function mouseToWorldCoordinates(e) {
+  var x = e.clientX - windowWidth/2;
+  var y = e.clientY - windowHeight/2;
 
-// state may be either True (denoting mousedown) or False (denoting mouseup)
-function setDrag(elem, state, event) {
-  if (state) {  
-      manageDrag(event);
-      elem.classList.add("dragging");
-      document.addEventListener("mousemove", manageDrag, true);
-  } else {
-      elem.classList.remove("dragging");
-      document.removeEventListener("mousemove", manageDrag, true);
+  x = Math.round(x / cardWidth);
+  y = Math.round(y / cardHeight);
 
-      var x = event.clientX - windowWidth/2;
-      var y = event.clientY - windowHeight/2;
-
-      x = Math.round(x / cardWidth);
-      y = Math.round(y / cardHeight);
-
-      event.target.style.setProperty("--x",x);
-      event.target.style.setProperty("--y",y);
-  }
-}
-function manageDrag(e) {
-  elem = e.target;
-  elem.style.setProperty("--drag-top", e.clientY + "px"); 
-  elem.style.setProperty("--drag-left", e.clientX + "px");
+  return {x:x,y:y};
 }
 /*
 --------------
 CARD FUNCTIONS
 --------------
 */
-function debug_generateCardscape() {
-  console.log("RSDCSDFHDSGF");
-  var boardHeight = Math.floor(windowHeight / cardHeight) - 2;
-  var boardWidth = Math.floor(windowWidth / cardWidth) - 2;
-
-  for (var y = Math.floor(boardHeight / 2) - boardHeight; y < Math.floor(boardHeight / 2) + 1; y++) {
-    for (var x = Math.floor(boardWidth / 2) - boardWidth; x < Math.floor(boardWidth / 2) + 2; x++) {
-      generateCard(randElem(cards),x,y);
+function retrieveCardDataAt(x,y) {
+  if (!gameBoard.hasOwnProperty(y)) {
+    return new Card();
+  }
+  if (gameBoard[y][x] == undefined) {
+    return new Card();
+  }
+  return gameBoard[y][x];
+}
+function updateCardTypeAt(x,y,newType) {
+  if (!gameBoard.hasOwnProperty(y)) {
+    gameBoard[y] = {};
+  }
+  gameBoard[y][x].type = newType;
+}
+function updateCardDataAt(x,y,newData) {
+  if (!gameBoard.hasOwnProperty(y)) {
+    gameBoard[y] = {};
+  }
+  gameBoard[y][x] = newData;
+}
+function renderBoard() { 
+  for (var y of Object.keys(gameBoard)) {
+    for (var x of Object.keys(gameBoard[y])) {
+      renderCard(x,y);
     }
   }
 }
-function generateCard(cardData,x,y) {
-  var card = generateCardElement(cardData);
+function renderCard(x,y) {
+  var cardDataToUpdate = retrieveCardDataAt(x,y);
+  try {
+    cardDataToUpdate.elem.remove();
+    cardDataToUpdate.elem = undefined;
+  } catch (Exception) {}
+  
+  try {
+    var elem = generateGridCardElement(x,y);
+    cardDataToUpdate.setElem(elem);
+    updateCardDataAt(x,y,cardDataToUpdate);
+    getElem("CardGrid").appendChild(elem);
+  } catch (Exception) {}
+}
+function debug_generateCardscape() {
+  var boardHeight = 2;
+  var boardWidth = 2;
+  // var boardHeight = Math.floor(windowHeight / cardHeight) - 2;
+  // var boardWidth = Math.floor(windowWidth / cardWidth) - 2;
+
+  for (var y = Math.floor(boardHeight / 2) - boardHeight; y < Math.floor(boardHeight / 2) + 1; y++) {
+    for (var x = Math.floor(boardWidth / 2) - boardWidth; x < Math.floor(boardWidth / 2) + 2; x++) {
+      updateCardDataAt(x,y,new Card(randElem(cardTypes)));
+    }
+  }
+}
+function generateGridCardElement(x,y) {
+  try {
+    var cardType = retrieveCardDataAt(x,y).type;
+  } catch (TypeError) {
+    console.error(`generateGridCardElement(${x},${y}): Attempted to generate a card element from undefined.`);
+    throw TypeError;
+  }
+
+  if (cardType == undefined) {
+    console.error(`generateGridCardElement(${x},${y}): Attempted to generate a card element from undefined.`);
+    throw TypeError;
+  }
+
+  var card = generateRawCardElement(cardType);
   card.style.setProperty("--x",x);
   card.style.setProperty("--y",y);
-  getElem("CardGrid").appendChild(card);
+
+  return card;
 } 
-function generateCardElement(cardData) {  
+function generateRawCardElement(cardType) {  
   var card = elem("div","card");
-  card.style = `--bg:var(--color-${cardData.colorName})`;
+  card.style = `--bg:var(--color-${cardType.colorName})`;
 
   makeDraggable(card);
   
   var cardDesc = elem("div","card-desc");
-  cardDesc.innerHTML = cardData.desc;
+  cardDesc.innerHTML = cardType.desc;
   card.appendChild(cardDesc);
   
   var cardBg = elem("div","card-bg");
@@ -232,17 +359,16 @@ function generateCardElement(cardData) {
   cardContent.appendChild(cardImgContainer);
   var cardTitleContainer = elem("div","card-title-container");
   cardContent.appendChild(cardTitleContainer);
-  var cardTitle = generateCardTitleElement(cardData.title, cardData.subtitle);
+  var cardTitle = generateCardTitleElement(cardType.title, cardType.subtitle);
   cardTitleContainer.appendChild(cardTitle);
 
-  
-  if (cardData.type == "spell") {
-    cardImgContainer.style = `--image:url('../resources/img/cards/${cardData.type}/${cardData.title}.png')`;
-  } else if (cardData.type == "castable") {
-    cardImgContainer.style = `--image:url('../resources/img/cards/${cardData.type}/${cardData.colorName}/${cardData.title}.png')`;
-    card.classList.add("castable");
-  } else if (cardData.type == "darkness") {
-    card.classList.add("darkness");
+  card.classList.add(cardType.type);
+  if (cardType.type == "spell") {
+    cardImgContainer.style = `--image:url('../resources/img/cards/${cardType.type}/${cardType.title}.png')`;
+  } else if (cardType.type == "castable") {
+    cardImgContainer.style = `--image:url('../resources/img/cards/${cardType.type}/${cardType.colorName}/${cardType.title}.png')`;
+  } else if (cardType.type == "darkness") {
+    //none
   }
 
   return card;

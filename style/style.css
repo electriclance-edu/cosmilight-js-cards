@@ -38,11 +38,11 @@
   --color-light: #ffd864;
   --color-text: rgb(230,230,230);
   --color-world: #6798c0;
-  --color-darkness: #533364;
+  --color-darkness: #714688;
   --color-dark: #69666f;
   --color-text-accent: rgb(200, 200, 200);
   --card-width: 130px; /*roughly 0.7 * height */
-  --card-height: 185px; /*roughly 20vh*/
+  --card-height: 180px; /*roughly 20vh*/
 }
 /*###########
 TAG SELECTORS
@@ -50,7 +50,7 @@ TAG SELECTORS
 * {
   margin: 0;
   font-family: "Overpass";
-  font-size:20px;
+  font-size:15px;
 }
 body {
   margin: 0;
@@ -72,7 +72,6 @@ h1, h2, h3, h4, .headerFont {
 p, span {
   color: var(--color-text);
   font-family: Overpass;
-  font-size: var(--txtSize-default);
 }
 hr {
   margin-left: 0;
@@ -162,13 +161,12 @@ CARD SELECTORS
   --y:0;
   width: var(--card-width);
   height: var(--card-height);
-  background-color:var(--bg-accent);
   position: absolute;
   user-select: none;
+  /* background-color:var(--bg-main); */
   transition: box-shadow 0.2s, filter 0s;
   margin-right: 5px;
   margin-left: 5px;
-  box-shadow: 0 0 15px var(--bg-accent);
   border-radius: 10px;
   z-index:1;
   top:50%;
@@ -185,8 +183,10 @@ body .card:active {
 }
 .card:hover {
   filter: brightness(1.2);
-  box-shadow: 0 0 20px var(--bg);
   z-index:100;
+}
+.card:hover .card-bg {
+  filter: drop-shadow(0 0 20px var(--bg));
 }
 .card.onCooldown {
   opacity:0.6;
@@ -243,14 +243,22 @@ body .card:active {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  transition:0.3s;
+  opacity:0;
 }
 .card-title * {
   flex-grow: 1;
   text-align: center;
 }
 .card-title .card-title-char {
-  font-size:1.2em;
+  font-size:1.6em;
   color:var(--bg);
+}
+.card:hover .card-title {
+  opacity:1;
+}
+.card.spell .card-title {
+  opacity:1;
 }
 .card.castable .card-title .card-title-char {
   color:var(--color-text);
@@ -260,7 +268,7 @@ body .card:active {
 }
 .card-title .card-subtitle-char {
   color: var(--color-text);
-  font-size: 0.7em
+  font-size: 1em
 }
 .card-desc {
   position:absolute;
@@ -296,9 +304,10 @@ body .card:active {
   height:100%;
   position:absolute;
   left:0;
-  top:0;
+  bottom:0;
   overflow: hidden;
   border-radius: 10px;
+  /* box-shadow: 0 0 15px var(--bg-accent); */
 }
 .card-bg::before {
   content:"";
@@ -310,6 +319,9 @@ body .card:active {
   top:0;
   background-color:var(--bg);
   opacity:0.3;
+}
+.card.castable .card-bg {
+  height:30%;
 }
 .card.darkness .card-bg::before {
   opacity:0 !important;
@@ -333,6 +345,25 @@ body .card:active {
   background-color:var(--bg);
   border-radius:10000px;
   opacity:0.1;
+}
+/*####################
+DRAG SELECTORS
+####################*/
+.drag_ghost {
+  position:absolute;
+  transition: transform 0.2s;
+  transform:translate(-50%,-50%) scale(1.2);
+  top:var(--drag-top);
+  left:var(--drag-left);
+  z-index:100 !important;
+  opacity:0.7;
+  pointer-events:none;
+}
+.drag_ghost.state-vanished {
+  transform:translate(-50%,-50%) scale(0);
+}
+.card.drag_ghost .card-desc {
+  display:none;
 }
 /*####################
 MAGIC CIRCLE SELECTORS
@@ -543,17 +574,6 @@ DEBUG SELECTORS
 ###########*/
 .draggable {
 }
-.dragging {
-  position:absolute;
-  transform:translate(-50%,-50%) scale(1.2);
-  top:var(--drag-top);
-  left:var(--drag-left);
-  z-index:100 !important;
-  opacity:0.6;
-}
-.card.dragging .card-desc {
-  display:none;
-}
 .debug-dot {
   width:0;
   height:0;
@@ -567,6 +587,14 @@ DEBUG SELECTORS
 /*############
 Animations
 #############*/
+@keyframes expand {
+  0% {
+    transform:scale(0);
+  }
+  100% {
+    transform:scale(1);
+  }
+}
 @keyframes flicker {
   0% { opacity: var(--flicker-max); }
   2% { opacity: var(--flicker-min); }
