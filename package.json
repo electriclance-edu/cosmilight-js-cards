@@ -1,0 +1,30 @@
+{
+  "name": "cosmilight-js-cards",
+  "version": "1.0.0",
+  "description": "a game in a dark world",
+  "main": "index.js",
+  "scripts": {
+    "test": "console.log(\"hello!\")"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electriclance-edu/cosmilight-js-cards.git"
+  },
+  "author": "electriclance",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/electriclance-edu/cosmilight-js-cards/issues"
+  },
+  "homepage": "https://github.com/electriclance-edu/cosmilight-js-cards#readme",
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-react",
+        {
+          "runtime": "automatic",
+          "importSource": "@vanilla-jsx"
+        }
+      ]
+    ]
+  }
+}

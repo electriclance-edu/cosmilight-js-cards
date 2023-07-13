@@ -1,10 +1,10 @@
 class Consequence {
-    constructor(type,param = []) {
+    constructor(type = "none",param = {}) {
       this.type = type;
       this.param = param;
   
       if (!Object.keys(consequenceTypes).includes(this.type)) {
-        console.log("class Consequence: consequence type '" + this.type + "' does not exist, defaulting to none.");
+        console.warn("Consequence.constructor(): consequence type '" + this.type + "' does not exist, defaulting to none.");
       }
     }
     trigger() {
@@ -21,5 +21,10 @@ class Consequence {
   }
   var consequenceTypes = {
     none:()=>{},
+    harvest:()=>{},
+    changeHealth:(amt,target)=>{
+      target.alterHealth(amt);
+    },
+    changeLightLevel:()=>{},
   }
   

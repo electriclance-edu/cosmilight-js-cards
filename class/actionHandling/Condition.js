@@ -1,7 +1,8 @@
 class Condition {
-    constructor(type,param) {
+    constructor(type,param,positive = true) {
       this.type = type;
       this.param = param;
+      this.positive = positive; // Determines whether or not the condition returns "true" when it is failed.
     }
     //returns whether or not the condition's type and parameters are satisfied
     //ie. new Condition("resource",["water",1]) will return true if the player has >=1 water
@@ -33,7 +34,7 @@ class Condition {
   var conditionChecks = {
     none:()=>{
       return true;
-    }
+    },
     cardExists:(card)=>{
   		return true;
     }

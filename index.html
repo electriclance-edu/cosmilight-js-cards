@@ -4,16 +4,50 @@
     <meta charset="utf-8">
     <title>Cosmilight</title>
     <link rel="stylesheet" href="style/style.css">
-    <!-- <script src="classes/World.js"></script> -->
-    <script src="class/Player.js"></script>
+    <script src="script/helper.js"></script>
+    <script src="class/generic/RGBA.js"></script>
+    <script src="class/generic/Point.js"></script>
+    <script src="class/World.js"></script>
+    <script src="class/Inventory.js"></script>
     <script src="class/CardType.js"></script>
     <script src="class/Card.js"></script>
+    <script src="class/Player.js"></script>
+    <script src="class/Game.js"></script>
+    <script src="class/actionHandling/Interaction.js"></script>
+    <script src="class/actionHandling/Consequence.js"></script>
+    <script src="class/actionHandling/Condition.js"></script>
+    <script src="class/actionHandling/Trigger.js"></script>
+    <script src="class/StructureType.js"></script>
+    <script src="class/Structure.js"></script>
+    <script src="class/TileType.js"></script>
+    <script src="class/Tile.js"></script>
+    <script src="class/Board.js" defer></script>
     <script src="script/main.js" defer></script>
+    <script src="class/LightPoint.js"></script>
+    <script src="class/handler/FPSHandler.js" defer></script>
+    <script src="class/handler/LightHandler.js" defer></script>
+    <script src="class/handler/GUIHandler.js" defer></script>
+    <script src="class/handler/GameTickHandler.js" defer></script>
+    <script src="class/handler/DataHandler.js" defer></script>
+    <script src="data/base_game/data-CardType.js" defer></script>
+    <script src="data/base_game/data-TileType.js" defer></script>
+    <script src="data/base_game/data-StructureType.js" defer></script>
   </head>
   <body class="bg-darkblue" onload="onload()" onresize="onresize()">
     <div class="Content fillWindow">
+      <h1 class="debug-fps txt-white" id="debug-fps">FPS: </h1>
+      <div class="fillWindow Vignette"></div>
       <div class="ScreenContainer fillWindow" id="ScreenContainer">
         <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-GameBoard">
+          <div class="StructureDetailDisplay" id="StructureDetailDisplay"></div>
+          <div class="fillWindow LightCanvasContainer">
+            <canvas id="LightCanvas"></canvas>
+          </div>
+          <div class="ExternalInventoryContainer inventoryParent state-hidden" id="InventoryDisplay">
+            <div class="inventory-bg validInventoryDrop externalInventory" onclick="Game.current.getWorld().closeInventory()"></div>
+            <p class="inventoryTitle txt-size-header headerFont txt-lined" id="inventoryTitle">???</p>
+            <div class="inventory" id="externalInventoryCards"></div>
+          </div>
           <div id="magicCircle" class="MagicCircle centered-absolute state-vanished" style="--runes-completed:0; --total-runes:6">
             <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--aux-circle-extra:30px; --flicker-delay:1.3s;"></div>
             <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--transition:2s"></div>
@@ -72,12 +106,11 @@
               <!-- filled with runes by initializeMagicCircle() -->
             </div>
           </div>
-          <div class="CardGrid flex-column" id="CardGrid">
-            <div class="cardRow flex-row" id="cardRow,-1"></div>
-            <div class="cardRow flex-row" id="cardRow,0"></div>
-            <div class="cardRow flex-row last-row" id="cardRow,1"></div>
+          <div class="TileBoard" id="TileBoard"></div>
+          <div class="PlayerHandContainer inventoryParent validInventoryDrop playerInventory">
+            <div class="inventory-bg validInventoryDrop playerInventory"></div>
+            <div class="PlayerHand inventory" id="playerInventoryCards"></div>
           </div>
-        </div>
       </div>
     </div>
   </body>

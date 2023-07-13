@@ -5,56 +5,130 @@ var magicCircleActivated = false;
 var currentRune = 0;
 const magicCircle = getElem("magicCircle");
 const magicCircleRunes = getElem("magicCircle-runeParent");
-var cardWidth = undefined;
-var cardHeight = undefined;
-var windowHeight = undefined;
-var windowWidth = undefined;
-/*
---------------
-GLOBALS (GAME WORLD)
---------------
-*/
-var gameBoard = {};
-var player = new Player();
-/*
---------------
-LISTENERS
---------------
-*/
-document.addEventListener('keypress', (e) => {
-  var code = e.code;
+var tileWidth = undefined;
+var tileHeight = undefined;
 
-  if (magicCircleActivated) {
-    magicCircleProcessKey(code);
-  }
-}, false);
-function onresize() {
-  windowHeight = window.innerHeight;
-  windowWidth = window.innerWidth;
-}
 /*
 --------------
 ONLOAD FUNCTIONS
 --------------
 */
 function onload() {
-  getCardProperties();
-  debug_generateCardscape();
-  renderBoard();
+  setTimeout(() => {initialize()},0);
 }
-function getCardProperties() {
-  var style = getComputedStyle(document.body);
-  cardWidth = parseInt(removePx(style.getPropertyValue('--card-width'))) + 10;
-  cardHeight = parseInt(removePx(style.getPropertyValue('--card-height'))) + 10;
+function initialize() {
+  DataHandler.loadAllData();
+  initializeGame();
+  retrieveCSSConstants();
+  GUIHandler.initialize();
+  LightHandler.initialize();
+  FPSHandler.initialize();
 
-  windowHeight = window.innerHeight;
-  windowWidth = window.innerWidth;
+  GUIHandler.renderCurrentTileBoard();
+
+  var centralTileInventory = Game.current.getWorld().getCurrentBoard().getTile(0,0).inventory;
+  centralTileInventory.addCard(new Card("harvest"));
+  centralTileInventory.addCard(new Card("harvest"));
+  centralTileInventory.addCard(new Card("release_heat"));
+  centralTileInventory.addCard(new Card("release_heat"));
+  centralTileInventory.addCard(new Card("release_heat"));
+  GUIHandler.renderTile(0,0);
+  Game.current.getWorld().openInventory(centralTileInventory);
+  Game.current.getPlayer().hand.addCard(new Card("blink"));
+  Game.current.getPlayer().hand.addCard(new Card("blink"));
+  
+  setInterval(() => {
+    FPSHandler.updateFrames();
+  },16.6);
+  setInterval(() => {
+    FPSHandler.updateElement();
+  },200);
 }
+function initializeGame() {
+  new Game(new World(), new Player());
+}
+function retrieveCSSConstants() {
+  var style = getComputedStyle(document.body);
+  tileWidth = parseInt(removePx(style.getPropertyValue('--tile-width'))) + 10;
+  tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height'))) + 10;
+}
+/*
+-------------------
+EVENT LISTENERS
+-------------------
+*/
+window.addEventListener("resize", (e) => {
+  doResize()
+});
+function doResize() {
+  LightHandler.initialize();
+}
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('mousedown', (e) => {
+  if (e.button == 2) {
+    if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
+      var inventoryId = e.target.getAttribute("data-inventoryId");
+
+      let currentlyOpenedInv = Game.current.getWorld().currentlyOpenedInventory;
+      if (currentlyOpenedInv == "none") {
+        return;
+      }
+
+      let originInventory, targetInventory;
+      switch (e.target.parentElement.id) {
+        case "playerInventoryCards":
+          originInventory = Game.current.getPlayer().hand;
+          targetInventory = currentlyOpenedInv;
+          break;
+        case "externalInventoryCards":
+          originInventory = currentlyOpenedInv;
+          targetInventory = Game.current.getPlayer().hand;
+          break;
+      }
+      var card = originInventory.getCard(inventoryId);
+  
+      originInventory.removeCard(inventoryId);
+      targetInventory.addCard(card);
+    
+      let world = Game.current.getWorld();
+      let tile = world.getCurrentBoard().getTile(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y);
+      if (tile.inventory.hasItems()) {
+        GUIHandler.addClassToTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
+      } else {
+        GUIHandler.removeClassFromTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
+      }
+    }
+    return;
+  }
+  //if target is an eleemnt of class draggable
+  if (e.target.classList.contains("draggable")) {
+    onDragStart(e);
+    document.addEventListener('mousemove', dragManager, true);
+    document.addEventListener('mouseup', dragEnder, true);
+  } else if (e.target.classList.contains("tile")) {
+    let currentCoords = Game.current.getWorld().currentlyOpenedTileCoords;
+    GUIHandler.removeClassFromTileElem(currentCoords.x,currentCoords.y,"selectedTile");
+
+    let coords = mouseToBoardCoordinates(e);
+    let tileInventory = Game.current.getWorld().getCurrentBoard().getTile(coords.x,coords.y).inventory;
+    Game.current.getWorld().openInventory(tileInventory);
+    Game.current.getWorld().currentlyOpenedTileCoords = coords;
+    GUIHandler.addClassToTileElem(coords.x,coords.y,"selectedTile");
+  }
+});
 /*
 --------------
 GENERAL GUI FUNCTIONS
 --------------
 */
+// Converts a string formatted like an HTML file into an element. Returns only the first element in the string if the string has multiple elements.
+function parseHTML(rawHTML) {
+  return document.createRange().createContextualFragment(rawHTML).firstElementChild;
+}
+// Converts a string formatted like an HTML file into an element. Returns the document fragment generated.
+function parseHTMLDocumentFragment(rawHTML) {
+  return document.createRange().createContextualFragment(rawHTML);
+}
 function setUniqueState(element, state = "none") {
   var classNames = element.className.split(' ');
   classNames.forEach((name) => {
@@ -153,25 +227,18 @@ function magicCircleProcessKey(code) {
     }
   }
 }
+
 /*
 --------------
 DRAG FUNCTIONS
 --------------
 */
-
 var dragManager = (e) => {onDragMove(e)};
 var dragEnder = (e) => {endDrag(e)};
-var dragStartingCoords = {x:undefined,y:undefined};
+var dragInvokerElement = undefined;
+var dragInvokerCardType = undefined;
 var dragGhost = undefined;
 
-document.addEventListener('mousedown', (e) => {
-  //if target is an eleemnt of class draggable
-  if (e.target.classList.contains("draggable")) {
-    onDragStart(e);
-    document.addEventListener('mousemove', dragManager, true);
-    document.addEventListener('mouseup', dragEnder, true);
-  }
-});
 function endDrag(e) {
   dragGhost.remove();
   dragGhost = undefined;
@@ -182,12 +249,13 @@ function endDrag(e) {
   onDragEnd(e);
 }
 function onDragStart(e) {
-  var coords = mouseToWorldCoordinates(e);
+  var coords = mouseToBoardCoordinates(e);
+  var elem = e.target;
 
-  dragStartingCoords = coords;
-
-  const cardData = retrieveCardDataAt(coords.x,coords.y).type;
-  var ghost = generateRawCardElement(cardData);
+  document.body.classList.add("dragging");
+  
+  const cardData = CardType.getById(elem.getAttribute("data-cardTypeId"));
+  var ghost = GUIHandler.generateRawCardElement(cardData);
   ghost.classList.add("drag_ghost");
   ghost.classList.add(".state-vanished");
   setTimeout(() => {
@@ -199,203 +267,68 @@ function onDragStart(e) {
   dragGhost.style.setProperty("--drag-left", e.clientX + "px");
 
   document.body.appendChild(ghost);
+
+  dragInvokerElement = elem;
+  dragInvokerCardType = cardData;
 }
 function onDragMove(e) {
   dragGhost.style.setProperty("--drag-top", e.clientY + "px"); 
   dragGhost.style.setProperty("--drag-left", e.clientX + "px");
 }
 function onDragEnd(e) {
-  var coords = mouseToWorldCoordinates(e);
-  //target and actor
-  var data = retrieveCardDataAt(coords.x,coords.y);
-  var draggerData = retrieveCardDataAt(dragStartingCoords.x,dragStartingCoords.y);
+  var coords = mouseToBoardCoordinates(e);
+  var target = e.target;
 
-  if (coords.x == dragStartingCoords.x && coords.y == dragStartingCoords.y) {
-    //do nothing because this is the same coordinate
-  } else if (data.type == undefined) {
-    //basic movement function --- 
-    // temporary, because different cards have different reactions depending on what they are
-    // it may be better to just have a stored "expectedDragResolution" variable or smth 
-    // that stores what to do in this part of hte function, but for now, hardcoded its movement
-    updateCardDataAt(coords.x,coords.y,draggerData);
-    updateCardDataAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
-    renderCard(coords.x,coords.y);
-  } else if (data.type != undefined) {
-    console.log(data.type.type);
-    if (draggerData.type.title == "harvest" && data.type.type == "castable") {
-      updateCardTypeAt(coords.x,coords.y,CardType.getById("resource"));
-      updateCardTypeAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
-      renderCard(coords.x,coords.y);
-      renderCard(dragStartingCoords.x,dragStartingCoords.y);
-    } else if (draggerData.type.type == "spell" && data.type.type == "castable") {
-      updateCardTypeAt(coords.x,coords.y,CardType.getById("amogs"));
-      updateCardTypeAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
-      renderCard(coords.x,coords.y);
-      renderCard(dragStartingCoords.x,dragStartingCoords.y);
-    } else if (draggerData.type.title == "tree" && data.type.title == "tree") {
-      updateCardTypeAt(coords.x,coords.y,CardType.getById("bigTree"));
-      updateCardTypeAt(dragStartingCoords.x,dragStartingCoords.y,undefined);
-      renderCard(coords.x,coords.y);
-      renderCard(dragStartingCoords.x,dragStartingCoords.y);
+  document.body.classList.remove("dragging");
+
+  // If targeting inventory:
+  if (target.classList.contains("validInventoryDrop")) {
+    var inventoryId = dragInvokerElement.getAttribute("data-inventoryId");
+    
+    let originInventory;
+    switch (dragInvokerElement.parentElement.id) {
+      case "playerInventoryCards":
+        originInventory = Game.current.getPlayer().hand;
+        break;
+      case "externalInventoryCards":
+        originInventory = Game.current.getWorld().currentlyOpenedInventory;
+        break;
+    }
+    var card = originInventory.getCard(inventoryId);
+
+    let targetInventory;
+    if (target.classList.contains("externalInventory")) {
+      targetInventory = Game.current.getWorld().currentlyOpenedInventory;
+    } else if (target.classList.contains("playerInventory")) {
+      targetInventory = Game.current.getPlayer().hand;
+    }
+    originInventory.removeCard(inventoryId);
+    targetInventory.addCard(card);
+    
+    let world = Game.current.getWorld();
+    let tile = world.getCurrentBoard().getTile(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y);
+    if (tile.inventory.hasItems()) {
+      GUIHandler.addClassToTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
+    } else {
+      GUIHandler.removeClassFromTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
     }
   }
-  
+  // If targeting card:
+  // // If targeting tile:
+  // var data = Game.current.getWorld().getCurrentBoard().getTile(coords.x,coords.y);
 }
 function makeDraggable(elem) {
   elem.classList.add("draggable");
 }
-function mouseToWorldCoordinates(e) {
-  var x = e.clientX - windowWidth/2;
-  var y = e.clientY - windowHeight/2;
+function mouseToBoardCoordinates(e) {
+  var x = e.clientX - window.innerWidth/2;
+  var y = e.clientY - window.innerHeight/2;
 
-  x = Math.round(x / cardWidth);
-  y = Math.round(y / cardHeight);
+  x = Math.round(x / tileWidth);
+  y = -Math.round(y / tileHeight);
 
   return {x:x,y:y};
 }
-/*
---------------
-CARD FUNCTIONS
---------------
-*/
-function retrieveCardDataAt(x,y) {
-  if (!gameBoard.hasOwnProperty(y)) {
-    return new Card();
-  }
-  if (gameBoard[y][x] == undefined) {
-    return new Card();
-  }
-  return gameBoard[y][x];
-}
-function updateCardTypeAt(x,y,newType) {
-  if (!gameBoard.hasOwnProperty(y)) {
-    gameBoard[y] = {};
-  }
-  gameBoard[y][x].type = newType;
-}
-function updateCardDataAt(x,y,newData) {
-  if (!gameBoard.hasOwnProperty(y)) {
-    gameBoard[y] = {};
-  }
-  gameBoard[y][x] = newData;
-}
-function renderBoard() { 
-  for (var y of Object.keys(gameBoard)) {
-    for (var x of Object.keys(gameBoard[y])) {
-      renderCard(x,y);
-    }
-  }
-}
-function renderCard(x,y) {
-  var cardDataToUpdate = retrieveCardDataAt(x,y);
-  try {
-    cardDataToUpdate.elem.remove();
-    cardDataToUpdate.elem = undefined;
-  } catch (Exception) {}
-  
-  try {
-    var elem = generateGridCardElement(x,y);
-    cardDataToUpdate.setElem(elem);
-    updateCardDataAt(x,y,cardDataToUpdate);
-    getElem("CardGrid").appendChild(elem);
-  } catch (Exception) {}
-}
-function debug_generateCardscape() {
-  var boardHeight = 2;
-  var boardWidth = 2;
-  // var boardHeight = Math.floor(windowHeight / cardHeight) - 2;
-  // var boardWidth = Math.floor(windowWidth / cardWidth) - 2;
-
-  for (var y = Math.floor(boardHeight / 2) - boardHeight; y < Math.floor(boardHeight / 2) + 1; y++) {
-    for (var x = Math.floor(boardWidth / 2) - boardWidth; x < Math.floor(boardWidth / 2) + 2; x++) {
-      updateCardDataAt(x,y,new Card(randElem(cardTypes)));
-    }
-  }
-}
-function generateGridCardElement(x,y) {
-  try {
-    var cardType = retrieveCardDataAt(x,y).type;
-  } catch (TypeError) {
-    console.error(`generateGridCardElement(${x},${y}): Attempted to generate a card element from undefined.`);
-    throw TypeError;
-  }
-
-  if (cardType == undefined) {
-    console.error(`generateGridCardElement(${x},${y}): Attempted to generate a card element from undefined.`);
-    throw TypeError;
-  }
-
-  var card = generateRawCardElement(cardType);
-  card.style.setProperty("--x",x);
-  card.style.setProperty("--y",y);
-
-  return card;
-} 
-function generateRawCardElement(cardType) {  
-  var card = elem("div","card");
-  card.style = `--bg:var(--color-${cardType.colorName})`;
-
-  makeDraggable(card);
-  
-  var cardDesc = elem("div","card-desc");
-  cardDesc.innerHTML = cardType.desc;
-  card.appendChild(cardDesc);
-  
-  var cardBg = elem("div","card-bg");
-  card.appendChild(cardBg);
-  var cardBgCircle1 = elem("div","card-bg-circle");
-  cardBgCircle1.style = "--index:0";
-  cardBg.appendChild(cardBgCircle1)
-  var cardBgCircle2 = elem("div","card-bg-circle");
-  cardBgCircle2.style = "--index:1";
-  cardBg.appendChild(cardBgCircle2)
-  var cardBgCircle3 = elem("div","card-bg-circle");
-  cardBgCircle3.style = "--index:2";
-  cardBg.appendChild(cardBgCircle3)
-
-  var cardContent = elem("div","card-content");
-  card.appendChild(cardContent);
-  var cardImgContainer = elem("div","card-img-container");
-  cardContent.appendChild(cardImgContainer);
-  var cardTitleContainer = elem("div","card-title-container");
-  cardContent.appendChild(cardTitleContainer);
-  var cardTitle = generateCardTitleElement(cardType.title, cardType.subtitle);
-  cardTitleContainer.appendChild(cardTitle);
-
-  card.classList.add(cardType.type);
-  if (cardType.type == "spell") {
-    cardImgContainer.style = `--image:url('../resources/img/cards/${cardType.type}/${cardType.title}.png')`;
-  } else if (cardType.type == "castable") {
-    cardImgContainer.style = `--image:url('../resources/img/cards/${cardType.type}/${cardType.colorName}/${cardType.title}.png')`;
-  } else if (cardType.type == "darkness") {
-    //none
-  }
-
-  return card;
-}
-function generateCardTitleElement(title,subtitle) {
-  var cardTitle = elem("div");
-  cardTitle.classList.add("card-title");
-  
-  //split title into characters
-  title.split("").forEach(letter => {
-    var char = elem("div","card-title-char headerFont",letter.toUpperCase());
-    cardTitle.append(char);
-  });
-  //linebreak
-  cardTitle.append(elem("div","flex-break"));
-  //split subtitle
-  subtitle.split("").forEach(letter => {
-    var char = elem("div","card-subtitle-char headerFont-thin",letter.toUpperCase());
-    cardTitle.append(char);
-  });
-
-  return cardTitle;
-}
-function selectCard() {
-
-}
-
 /*
 --------------
 TEXT DISPLAY FUNCTIONS
@@ -408,15 +341,13 @@ TEXT DISPLAY FUNCTIONS
 DEBUG FUNCTIONS
 --------------
 */
-function createDot(x = windowWidth/2, y=windowHeight/2,borderColor = "red") {
+function createDot(x = 100, y = 100,borderColor = "red") {
   var dot = elem("div","debug-dot");
   dot.style.left = x + "px";
   dot.style.top = y + "px";
   dot.style.borderColor = borderColor;
   document.body.appendChild(dot);
 }
-
-
 /*
 -----------------
 UTILITY FUNCTIONS
@@ -425,23 +356,10 @@ UTILITY FUNCTIONS
 function removePx(str) {
   return str.substring(0,str.length - 2);
 }
-function randInt(max) {
-  return Math.floor(Math.random()*(max));
-}
-function randFloat(max) {
-  return Math.random()*max;
-}
-function randElem(array) {
-  return array[randInt(array.length)];
-}
-function clamp(num,min,max) {
-  //https://stackoverflow.com/questions/5842747/how-can-i-use-javascript-to-limit-a-number-between-a-min-max-value
-   return Math.max(min, Math.min(num, max));
-}
 function getElem(id) {
   return document.getElementById(id);
 }
-function glhelm (tag, className = false, innerHTML = false) {
+function glhelm(tag, className = false, innerHTML = false) {
   return elem(tag, className, innerHTML);
 }
 function elem(tag, className = false, innerHTML = false) {
@@ -467,4 +385,21 @@ function findKeyFromValue(dict,value) {
   };
 
   return matchingKey;
+}
+
+/*
+--------------
+LISTENERS
+--------------
+*/
+document.addEventListener('keypress', (e) => {
+  var code = e.code;
+
+  if (magicCircleActivated) {
+    magicCircleProcessKey(code);
+  }
+}, false);
+function onresize() {
+  windowHeight = window.innerHeight;
+  windowWidth = window.innerWidth;
 }
