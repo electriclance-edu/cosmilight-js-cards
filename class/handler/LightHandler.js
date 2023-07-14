@@ -1,6 +1,7 @@
 class LightHandler {
     static lightPoints = {
-        "player":new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}),
+        "player":new LightPoint(0,0,{strength:1.5,waver:0.12,color:new RGBA(50,100,255,0.1)}),
+        "fire":new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}),
         // "#2,2":new LightPoint(2,2,{strength:1.5,waver:0.1,color:new RGBA(255,0,200,0.1)}),
         // "#-1,1":new LightPoint(-1,1,{strength:1,waver:0.05,color:new RGBA(0,0,0,0)}),
         // "#3,-2":new LightPoint(3,-2,{strength:1,waver:0.1,color:new RGBA(0,0,0,0)}),
@@ -25,6 +26,14 @@ class LightHandler {
             LightHandler.renderAllLight();
         },50);
     }
+    static moveLight(id,x,y) {
+        let point = this.getLight(id);
+        point.setX(x);
+        point.setY(y);
+    }
+    static addLight(id,lightPoint) {
+        this.lightPoints[id] = lightPoint;
+    }
     static getLight(id) {
         return LightHandler.lightPoints[id];
     }
@@ -36,7 +45,7 @@ class LightHandler {
         ctx.globalCompositeOperation = "source-over";
         ctx.beginPath();
         ctx.rect(0,0,LightHandler.canvas.width,LightHandler.canvas.height);
-        ctx.fillStyle = "rgba(15,0,30,0.6)";
+        ctx.fillStyle = "rgba(15,0,30,0.8)";
         ctx.fill();
     }
     static renderAllLight() {
@@ -68,7 +77,8 @@ class LightHandler {
         var ctx = LightHandler.canvas.getContext("2d");
         // Squish/stretch the canvas vertically becasue tileHeight may not necessarily equal tileWidth
         // Important for renderLight() which renders light gradients with both x,y lengths equal to tileWidth
-        const square = generateSquare(new Point(light.x * tileWidth, -light.y * tileHeight),strength);
+        var translatedLight = Point.translate(new Point(light.x,light.y),Game.current.getPlayer().location);
+        const square = generateSquare(new Point(translatedLight.x * tileWidth, -translatedLight.y * tileHeight),strength);
         const trueSquareCenter = new Point(light.x * tileWidth, light.y * tileHeight);
         square.center = decentralizePoint(LightHandler.canvasCenter, square.center);
         square.topLeft = decentralizePoint(LightHandler.canvasCenter, square.topLeft);
@@ -96,10 +106,10 @@ class LightHandler {
         var ctx = LightHandler.canvas.getContext("2d");
         ctx.beginPath();
         const gradient_mask = ctx.createRadialGradient(square.center.x,square.center.y,1,square.center.x,square.center.y,square.width / 2);
-        gradient_mask.addColorStop(0.2,"rgba(0,0,0,1)");
-        gradient_mask.addColorStop(0.55,"rgba(0,0,0,0.7)");
-        gradient_mask.addColorStop(0.7,"rgba(0,0,0,0.4)");
-        gradient_mask.addColorStop(1,"rgba(0,0,0,0)");
+        gradient_mask.addColorStop(0.2,`rgba(0,0,0,${1 * light.faintness})`);
+        gradient_mask.addColorStop(0.55,`rgba(0,0,0,${0.7 * light.faintness})`);
+        gradient_mask.addColorStop(0.7,`rgba(0,0,0,${0.4 * light.faintness})`);
+        gradient_mask.addColorStop(1,`rgba(0,0,0,0)`);
         ctx.fillStyle = gradient_mask;
         ctx.globalCompositeOperation = "destination-out";
         ctx.rect(square.topLeft.x,square.topLeft.y,square.width,square.width);

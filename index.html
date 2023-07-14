@@ -39,7 +39,38 @@
       <div class="fillWindow Vignette"></div>
       <div class="ScreenContainer fillWindow" id="ScreenContainer">
         <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-GameBoard">
-          <div class="StructureDetailDisplay" id="StructureDetailDisplay"></div>
+          <div class="Crosshair">+</div>
+          <div class="FollowCursorTextDisplay textDisplay fillWindow" id="FollowCursorTextDisplay"></div>
+          <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
+          <div class="StructureDetailDisplay state-vanished" id="StructureDetailDisplay">
+            <div class="titleContainer">
+              <p class="structureTitle txt-size-header txt-lined txt-lined-after headerFont">Sapfire</p>
+              <p class="structureDescription txt-italic">Consumes plant fuel to produce heat and light.</p>
+            </div>
+            <div class="statContainer">
+              <div>
+                <div class="progressBar" style="--fill:12;--fill-max:15;--fill-color:var(--color-item)">
+                  <div class="progressBar-icon"></div>
+                  <p class="progressBar-title headerFont">FUEL</p>
+                  <div class="progressBar-fill"></div>
+                </div>
+              </div>
+              <div>
+                <div class="progressBar" style="--fill:5;--fill-max:20;--fill-color:var(--color-fire)">
+                  <div class="progressBar-icon"></div>
+                  <p class="progressBar-title headerFont">HEAT</p>
+                  <div class="progressBar-fill"></div>
+                </div>
+              </div>
+              <div>
+                <div class="progressBar" style="--fill:8;--fill-max:10;--fill-color:var(--color-light);--fill-color-accent:var(--bg-shadow)">
+                  <div class="progressBar-icon"></div>
+                  <p class="progressBar-title headerFont">LIGHT</p>
+                  <div class="progressBar-fill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="fillWindow LightCanvasContainer">
             <canvas id="LightCanvas"></canvas>
           </div>

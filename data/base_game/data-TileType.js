@@ -12,5 +12,12 @@ DataHandler.addObjectToLoad("TileType","baseCosmilight",[
 
         ],
         amountOfSprites:1
+    },
+    {
+        id:"flowered_grass",
+        interaction:[
+
+        ],
+        amountOfSprites:3
     }
 ])

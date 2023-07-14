@@ -9,6 +9,7 @@ class GUIHandler {
         GUIHandler.PlayerInventoryElem = document.getElementById("playerInventoryCards");
         Game.current.getPlayer().hand.renderElement = GUIHandler.PlayerInventoryElem;
         GUIHandler.ExternalInventoryElem = document.getElementById("externalInventoryCards");
+        GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
     }
     static renderCurrentTileBoard() {
         // console.log("Trying to render current board...")
@@ -20,6 +21,34 @@ class GUIHandler {
             var coords = Point.stringToPoint(coordinate);
             GUIHandler.renderTile(coords.x,coords.y);
         });
+    }
+    static logText(string,location = "center",persistence = 15000) {
+        var elem = document.createElement("p");
+
+        if (location == "center") {
+            let index = 0;
+            string.split(" ").forEach((char) => {
+              let charElement = document.createElement("span");
+              charElement.innerHTML = char + " ";
+              charElement.style = `
+                --index:${index};
+                --mod-index:${index++ % 5};
+              `;
+              index += char.length + (char.includes(".") || char.includes(",") ? 10 : 0);
+              elem.appendChild(charElement);
+            });
+            elem.style = `--log-persistence:${persistence}ms;`;
+            document.getElementById("PlayerTextDisplay").appendChild(elem);
+        } else if (location == "cursor") {
+            elem.innerHTML = string;
+            elem.classList.add("log-cursor");
+            elem.style = `--log-persistence:${persistence}ms;--x:${mousePosition.x};--y:${mousePosition.y}`;
+            document.getElementById("FollowCursorTextDisplay").appendChild(elem);
+        }
+        
+        setTimeout(()=>{
+            elem.remove();
+        },persistence);
     }
     static removeClassFromTileElem(x,y,className) {
         var tileId = `${x},${y}`;
@@ -82,21 +111,30 @@ class GUIHandler {
             elem.appendChild(cardElem);
         });
     }
+    static moveTileBoard(x,y) {
+        GUIHandler.TileBoard.style = `
+            --x:${-x * tileWidth};
+            --y:${y * tileHeight};
+        `;
+    }
     static generateRawCardElement(cardType) {
-        var imgCSS;
+        let type;
         if (cardType.hasTag("spell")) {
-            imgCSS = `--image:url('../resources/img/cards/spell/${cardType.id}.png')`;
-        } else {
-            imgCSS = `--image:url('../resources/img/cards/${cardType.type}/${cardType.colorName}/${cardType.id}.png')`;
+            type = "spell";
+        } else if (cardType.hasTag("item")) {
+            type = "item";
         }
-        
+        var imgCSS = `--image:url('../resources/img/cards/${type}/${cardType.id}.png')`;
+
         var taglist = cardType.tags.reduce((accumulator, current) => {return accumulator + current + " "},"");
         
+        // Part of cardHTML, removed for optimization purposes.
+        // <div class="card-desc">
+        //     ${cardType.lore.description}
+        // </div>
+
         var cardHTML = `
             <div class="card draggable ${taglist}" style="--bg:var(--color-${cardType.colorName})">
-            <div class="card-desc">
-                ${cardType.lore.description}
-            </div>
             <div class="card-bg">
                 <div class="card-bg-circle" style="--index:0"></div>
                 <div class="card-bg-circle" style="--index:1"></div>

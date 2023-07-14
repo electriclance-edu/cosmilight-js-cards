@@ -7,7 +7,10 @@ const magicCircle = getElem("magicCircle");
 const magicCircleRunes = getElem("magicCircle-runeParent");
 var tileWidth = undefined;
 var tileHeight = undefined;
-
+var defaultPersistence = undefined;
+var mousePosition = new Point(0,0);
+var disableContextMenu = false;
+var keyShiftPressed = false;
 /*
 --------------
 ONLOAD FUNCTIONS
@@ -33,7 +36,7 @@ function initialize() {
   centralTileInventory.addCard(new Card("release_heat"));
   centralTileInventory.addCard(new Card("release_heat"));
   GUIHandler.renderTile(0,0);
-  Game.current.getWorld().openInventory(centralTileInventory);
+  // Game.current.getWorld().openInventory(centralTileInventory);
   Game.current.getPlayer().hand.addCard(new Card("blink"));
   Game.current.getPlayer().hand.addCard(new Card("blink"));
   
@@ -43,14 +46,126 @@ function initialize() {
   setInterval(() => {
     FPSHandler.updateElement();
   },200);
+
+  GUIHandler.logText("Feel the ground here.");
+  setTimeout(()=>{GUIHandler.logText("It is hard. Cold. Ancient.")},3000);
+  setTimeout(()=>{GUIHandler.logText("The warmth of your hand is the first heat it has touched in eons.")},7000);
+  setTimeout(()=>{GUIHandler.logText("But with time... perhaps this whole world will feel the resplendence of heat once again.")},12000);
+  setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
+  
+  document.addEventListener('keyup', (e)=>{
+    var key = e.code;
+
+    if (key == "ShiftLeft") {
+      keyShiftPressed = false;
+    }
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.repeat) {
+      return;
+    }
+    var key = e.code;
+
+    if (key == "ShiftLeft") {
+      keyShiftPressed = true;
+    }
+
+    var movement = {
+      "+y":0,
+      "-y":0,
+      "-x":0,
+      "+x":0
+    }
+
+    let attemptMovement = false;
+    if (key == "ArrowLeft" || key == "KeyA") {
+      attemptMovement = true;
+      movement["-x"] = 1;
+    } else if (key == "ArrowUp" || key == "KeyW") {
+      attemptMovement = true;
+      movement["+y"] = 1;
+    } else if (key == "ArrowRight" || key == "KeyD") {
+      attemptMovement = true;
+      movement["+x"] = 1;
+    } else if (key == "ArrowDown" || key == "KeyS") {
+      attemptMovement = true;
+      movement["-y"] = 1;
+    }
+
+    if (attemptMovement) {
+      e.preventDefault();
+      let player = Game.current.getPlayer();
+      var x = movement["+x"] - movement["-x"];
+      var y = movement["+y"] - movement["-y"];
+      player.translate(x,y);
+    }
+  });
 }
+//   var movement = {
+//     "+y":false,
+//     "-y":false,
+//     "-x":false,
+//     "+x":false
+//   }
+//   var movementInterval = "none";
+//   function startMovement() {
+//     movementInterval = setInterval(()=>{
+//       let player = Game.current.getPlayer();
+//       var x = player.location.x + movement["+x"]*player.movementVelocity - movement["-x"]*player.movementVelocity;
+//       var y = player.location.y + movement["+y"]*player.movementVelocity - movement["-y"]*player.movementVelocity;
+//       player.move(x,y);
+//     },50);
+//   }
+//   document.addEventListener('keyup', function(e) {
+//     var key = e.code;
+//     if (key == "ArrowLeft" || key == "KeyA") {
+//       e.preventDefault();
+//       movement["-x"] = false;
+//     } else if (key == "ArrowUp" || key == "KeyW") {
+//       e.preventDefault();
+//       movement["+y"] = false;
+//     } else if (key == "ArrowRight" || key == "KeyD") {
+//       e.preventDefault();
+//       movement["+x"] = false;
+//     } else if (key == "ArrowDown" || key == "KeyS") {
+//       e.preventDefault();
+//       movement["-y"] = false;
+//     }
+
+//     if (Object.values(movement).every((val) => !val)) {
+//       clearInterval(movementInterval);
+//       movementInterval = "none";
+//     }
+//   });
+//   document.addEventListener('keydown', function(e) {
+//     var key = e.code;
+//     if (key == "ArrowLeft" || key == "KeyA") {
+//       e.preventDefault();
+//       movement["-x"] = true;
+//     } else if (key == "ArrowUp" || key == "KeyW") {
+//       e.preventDefault();
+//       movement["+y"] = true;
+//     } else if (key == "ArrowRight" || key == "KeyD") {
+//       e.preventDefault();
+//       movement["+x"] = true;
+//     } else if (key == "ArrowDown" || key == "KeyS") {
+//       e.preventDefault();
+//       movement["-y"] = true;
+//     }
+
+//     if (Object.values(movement).some((val) => val) && movementInterval == "none") {
+//       startMovement();
+//     }
+//   });
+// }
 function initializeGame() {
   new Game(new World(), new Player());
 }
 function retrieveCSSConstants() {
   var style = getComputedStyle(document.body);
-  tileWidth = parseInt(removePx(style.getPropertyValue('--tile-width'))) + 10;
-  tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height'))) + 10;
+  tileWidth = parseInt(removePx(style.getPropertyValue('--tile-width')));
+  tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height')));
+  defaultPersistence = removePx(style.getPropertyValue('--log-persistence'));
 }
 /*
 -------------------
@@ -58,14 +173,17 @@ EVENT LISTENERS
 -------------------
 */
 window.addEventListener("resize", (e) => {
-  doResize()
+  doResize();
 });
 function doResize() {
   LightHandler.initialize();
 }
-document.addEventListener('contextmenu', event => event.preventDefault());
+document.addEventListener('mousemove', (e) => {
+  mousePosition = new Point(e.clientX,e.clientY);
+});
+document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {
-  if (e.button == 2) {
+  if (keyShiftPressed) {
     if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
       var inventoryId = e.target.getAttribute("data-inventoryId");
 
@@ -74,18 +192,22 @@ document.addEventListener('mousedown', (e) => {
         return;
       }
 
+      let verb;
       let originInventory, targetInventory;
       switch (e.target.parentElement.id) {
         case "playerInventoryCards":
+          verb = "place";
           originInventory = Game.current.getPlayer().hand;
           targetInventory = currentlyOpenedInv;
           break;
         case "externalInventoryCards":
+          verb = "take";
           originInventory = currentlyOpenedInv;
           targetInventory = Game.current.getPlayer().hand;
           break;
       }
       var card = originInventory.getCard(inventoryId);
+      GUIHandler.logText(`You quickly ${verb} the ${originInventory.amountOfCards() == 1 ? "last " : ""}${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
   
       originInventory.removeCard(inventoryId);
       targetInventory.addCard(card);
@@ -106,14 +228,36 @@ document.addEventListener('mousedown', (e) => {
     document.addEventListener('mousemove', dragManager, true);
     document.addEventListener('mouseup', dragEnder, true);
   } else if (e.target.classList.contains("tile")) {
-    let currentCoords = Game.current.getWorld().currentlyOpenedTileCoords;
-    GUIHandler.removeClassFromTileElem(currentCoords.x,currentCoords.y,"selectedTile");
-
     let coords = mouseToBoardCoordinates(e);
-    let tileInventory = Game.current.getWorld().getCurrentBoard().getTile(coords.x,coords.y).inventory;
-    Game.current.getWorld().openInventory(tileInventory);
+    if (Game.current.getPlayer().distanceTo(coords) > 1.5) {
+      GUIHandler.logText("Too far!","cursor",1000);
+      return;
+    }
+    if (Point.areEqual(coords,Game.current.getWorld().currentlyOpenedTileCoords)) {
+      return;
+    }
+
+    let currentCoords = Game.current.getWorld().currentlyOpenedTileCoords;
+    if (currentCoords != "none") {
+      GUIHandler.removeClassFromTileElem(currentCoords.x,currentCoords.y,"selectedTile");
+    }
+
+    let tile = Game.current.getWorld().getCurrentBoard().getTile(coords.x,coords.y);
+    Game.current.getWorld().openInventory(tile.inventory);
     Game.current.getWorld().currentlyOpenedTileCoords = coords;
     GUIHandler.addClassToTileElem(coords.x,coords.y,"selectedTile");
+    
+    GUIHandler.StructureDetailDisplay.classList.add("state-vanished");
+    if (tile.hasStructure()) {
+      coords = boardToMouseCoordinates(coords.x,coords.y);
+      setTimeout(()=>{
+        GUIHandler.StructureDetailDisplay.classList.remove("state-vanished");
+        GUIHandler.StructureDetailDisplay.style = `
+          --x:${coords.x};
+          --y:${coords.y};
+        `;
+      },300);
+    }
   }
 });
 /*
@@ -296,10 +440,13 @@ function onDragEnd(e) {
     }
     var card = originInventory.getCard(inventoryId);
 
+    let verb = "move";
     let targetInventory;
     if (target.classList.contains("externalInventory")) {
       targetInventory = Game.current.getWorld().currentlyOpenedInventory;
+      GUIHandler.logText(`You drop the ${card.type.hasTag("spell") ? "spell" : "item"} ${targetInventory.title == "THE GROUND" ? "onto" : "into"} ${targetInventory.title.toLowerCase()}.`,"cursor",1000);
     } else if (target.classList.contains("playerInventory")) {
+      GUIHandler.logText(`You take the ${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
       targetInventory = Game.current.getPlayer().hand;
     }
     originInventory.removeCard(inventoryId);
@@ -312,13 +459,22 @@ function onDragEnd(e) {
     } else {
       GUIHandler.removeClassFromTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
     }
+  } else if (target.classList.contains("tile")) {
+    // If targeting tile:
+    var data = Game.current.getWorld().getCurrentBoard().getTile(coords.x,coords.y);
+    console.log("targeting tile with data",data);
   }
   // If targeting card:
-  // // If targeting tile:
-  // var data = Game.current.getWorld().getCurrentBoard().getTile(coords.x,coords.y);
 }
 function makeDraggable(elem) {
   elem.classList.add("draggable");
+}
+function boardToMouseCoordinates(x,y) {
+  var converted = new Point(x,y);
+  Point.translate(converted,Game.current.getPlayer().location);
+  converted.x = Math.round(x * tileWidth + window.innerWidth/2);
+  converted.y = Math.round(-(y * tileHeight) + window.innerHeight/2);
+  return converted;
 }
 function mouseToBoardCoordinates(e) {
   var x = e.clientX - window.innerWidth/2;
@@ -327,7 +483,7 @@ function mouseToBoardCoordinates(e) {
   x = Math.round(x / tileWidth);
   y = -Math.round(y / tileHeight);
 
-  return {x:x,y:y};
+  return decentralizePoint(Game.current.getPlayer().getRoundedLocation(),new Point(x,y));
 }
 /*
 --------------

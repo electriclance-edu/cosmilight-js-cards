@@ -101,17 +101,55 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"every day.",
         },
         colorName:"item",
-        tags:["spell","harvester","damager"],
-        interactions:[
-            new Interaction({
-                triggers:["onDrop"],
-                consequences:[
-                    new Consequence("harvest",{rank:2}),
-                    new Consequence("changeHealth",{amt:-20})
-                ],
-                target:"drop"
-            }),
-        ]
+        tags:["item"],
+        interactions:[]
+    },
+    //milo everyday
+    {
+        id:"hearthberry",
+        lore:{
+            mainTitle:"hearth",
+            subTitle:"berry",
+            description:"warm and delicious.",
+        },
+        colorName:"item",
+        tags:["item"],
+        interactions:[]
+    },
+    //milo everyday
+    {
+        id:"sap",
+        lore:{
+            superTitle:"sticky",
+            mainTitle:"sap",
+            description:"sticky!",
+        },
+        colorName:"item",
+        tags:["item"],
+        interactions:[]
+    },
+    //milo everyday
+    {
+        id:"wood",
+        lore:{
+            mainTitle:"wood",
+            subTitle:"stick",
+            description:"stick!",
+        },
+        colorName:"item",
+        tags:["item"],
+        interactions:[]
+    },
+    //milo everyday
+    {
+        id:"pebble",
+        lore:{
+            mainTitle:"pebble",
+            description:"pebble!",
+        },
+        colorName:"item",
+        tags:["item"],
+        interactions:[]
     },
     //Damages and releases some material from a restricted inventory tier 2 (what composes the structure)
     {

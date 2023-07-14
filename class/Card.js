@@ -7,4 +7,10 @@ class Card {
         }
         this.stats = stats;
     }
+    get type() {
+        return CardType.getById(this.id);
+    }
+    static checkEquality(cardA,cardB) {
+        return cardA.id == cardB.id && hasSameKeysAndValues(cardA.stats,cardB.stats);
+    }
 }

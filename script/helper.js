@@ -1,3 +1,7 @@
+// Checks if both objects contain the same keys, and the same values for those keys.
+function hasSameKeysAndValues(objA,objB) {
+    return Object.keys(objA).every((objAKey) => objA[objAKey] == objB[objAKey]) && Object.keys(objB).every((objBKey) => objB[objBKey] == objA[objAKey]);
+}
 // Checks if superset contains every element in subset.
 function checkIfSuperset(superset,subset) {
     return subset.every((elemInSubset) => superset.includes(elemInSubset));

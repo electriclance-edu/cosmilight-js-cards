@@ -21,6 +21,9 @@ class Inventory {
     hasId(id) {
         return Object.keys(this.cards).includes(id);
     }
+    amountOfCards() {
+        return Object.keys(this.cards).length;
+    }
     isFull() {
         return (this.size == 0) ? false : (this.cards.length < this.size);
     }

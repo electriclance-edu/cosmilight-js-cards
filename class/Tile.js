@@ -2,7 +2,7 @@ class Tile {
     constructor(typeId = "grass") {
         this.typeId = typeId;
         this.structure = Structure.none;
-        this.inventory = new Inventory(0,"ON GROUND");
+        this.inventory = new Inventory(0,"THE GROUND");
     }
     setStructure(struct) {
         if (!StructureType.typeExists(struct.getTypeId())) {
