@@ -1,0 +1,141 @@
+/*############
+ANIMATIONS
+#############*/
+@keyframes flash {
+  0% {
+    scale:1.01;
+    filter:brightness(2);
+  }
+  100% {
+    filter:auto;
+  }
+}
+@keyframes expand {
+  0% {
+    transform:scale(0);
+  }
+  100% {
+    transform:scale(1);
+  }
+}
+@keyframes shake {
+  0% { 
+    --y-shake:1;
+    --x-shake:0; 
+  }
+  10% { 
+    --y-shake:0;
+    --x-shake:1; 
+  }
+  20% { 
+    --y-shake:-1;
+    --x-shake:1; 
+  }
+  30% { 
+    --y-shake:-1;
+    --x-shake:0; 
+  }
+  40% { 
+    --y-shake:0;
+    --x-shake:-1; 
+  }
+  50% { 
+    --y-shake:1;
+    --x-shake:1; 
+  }
+  60% { 
+    --y-shake:-1;
+    --x-shake:1; 
+  }
+  70% { 
+    --y-shake:1;
+    --x-shake:0; 
+  }
+  80% { 
+    --y-shake:0;
+    --x-shake:0; 
+  }
+  90% { 
+    --y-shake:0;
+    --x-shake:1; 
+  }
+  100% { 
+    --y-shake:1;
+    --x-shake:-1; 
+  }
+}
+@keyframes wobble {
+  0% { --y-wobble:1 }
+  25% { --y-wobble:0.5 }
+  50% { --y-wobble:0 }
+  75% { --y-wobble:-0.5 }
+  100%  { --y-wobble:-1 }
+}
+@keyframes flicker {
+  0% { opacity: var(--flicker-max); }
+  2% { opacity: var(--flicker-min); }
+  7% { opacity: var(--flicker-max); }
+  7.5% { opacity: var(--flicker-min); }
+  8% { opacity: var(--flicker-max); }
+  9% { opacity: var(--flicker-min); }
+  9.5% { opacity: var(--flicker-max); }
+  10.5% { opacity: var(--flicker-min); }
+  12% { opacity: var(--flicker-max); }
+  25% { opacity: var(--flicker-min); }
+  29% { opacity: var(--flicker-max); }
+  29.5% { opacity: var(--flicker-min); }
+  30% { opacity: var(--flicker-max); }
+  35% { opacity: var(--flicker-min); }
+  48% { opacity: var(--flicker-max); }
+  55% { opacity: var(--flicker-min); }
+  69% { opacity: var(--flicker-max); }
+  73% { opacity: var(--flicker-min); }
+  81% { opacity: var(--flicker-max); }
+  81.5% { opacity: var(--flicker-min); }
+  83% { opacity: var(--flicker-max); }
+  83.5% { opacity: var(--flicker-min); }
+  84% { opacity: var(--flicker-max); }
+  85% { opacity: var(--flicker-min); }
+  90% { opacity: var(--flicker-min); }
+  93% { opacity: var(--flicker-max); }
+  95% { opacity: var(--flicker-min); }
+  95.5% { opacity: var(--flicker-max); }
+  97% { opacity: var(--flicker-min); }
+  100% { opacity: var(--flicker-max); }
+}
+@keyframes log-fadeInOut {
+  0% {
+    opacity:0;
+    transform:translatey(5px);
+  }
+  10% {
+    opacity:1;
+    transform:translatey(0px);
+  }
+  55% {
+    opacity:1;
+    transform:translatey(-5px);
+  }
+  100% {
+    opacity:0;
+    transform:translatey(-10px);
+  }
+}
+@keyframes log-fadeInOut-cursor {
+  0% {
+    opacity:1;
+    transform:translatey(-10px);
+  }
+  30% {
+    opacity:1;
+  }
+  100% {
+    opacity:0;
+    transform:translatey(-80px);
+  }
+}
+@keyframes log-opaque {
+  100% {
+    opacity:1;
+  }
+}

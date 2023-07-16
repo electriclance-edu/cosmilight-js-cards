@@ -1,0 +1,58 @@
+
+/*####################
+LOG SELECTORS
+####################*/
+.textDisplay {
+  pointer-events:none;
+  text-align:center;
+  z-index:30000;
+  transform:translatey(calc((var(--tile-height) * 0.8) * -1));
+}
+.PlayerTextDisplay p {
+  filter:drop-shadow(4px 1px 2px rgb(198, 32, 74)) drop-shadow(-4px -1px 2px rgb(29, 45, 187)) drop-shadow(0 0 10px var(--bg-shadow));
+}
+.FollowCursorTextDisplay p {
+  filter:drop-shadow(0 0 10px var(--bg-shadow));
+}
+.textDisplay p {
+  --log-persistence:15000ms;
+  opacity:0;
+  transform:translatey(10px);
+  animation:var(--log-persistence) forwards log-fadeInOut;
+}
+.textDisplay p.log-center {
+  filter:drop-shadow(0 0 5px red);
+}
+.textDisplay p.log-cursor {
+  animation:var(--log-persistence) linear forwards log-fadeInOut-cursor;
+}
+.textDisplay p.log-cursor > span {
+  opacity:1;
+  animation:none;
+  /* animation:0.4s calc(var(--mod-index) * 0.1s) infinite linear alternate-reverse shake; */
+            /* 1s calc(var(--rand) * 1s) infinite linear alternate wobble, */
+            /* 0.15s forwards log-opaque; */
+}
+.textDisplay p > span {
+  --x-shake:0;
+  --y-shake:0;
+  --y-wobble:0;
+  opacity:0.3;
+  animation:1s calc(var(--mod-index) * 0.1s) infinite linear alternate-reverse shake,
+            0.4s calc(var(--index) * 0.05s) forwards log-opaque;
+  display:inline-block;
+  translate:calc(var(--x-shake) * 0.5px) calc(var(--y-shake) * 0.5px);
+  white-space:pre;
+}
+.FollowCursorTextDisplay {
+  position:absolute;
+  top:0;
+  left:0;
+}
+.FollowCursorTextDisplay p {
+  position:absolute;
+  top:calc(var(--y) * 1px);
+  left:calc(var(--x) * 1px);
+  translate:-50% 400%;
+  white-space:nowrap;
+}

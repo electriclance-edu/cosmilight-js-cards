@@ -1,0 +1,104 @@
+/*####################
+STRUCTURE SELECTORS
+####################*/
+.StructureDetailDisplay {
+  z-index:15000;
+  position:absolute;
+  top:20px;
+  right:20px;
+  translate:0px 0;
+  /* transform:translate(calc((var(--x) * 1px) + (var(--tile-width) / 2)),calc((var(--y) * 1px) + (-50% - 20px))); */
+  opacity:1;
+  transition:translate 0.3s, opacity 0.3s;
+  width:400px;
+  background:linear-gradient(90deg, var(--bg-inventory) 0%, transparent 100%);
+}
+.StructureDetailDisplay .titleContainer:hover {
+  background:linear-gradient(90deg, var(--bg-shadow-red) 0%, transparent 100%);
+}
+.StructureDetailDisplay.state-vanished {
+  pointer-events:none;
+  opacity:0;
+  translate:20px 0;
+}
+.StructureDetailDisplay .titleContainer {
+  padding:10px;
+}
+.StructureDetailDisplay .statContainer {
+  padding:0 10px 10px 10px;
+}
+.progressBarParent {
+  --fill-color:var(--bg-accent-light);
+  --fill-color-accent:var(--bg-white);
+  display:flex;
+  align-items:center;
+  width:100%;
+}
+.progressBarParent > p {
+  margin-left:auto;
+  padding-left:20px;
+  color:var(--fill-color);
+}
+.progressBar {
+  --calc-width:calc(var(--fill-max) * 4px + 80px);
+  width:clamp(10px,var(--calc-width),100%);
+  height:30px;
+  background-color:var(--bg-shadow);
+  position:relative;
+  border:3px solid var(--fill-color);
+  box-sizing:border-box;
+  border-radius:20px;
+  padding-left:40px;
+  margin:3px 0;
+  transition:0.3s;
+  display:flex;
+  align-items:center;
+  background-image:linear-gradient(120deg, transparent 50%, var(--bg-main) 100%);
+}
+.progressBar:hover {
+  height:30px;
+  width:100%;
+}
+.progressBar-icon-debug {
+  position:absolute;
+  width:24px;
+  z-index:3;
+  font-size:30px;
+  height:24px;
+  color:var(--fill-color-accent);
+  line-height:24px;
+  left:5px;
+  top:4px;
+}
+.progressBar-icon {
+  left:0;
+  position:absolute;
+  width:24px;
+  height:24px;
+  box-sizing:border-box;
+  background-color:var(--fill-color-accent);
+  border:3px solid var(--fill-color);
+  border-radius:5px;
+  top:calc(50% - 4.3px);
+  transform:rotate(45deg) translatey(-50%);
+  z-index:3;
+  background-image:url("../resources/img/cards/resource/water.png");
+
+}
+.progressBar-title {
+  z-index:2;
+  color:var(--fill-color-accent);
+  position:relative;
+}
+.progressBar-fill {
+  --overflow-padding-combat:1px;
+  border-radius:20px;
+  position:absolute;
+  z-index:1;
+  top:calc(var(--overflow-padding-combat) * -1);
+  left:calc(var(--overflow-padding-combat) * -1);
+  height:calc(100% + var(--overflow-padding-combat) * 2);
+  width:calc(var(--fill) / var(--fill-max) * 100% + var(--overflow-padding-combat));
+  background-color:var(--fill-color);
+  background-image:linear-gradient(90deg, transparent 50%, var(--fill-color-complement) 100%);
+}

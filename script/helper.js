@@ -19,7 +19,17 @@ function mergeObject(main,merger) {
     //take every property from merger
         //if main doesnt include property ==> place into main
 }
-
+// Generates a DOM element given certain properties.
+function elem(tag, className = false, innerHTML = false) {
+    var element = document.createElement(tag);
+    if (innerHTML != false) {
+      element.innerHTML = innerHTML;
+    }
+    if (className != false) {
+      element.className = className;
+    }
+    return element;
+  }
 // Given a point and the center that it is relative to, converts to absolute coordinates
 function decentralizePoint(center, point) {
     return new Point(point.x + center.x, point.y + center.y);

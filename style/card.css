@@ -1,0 +1,176 @@
+/*####################
+CARD SELECTORS
+####################*/
+.card {
+    --x:0;
+    --y:0;
+    width:var(--card-width);
+    min-width:var(--card-width);
+    height: var(--card-height);
+    position: absolute;
+    user-select: none;
+    /* transition: 0.2s; //doesnt work??? */
+    border-radius: 10px;
+    z-index:1;
+    transform:translate(
+      calc(-50% + var(--x) * (var(--card-width) + 10px)),
+      calc(-50% + var(--y) * (var(--card-height) + 10px)));
+}
+.card * {
+  pointer-events:none;
+}
+body .card:active {
+  filter: brightness(1.5);
+}
+.card:hover {
+  filter: brightness(1.2);
+  z-index:100;
+}
+.card:hover .card-bg {
+  filter: drop-shadow(0 0 20px var(--bg));
+}
+.card.onCooldown {
+  opacity:0.6;
+}
+.card.onCooldown::before {
+  --border-width-internal: calc(var(--border-width) * 0.5);
+  border-radius: calc(var(--border-radius) * 0.8);
+}
+.card-content {
+  z-index: 10;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+.cards-titleDown .card .card-content {
+  flex-direction:column-reverse;
+}
+.cards-titleDown .card-title-container {
+  position:relative;
+  top:-10px;
+}
+.card-img-container {
+  flex-grow:1;
+  height:100%;
+  width:100%;
+  border:10px solid transparent;
+  box-sizing:border-box;
+  background: var(--image);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter:drop-shadow(0 0 10px var(--bg-accent));
+  pointer-events:none;
+}
+.card.castable .card-img-container {
+  background-position: bottom;
+  transform:scale(1.5) translatey(-15%);
+  filter:drop-shadow(0 0 10px var(--bg-accent))
+  drop-shadow(0 10px 10px var(--bg-accent));
+  margin-top:-15px;
+  margin-bottom:-15px;
+}
+.card-title-container {
+  z-index:1;
+  margin-bottom:-5px;
+  padding: 0 7px;
+  border-bottom-left-radius:10px;
+  border-bottom-right-radius:10px;
+}
+.card.darkness {
+  z-index:0;
+}
+.card.darkness .card-title-container {
+  display:none;
+}
+.card-title {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  transition:0.3s;
+  margin-top:8px;
+}
+.card-title * {
+  flex-grow: 1;
+  text-align: center;
+  line-height:1em;
+}
+.card-title .card-title-char {
+  font-size:1.6em;
+  color:var(--bg);
+}
+.card.castable .card-title .card-title-char {
+  color:var(--color-text);
+}
+.card.darkness .card-title .card-title-char {
+  color:var(--color-dark);
+}
+.card-title .card-subtitle-char, .card-title .card-supertitle-char {
+  color: var(--color-text);
+  font-size: 1em;
+  max-width:1.3em;
+}
+/* .card-desc {
+  position:absolute;
+  bottom:calc(100% - 10px);
+  width:100%;
+  color:var(--color-text);
+  word-wrap: break-word;
+  word-break: break-word;
+  text-align: center;
+  font-style:italic;
+  transition:0.3s;
+  opacity:0;
+  filter:drop-shadow(0 0 15px var(--bg-shadow));
+  user-select:none;
+  pointer-events:none;
+} */
+.card:hover .card-desc {
+  opacity:1;
+  bottom:calc(100% + 10px);
+}
+.card-bg {
+  width:100%;
+  height:100%;
+  position:absolute;
+  left:0;
+  bottom:0;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color:var(--bg-accent-translucent);
+}
+.card.drag_ghost .card-bg {
+  background-color:transparent;
+}
+.card-bg::before {
+  content:"";
+  display:block;
+  width:100%;
+  height:100%;
+  position:absolute;
+  left:0;
+  top:0;
+  background-color:var(--bg);
+  opacity:0.3;
+}
+.card-bg .card-bg-circle {
+  --finalDiameter:calc(100% - 20% * var(--index));
+  width:var(--finalDiameter);
+  aspect-ratio:1 / 1;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  margin-top:20px;
+  background-color:var(--bg);
+  border-radius:10000px;
+  opacity:0.1;
+}
+.cards-titleDown .card-bg .card-bg-circle {
+  margin-top:-10px;
+}

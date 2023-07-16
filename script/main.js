@@ -52,112 +52,7 @@ function initialize() {
   setTimeout(()=>{GUIHandler.logText("The warmth of your hand is the first heat it has touched in eons.")},7000);
   setTimeout(()=>{GUIHandler.logText("But with time... perhaps this whole world will feel the resplendence of heat once again.")},12000);
   setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
-  
-  document.addEventListener('keyup', (e)=>{
-    var key = e.code;
-
-    if (key == "ShiftLeft") {
-      keyShiftPressed = false;
-    }
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.repeat) {
-      return;
-    }
-    var key = e.code;
-
-    if (key == "ShiftLeft") {
-      keyShiftPressed = true;
-    }
-
-    var movement = {
-      "+y":0,
-      "-y":0,
-      "-x":0,
-      "+x":0
-    }
-
-    let attemptMovement = false;
-    if (key == "ArrowLeft" || key == "KeyA") {
-      attemptMovement = true;
-      movement["-x"] = 1;
-    } else if (key == "ArrowUp" || key == "KeyW") {
-      attemptMovement = true;
-      movement["+y"] = 1;
-    } else if (key == "ArrowRight" || key == "KeyD") {
-      attemptMovement = true;
-      movement["+x"] = 1;
-    } else if (key == "ArrowDown" || key == "KeyS") {
-      attemptMovement = true;
-      movement["-y"] = 1;
-    }
-
-    if (attemptMovement) {
-      e.preventDefault();
-      let player = Game.player;
-      var x = movement["+x"] - movement["-x"];
-      var y = movement["+y"] - movement["-y"];
-      player.translate(x,y);
-    }
-  });
 }
-//   var movement = {
-//     "+y":false,
-//     "-y":false,
-//     "-x":false,
-//     "+x":false
-//   }
-//   var movementInterval = "none";
-//   function startMovement() {
-//     movementInterval = setInterval(()=>{
-//       let player = Game.player;
-//       var x = player.location.x + movement["+x"]*player.movementVelocity - movement["-x"]*player.movementVelocity;
-//       var y = player.location.y + movement["+y"]*player.movementVelocity - movement["-y"]*player.movementVelocity;
-//       player.move(x,y);
-//     },50);
-//   }
-//   document.addEventListener('keyup', function(e) {
-//     var key = e.code;
-//     if (key == "ArrowLeft" || key == "KeyA") {
-//       e.preventDefault();
-//       movement["-x"] = false;
-//     } else if (key == "ArrowUp" || key == "KeyW") {
-//       e.preventDefault();
-//       movement["+y"] = false;
-//     } else if (key == "ArrowRight" || key == "KeyD") {
-//       e.preventDefault();
-//       movement["+x"] = false;
-//     } else if (key == "ArrowDown" || key == "KeyS") {
-//       e.preventDefault();
-//       movement["-y"] = false;
-//     }
-
-//     if (Object.values(movement).every((val) => !val)) {
-//       clearInterval(movementInterval);
-//       movementInterval = "none";
-//     }
-//   });
-//   document.addEventListener('keydown', function(e) {
-//     var key = e.code;
-//     if (key == "ArrowLeft" || key == "KeyA") {
-//       e.preventDefault();
-//       movement["-x"] = true;
-//     } else if (key == "ArrowUp" || key == "KeyW") {
-//       e.preventDefault();
-//       movement["+y"] = true;
-//     } else if (key == "ArrowRight" || key == "KeyD") {
-//       e.preventDefault();
-//       movement["+x"] = true;
-//     } else if (key == "ArrowDown" || key == "KeyS") {
-//       e.preventDefault();
-//       movement["-y"] = true;
-//     }
-
-//     if (Object.values(movement).some((val) => val) && movementInterval == "none") {
-//       startMovement();
-//     }
-//   });
-// }
 function initializeGame() {
   new Game(new World(), new Player());
 }
@@ -167,99 +62,6 @@ function retrieveCSSConstants() {
   tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height')));
   defaultPersistence = removePx(style.getPropertyValue('--log-persistence'));
 }
-/*
--------------------
-EVENT LISTENERS
--------------------
-*/
-window.addEventListener("resize", (e) => {
-  doResize();
-});
-function doResize() {
-  LightHandler.initialize();
-}
-document.addEventListener('mousemove', (e) => {
-  mousePosition = new Point(e.clientX,e.clientY);
-});
-document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
-document.addEventListener('mousedown', (e) => {
-  if (keyShiftPressed) {
-    if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
-      var inventoryId = e.target.getAttribute("data-inventoryId");
-
-      let currentlyOpenedInv = Game.world.currentlyOpenedInventory;
-      if (currentlyOpenedInv == "none") {
-        return;
-      }
-
-      let verb;
-      let originInventory, targetInventory;
-      switch (e.target.parentElement.id) {
-        case "playerInventoryCards":
-          verb = "place";
-          originInventory = Game.player.hand;
-          targetInventory = currentlyOpenedInv;
-          break;
-        case "externalInventoryCards":
-          verb = "take";
-          originInventory = currentlyOpenedInv;
-          targetInventory = Game.player.hand;
-          break;
-      }
-      var card = originInventory.transferCard(inventoryId,targetInventory)
-      GUIHandler.logText(`You quickly ${verb} the ${originInventory.amountOfCards() == 1 ? "last " : ""}${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
-    
-      let tile = Game.currentTile;
-      if (tile.inventory.hasItems()) {
-        GUIHandler.addClassToTileElem(Game.currentTileCoords,"hasItems");
-      } else {
-        GUIHandler.removeClassFromTileElem(Game.currentTileCoords,"hasItems");
-      }
-    }
-    return;
-  }
-  //if target is an eleemnt of class draggable
-  if (e.target.classList.contains("draggable")) {
-    onDragStart(e);
-    document.addEventListener('mousemove', dragManager, true);
-    document.addEventListener('mouseup', dragEnder, true);
-  } else if (e.target.classList.contains("tile")) {
-    let coords = mouseToBoardCoordinates(e);
-    if (Game.player.distanceTo(coords) > 1.5) {
-      GUIHandler.logText("Too far!","cursor",1000);
-      return;
-    }
-
-    let tile = Game.board.getTile(coords);
-
-    // Commented code was for handling positioning of StructureDetailDisplay to beside the structure tile that has just been opened
-    toggleStructureDetailDisplay(false);
-    if (tile.hasStructure()) {
-      // var screenCoords = Point.translate(coords,Game.player.getRoundedLocation());
-      // screenCoords = boardToMouseCoordinates(screenCoords.x,screenCoords.y);
-      setTimeout(()=>{
-        toggleStructureDetailDisplay(true);
-        // GUIHandler.StructureDetailDisplay.style = `
-        //   --x:${screenCoords.x};
-        //   --y:${screenCoords.y};
-        // `;
-      },300);
-    }
-
-    if (Point.areEqual(coords,Game.world.currentlyOpenedTileCoords)) {
-      return;
-    }
-
-    let currentCoords = Game.world.currentlyOpenedTileCoords;
-    if (currentCoords != "none") {
-      GUIHandler.removeClassFromTileElem(currentCoords,"selectedTile");
-    }
-
-    Game.world.openInventory(tile.inventory);
-    Game.world.currentlyOpenedTileCoords = coords;
-    GUIHandler.addClassToTileElem(coords,"selectedTile");
-  }
-});
 function toggleStructureDetailDisplay(visible) {
   if (visible) {
     GUIHandler.StructureDetailDisplay.classList.remove("state-vanished");
@@ -291,96 +93,6 @@ function setUniqueState(element, state = "none") {
   });
   element.classList.add(`state-${state}`);
 }
-/*
---------------
-MAGIC CIRCLE FUNCTIONS
---------------
-*/
-const runeTypes = {
-  "KeyW":"W",
-  "KeyA":"A",
-  "KeyS":"S",
-  "KeyD":"D"
-}
-function generateRuneElem(index, key) {
-  //runes have images associataed with them depending on the type, but for now they'll just be p elements.
-  rune = elem("div","magicCircle-rune",runeTypes[key]);
-  rune.style.setProperty("--index",index);
-
-  return rune;
-}
-function setRuneState(runeIndex, state = "default") {
-  setUniqueState(magicCircleRunes.children[runeIndex],state);
-  if (state = "selected") {
-    currentRune = runeIndex;
-  }
-}
-function debug_generateMagicCircle() {
-  initializeMagicCircle(
-    [randElem(["KeyW","KeyA","KeyS","KeyD"]),
-    randElem(["KeyW","KeyA","KeyS","KeyD"]),
-    randElem(["KeyW","KeyA","KeyS","KeyD"]),
-    randElem(["KeyW","KeyA","KeyS","KeyD"]),
-    randElem(["KeyW","KeyA","KeyS","KeyD"]),
-    randElem(["KeyW","KeyA","KeyS","KeyD"]),
-    randElem(["KeyW","KeyA","KeyS","KeyD"])],
-    {
-      y:"50%",
-      x:"50%"
-    }
-  );
-}
-function initializeMagicCircle(runes, position) {
-  magicCircle.top = position.y;
-  magicCircle.left = position.x;
-  magicCircle.classList.add("state-initial");
-  magicCircle.classList.add("state-vanished");
-  magicCircle.classList.remove("state-initial");
-  setTimeout(() => {
-    magicCircle.classList.remove("state-vanished");
-  },100);
-  magicCircle.style.setProperty("--fill-level","0%");
-  magicCircle.style.setProperty("--total-runes",`${runes.length}`);
-  magicCircle.style.setProperty("--runes-completed",`${0}`);
-
-  magicCircleRunes.innerHTML = "";
-  runes.forEach((key, index) => {
-    runeElem = generateRuneElem(index, key);
-    magicCircleRunes.appendChild(runeElem);
-  });
-
-  magicCircleActivated = true;
-  currentMagicCircle = runes;
-
-  setRuneState(0,"selected");
-}
-function debug_activateMagicCircle() {
-  magicCircle.classList.add("state-initial");
-  magicCircle.classList.add("state-vanished");
-  magicCircle.classList.remove("state-initial");
-  setTimeout(() => {
-    magicCircle.classList.remove("state-vanished");
-  },100);
-}
-function shutdownMagicCircle() {
-  magicCircleActivated = false;
-  magicCircle.classList.add("state-vanished");
-}
-function magicCircleProcessKey(code) {
-  magicCircleActivated = currentRune < magicCircleRunes.children.length;
-  if (magicCircleActivated) {
-    state = (code == findKeyFromValue(runeTypes,magicCircleRunes.children[currentRune].innerHTML));
-    magicCircle.style.setProperty("--runes-completed",`${currentRune + 1}`);
-    setRuneState(currentRune, state ? "completed" : "failed");
-
-    if (currentRune < magicCircleRunes.children.length - 1) {
-      setRuneState(currentRune + 1, "selected");
-    } else {
-      shutdownMagicCircle();
-    }
-  }
-}
-
 /*
 --------------
 DRAG FUNCTIONS
@@ -536,33 +248,6 @@ function removePx(str) {
 function getElem(id) {
   return document.getElementById(id);
 }
-function glhelm(tag, className = false, innerHTML = false) {
-  return elem(tag, className, innerHTML);
-}
-function elem(tag, className = false, innerHTML = false) {
-  var element = document.createElement(tag);
-  if (innerHTML != false) {
-    element.innerHTML = innerHTML;
-  }
-  if (className != false) {
-    element.className = className;
-  }
-  return element;
-}
-function findKeyFromValue(dict,value) {
-  var matchingKey = false;
-
-  keys = Object.keys(dict);
-  for (var i = 0; i < keys.length; i++) {
-    key = keys[i];
-    if (dict[key] == value) {
-      matchingKey = key;
-      break;
-    }
-  };
-
-  return matchingKey;
-}
 
 /*
 --------------
@@ -580,3 +265,138 @@ function onresize() {
   windowHeight = window.innerHeight;
   windowWidth = window.innerWidth;
 }
+document.addEventListener('keyup', (e)=>{
+  var key = e.code;
+
+  if (key == "ShiftLeft") {
+    keyShiftPressed = false;
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.repeat) {
+    return;
+  }
+  var key = e.code;
+
+  if (key == "ShiftLeft") {
+    keyShiftPressed = true;
+  }
+
+  var movement = {
+    "+y":0,
+    "-y":0,
+    "-x":0,
+    "+x":0
+  }
+
+  let attemptMovement = false;
+  if (key == "ArrowLeft" || key == "KeyA") {
+    attemptMovement = true;
+    movement["-x"] = 1;
+  } else if (key == "ArrowUp" || key == "KeyW") {
+    attemptMovement = true;
+    movement["+y"] = 1;
+  } else if (key == "ArrowRight" || key == "KeyD") {
+    attemptMovement = true;
+    movement["+x"] = 1;
+  } else if (key == "ArrowDown" || key == "KeyS") {
+    attemptMovement = true;
+    movement["-y"] = 1;
+  }
+
+  if (attemptMovement) {
+    e.preventDefault();
+    let player = Game.player;
+    var x = movement["+x"] - movement["-x"];
+    var y = movement["+y"] - movement["-y"];
+    player.translate(x,y);
+  }
+});
+window.addEventListener("resize", (e) => {
+  doResize();
+});
+function doResize() {
+  LightHandler.initialize();
+}
+document.addEventListener('mousemove', (e) => {
+  mousePosition = new Point(e.clientX,e.clientY);
+});
+document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
+document.addEventListener('mousedown', (e) => {
+  if (keyShiftPressed) {
+    if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
+      var inventoryId = e.target.getAttribute("data-inventoryId");
+
+      let currentlyOpenedInv = Game.world.currentlyOpenedInventory;
+      if (currentlyOpenedInv == "none") {
+        return;
+      }
+
+      let verb;
+      let originInventory, targetInventory;
+      switch (e.target.parentElement.id) {
+        case "playerInventoryCards":
+          verb = "place";
+          originInventory = Game.player.hand;
+          targetInventory = currentlyOpenedInv;
+          break;
+        case "externalInventoryCards":
+          verb = "take";
+          originInventory = currentlyOpenedInv;
+          targetInventory = Game.player.hand;
+          break;
+      }
+      var card = originInventory.transferCard(inventoryId,targetInventory)
+      GUIHandler.logText(`You quickly ${verb} the ${originInventory.amountOfCards() == 1 ? "last " : ""}${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
+    
+      let tile = Game.currentTile;
+      if (tile.inventory.hasItems()) {
+        GUIHandler.addClassToTileElem(Game.currentTileCoords,"hasItems");
+      } else {
+        GUIHandler.removeClassFromTileElem(Game.currentTileCoords,"hasItems");
+      }
+    }
+    return;
+  }
+  //if target is an eleemnt of class draggable
+  if (e.target.classList.contains("draggable")) {
+    onDragStart(e);
+    document.addEventListener('mousemove', dragManager, true);
+    document.addEventListener('mouseup', dragEnder, true);
+  } else if (e.target.classList.contains("tile")) {
+    let coords = mouseToBoardCoordinates(e);
+    if (Game.player.distanceTo(coords) > 1.5) {
+      GUIHandler.logText("Too far!","cursor",1000);
+      return;
+    }
+
+    let tile = Game.board.getTile(coords);
+
+    // Commented code was for handling positioning of StructureDetailDisplay to beside the structure tile that has just been opened
+    toggleStructureDetailDisplay(false);
+    if (tile.hasStructure()) {
+      // var screenCoords = Point.translate(coords,Game.player.getRoundedLocation());
+      // screenCoords = boardToMouseCoordinates(screenCoords.x,screenCoords.y);
+      setTimeout(()=>{
+        toggleStructureDetailDisplay(true);
+        // GUIHandler.StructureDetailDisplay.style = `
+        //   --x:${screenCoords.x};
+        //   --y:${screenCoords.y};
+        // `;
+      },300);
+    }
+
+    if (Point.areEqual(coords,Game.world.currentlyOpenedTileCoords)) {
+      return;
+    }
+
+    let currentCoords = Game.world.currentlyOpenedTileCoords;
+    if (currentCoords != "none") {
+      GUIHandler.removeClassFromTileElem(currentCoords,"selectedTile");
+    }
+
+    Game.world.openInventory(tile.inventory);
+    Game.world.currentlyOpenedTileCoords = coords;
+    GUIHandler.addClassToTileElem(coords,"selectedTile");
+  }
+});
