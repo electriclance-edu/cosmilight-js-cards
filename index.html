@@ -44,41 +44,54 @@
           <div class="FollowCursorTextDisplay textDisplay fillWindow" id="FollowCursorTextDisplay"></div>
           <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
           <div class="StructureDetailDisplay state-vanished" id="StructureDetailDisplay">
-            <div class="titleContainer">
+            <div class="titleContainer" onclick="toggleStructureDetailDisplay(false)">
               <p class="structureTitle txt-size-header txt-lined txt-lined-after headerFont">Sapfire</p>
               <p class="structureDescription txt-italic">Consumes plant fuel to produce heat and light.</p>
             </div>
             <div class="statContainer">
-              <div>
-                <div class="progressBar" style="--fill:12;--fill-max:15;--fill-color:var(--color-item)">
+              <div class="progressBarParent" style="--fill:30;--fill-max:40;--fill-color:var(--color-water);--fill-color-complement:var(--color-water-complement);--fill-color-accent:var(--bg-main)">
+                <div class="progressBar">
+                  <div class="progressBar-icon-debug">🌢</div>
+                  <p class="progressBar-title headerFont">WATER</p>
+                  <div class="progressBar-fill"></div>
+                </div>
+                <p>30/40</p>
+              </div>
+              <div class="progressBarParent" style="--fill:12;--fill-max:15;--fill-color:var(--color-energy);--fill-color-complement:var(--color-energy-complement)">
+                <div class="progressBar">
                   <div class="progressBar-icon"></div>
                   <p class="progressBar-title headerFont">FUEL</p>
                   <div class="progressBar-fill"></div>
                 </div>
+                <p>12/15</p>
               </div>
-              <div>
-                <div class="progressBar" style="--fill:5;--fill-max:20;--fill-color:var(--color-fire)">
+              <div class="progressBarParent" style="--fill:5;--fill-max:20;--fill-color:var(--color-fire);--fill-color-complement:var(--color-fire-complement)">
+                <div class="progressBar">
                   <div class="progressBar-icon"></div>
                   <p class="progressBar-title headerFont">HEAT</p>
                   <div class="progressBar-fill"></div>
                 </div>
+                <p>5/20</p>
               </div>
-              <div>
-                <div class="progressBar" style="--fill:8;--fill-max:10;--fill-color:var(--color-light);--fill-color-accent:var(--bg-shadow)">
-                  <div class="progressBar-icon"></div>
+              <div class="progressBarParent"  style="--fill:8;--fill-max:10;--fill-color:var(--color-light);--fill-color-complement:var(--color-light-complement);--fill-color-accent:var(--bg-main)">
+                <div class="progressBar">
+                  <div class="progressBar-icon-debug">🌢</div>
                   <p class="progressBar-title headerFont">LIGHT</p>
                   <div class="progressBar-fill"></div>
                 </div>
+                <p>8/10</p>
               </div>
             </div>
           </div>
           <div class="fillWindow LightCanvasContainer">
             <canvas id="LightCanvas"></canvas>
           </div>
-          <div class="ExternalInventoryContainer inventoryParent state-hidden" id="InventoryDisplay">
-            <div class="inventory-bg validInventoryDrop externalInventory" onclick="Game.current.getWorld().closeInventory()"></div>
-            <p class="inventoryTitle txt-size-header headerFont txt-lined" id="inventoryTitle">???</p>
-            <div class="inventory" id="externalInventoryCards"></div>
+          <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer">
+            <div class="inventoryParent">
+              <div class="inventory-bg validInventoryDrop externalInventory" onclick="Game.world.closeInventory(this)"></div>
+              <p class="inventoryTitle txt-size-header headerFont txt-lined" id="inventoryTitle">???</p>
+              <div class="inventory" data-inventoryType="tile" id="externalInventoryCards"></div>
+            </div>
           </div>
           <div id="magicCircle" class="MagicCircle centered-absolute state-vanished" style="--runes-completed:0; --total-runes:6">
             <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--aux-circle-extra:30px; --flicker-delay:1.3s;"></div>
@@ -139,7 +152,7 @@
             </div>
           </div>
           <div class="TileBoard" id="TileBoard"></div>
-          <div class="PlayerHandContainer inventoryParent validInventoryDrop playerInventory">
+          <div class="PlayerHandContainer inventoryParent validInventoryDrop playerInventory" id="PlayerHandContainer">
             <div class="inventory-bg validInventoryDrop playerInventory"></div>
             <div class="PlayerHand inventory" id="playerInventoryCards"></div>
           </div>

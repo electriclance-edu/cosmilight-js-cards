@@ -21,6 +21,12 @@ class Inventory {
     hasId(id) {
         return Object.keys(this.cards).includes(id);
     }
+    transferCard(id,acceptor) {
+        var card = this.getCard(id);
+        this.removeCard(id);
+        acceptor.addCard(card);
+        return card;
+    }
     amountOfCards() {
         return Object.keys(this.cards).length;
     }

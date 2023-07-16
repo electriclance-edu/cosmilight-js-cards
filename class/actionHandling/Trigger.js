@@ -1,7 +1,27 @@
 class Trigger {
-    constructor(id,properties) {
+    static initializables = {
+        onTick:()=>{
+            //add self to gametickmanager
+        }
+    };
+    constructor(id,properties = "none") {
         this.id = id;
         this.properties = properties;
+    }
+    isSimple() {
+        return this.properties == "none";
+    }
+    initialize() {
+        if (Object.keys(Trigger.initializables).includes(this.id)) {
+            Trigger.initializables[this.id]();
+        }
+    }
+    trigger(eventId, param) {
+        if (this.isSimple() && eventId == this.id) {
+            return true;
+        } else {
+            //look at param n determine whether or not it's a valid event based on this.properties 
+        }
     }
     getInterval() {
         if (Object.keys(this).includes("ticks")) {

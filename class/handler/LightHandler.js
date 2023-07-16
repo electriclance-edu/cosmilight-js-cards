@@ -77,7 +77,7 @@ class LightHandler {
         var ctx = LightHandler.canvas.getContext("2d");
         // Squish/stretch the canvas vertically becasue tileHeight may not necessarily equal tileWidth
         // Important for renderLight() which renders light gradients with both x,y lengths equal to tileWidth
-        var translatedLight = Point.translate(new Point(light.x,light.y),Game.current.getPlayer().location);
+        var translatedLight = Point.translate(new Point(light.x,light.y),Game.player.location);
         const square = generateSquare(new Point(translatedLight.x * tileWidth, -translatedLight.y * tileHeight),strength);
         const trueSquareCenter = new Point(light.x * tileWidth, light.y * tileHeight);
         square.center = decentralizePoint(LightHandler.canvasCenter, square.center);

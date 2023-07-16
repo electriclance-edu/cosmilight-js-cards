@@ -14,7 +14,6 @@ class World {
     constructor() {
         this.currentBoardCoords = new Point(0,0);
         this.worldBoard = {};
-        this.currentlyOpenedInventory = "none";
         this.currentlyOpenedTileCoords = "none";
 
         this.populateWorldBoard();
@@ -22,17 +21,20 @@ class World {
     populateWorldBoard() {
         var debug_startingBoard = new Board();
         debug_startingBoard.populateBoard();
-        this.setBoard(0,0,debug_startingBoard);
+        this.setBoard(new Point(0,0),debug_startingBoard);
         //steal world creation from cosmi-js
     }
-    setBoard(x,y,board) {
-        this.worldBoard[`${x},${y}`] = board;
+    getCurrentlyOpenedTile() {
+        return this.currentBoard.getTile(this.currentlyOpenedTileCoords);
     }
-    getBoard(x,y) {
-        return this.worldBoard[`${x},${y}`];
+    setBoard(point,board) {
+        this.worldBoard[`${point.x},${point.y}`] = board;
     }
-    getCurrentBoard() {
-        return this.getBoard(this.currentBoardCoords.x,this.currentBoardCoords.x);
+    getBoard(point) {
+        return this.worldBoard[`${point.x},${point.y}`];
+    }
+    get currentBoard() {
+        return this.getBoard(this.currentBoardCoords);
     }
     addCardToOpenedInventory(card) {
         this.currentlyOpenedInventory.addCard(card);

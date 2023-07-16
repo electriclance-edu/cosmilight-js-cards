@@ -7,19 +7,17 @@ class GUIHandler {
     static initialize() {
         GUIHandler.TileBoard = document.getElementById("TileBoard");
         GUIHandler.PlayerInventoryElem = document.getElementById("playerInventoryCards");
-        Game.current.getPlayer().hand.renderElement = GUIHandler.PlayerInventoryElem;
+        Game.player.hand.renderElement = GUIHandler.PlayerInventoryElem;
+        GUIHandler.ExternalInventoryContainer = document.getElementById("ExternalInventoryContainer");
         GUIHandler.ExternalInventoryElem = document.getElementById("externalInventoryCards");
         GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
     }
     static renderCurrentTileBoard() {
-        // console.log("Trying to render current board...")
-
-        var currentBoard = Game.current.getWorld().getCurrentBoard();
-        var tileCoordinates = Object.keys(currentBoard.tiles);
+        var tileCoordinates = Object.keys(Game.board.tiles);
 
         tileCoordinates.forEach((coordinate) => {
             var coords = Point.stringToPoint(coordinate);
-            GUIHandler.renderTile(coords.x,coords.y);
+            GUIHandler.renderTile(coords);
         });
     }
     static logText(string,location = "center",persistence = 15000) {
@@ -50,18 +48,18 @@ class GUIHandler {
             elem.remove();
         },persistence);
     }
-    static removeClassFromTileElem(x,y,className) {
-        var tileId = `${x},${y}`;
+    static removeClassFromTileElem(point,className) {
+        var tileId = `${point.x},${point.y}`;
         var elem = document.getElementById(tileId);
         elem.classList.remove(className);
     }
-    static addClassToTileElem(x,y,className) {
-        var tileId = `${x},${y}`;
+    static addClassToTileElem(point,className) {
+        var tileId = `${point.x},${point.y}`;
         var elem = document.getElementById(tileId);
         elem.classList.add(className);
     }
-    static renderTile(x,y) {
-        var tileId = `${x},${y}`;
+    static renderTile(point) {
+        var tileId = point.str;
 
         //if the tile is already rendered, delete it first before rendering it
         if (Object.keys(GUIHandler.tileElements).includes(tileId)) {
@@ -69,11 +67,11 @@ class GUIHandler {
         }
 
         //create the tile
-        var tileData = Game.current.getWorld().getCurrentBoard().getTile(x,y);
+        var tileData = Game.board.getTile(point);
         var elem = this.generateTileElem(tileData);
         elem.id = tileId;
         elem.draggable = false;
-        elem.style = `--x:${x};--y:${y};`;
+        elem.style = `--x:${point.x};--y:${point.y};`;
 
         if (tileData.inventory.hasItems()) {
             elem.classList.add("hasItems")
@@ -93,15 +91,15 @@ class GUIHandler {
         return parseHTML(tileHTML);
     }
     static displayInventory(inventory) {
-        document.getElementById("InventoryDisplay").classList.add("state-hidden");
+        GUIHandler.ExternalInventoryContainer.classList.add("state-hidden");
         setTimeout(()=>{
-            document.getElementById("InventoryDisplay").classList.remove("state-hidden");
+            GUIHandler.ExternalInventoryContainer.classList.remove("state-hidden");
             document.getElementById("inventoryTitle").innerHTML = inventory.title;
             this.renderInventoryIn(GUIHandler.ExternalInventoryElem,inventory); 
         },300);
     }
     static closeInventory() {
-        document.getElementById("InventoryDisplay").classList.add("state-hidden");
+        GUIHandler.ExternalInventoryContainer.classList.add("state-hidden");
     }
     static renderInventoryIn(elem, inventory) {
         elem.innerHTML = "";
@@ -141,10 +139,10 @@ class GUIHandler {
                 <div class="card-bg-circle" style="--index:2"></div>
             </div>
             <div class="card-content">
-                <div class="card-img-container" style=${imgCSS}></div>
-                <div class="card-title-container" id="title-container">
-                
-                </div>
+            <div class="card-title-container" id="title-container">
+            
+            </div>
+            <div class="card-img-container" style=${imgCSS}></div>
             </div>
             </div>
         `;

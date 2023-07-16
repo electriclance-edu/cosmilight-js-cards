@@ -7,13 +7,16 @@ class Point {
         var translated = new Point(point.x,point.y);
         translated.x -= translator.x;
         translated.y -= translator.y;
-        return translated
+        return translated;
     }
     setX(x) {
         this.x = x;
     }
     setY(y) {
         this.y = y;
+    }
+    get str() {
+        return `${this.x},${this.y}`;
     }
     // receives a string formatted "x,y" and returns a proper point 
     static stringToPoint(string) {

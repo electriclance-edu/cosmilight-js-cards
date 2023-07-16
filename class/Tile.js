@@ -10,6 +10,13 @@ class Tile {
         }
         this.structure = struct;
     }
+    getInventory(type) {
+        if (type == "tile") {
+            return this.inventory;
+        } else if (type == "structure") {
+            return this.structure.getInventory();
+        }
+    }
     getStructure() {
         return this.structure;
     }
