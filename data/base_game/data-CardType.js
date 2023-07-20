@@ -127,32 +127,17 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"pebble!",
         },
         colorName:"item",
-        tags:["item"]
-    },
-    //Damages and releases some material from a restricted inventory tier 2 (what composes the structure)
-    {
-        id:"stone",
-        lore:{
-            mainTitle:"stone",
-            description:"Remind that which has forgotten what it means to break.",
-        },
-        colorName:"fire",
-        tags:["spell","harvester","damager"],
+        tags:["item"],
         interactions:{
             "onDrop":(dropEvent)=>{
                 if (!Card.isCard(dropEvent.target)) return;
 
-                if (dropEvent.target.type == "stone") {
-                    GameEvent.craftCard({
-                        cardType:"order",
-                        inventory:dropEvent.target.inventory,
-                        cardIngredients:[
-                        ]
-                    });
-                    dropEvent.target,
-                    dropEvent.invoker
+                if (dropEvent.target.type.id == "pebble" && dropEvent.invoker.type.id == "pebble") {
+                    dropEvent.target.inventory.addCard(new Card("breakfast"));
+                    dropEvent.target.remove();
+                    dropEvent.invoker.remove();
                 }
             }
         }
-    }
+    },
 ])

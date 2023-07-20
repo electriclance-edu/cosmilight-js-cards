@@ -38,8 +38,8 @@ function initialize() {
   GUIHandler.renderTile(new Point(0,0));
   // Game.world.openInventory(centralTileInventory);
   GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
-  Game.player.hand.addCard(new Card("blink"));
-  Game.player.hand.addCard(new Card("blink"));
+  Game.player.hand.addCard(new Card("sap"));
+  Game.player.hand.addCard(new Card("pebble"));
   
   setInterval(() => {
     FPSHandler.updateFrames();
@@ -109,7 +109,6 @@ DRAG FUNCTIONS
 var dragManager = (e) => {onDragMove(e)};
 var dragEnder = (e) => {endDrag(e)};
 var dragInvokerElement = undefined;
-var dragInvokerCardType = undefined;
 var dragGhost = undefined;
 
 function endDrag(e) {
@@ -142,7 +141,6 @@ function onDragStart(e) {
   document.body.appendChild(ghost);
 
   dragInvokerElement = elem;
-  dragInvokerCardType = cardData;
 }
 function onDragMove(e) {
   dragGhost.style.setProperty("--drag-top", e.clientY + "px"); 
@@ -162,7 +160,14 @@ function onDragEnd(e) {
     var data = Game.board.getTile(coords);
     console.log("targeting tile with data",data);
   } else if (target.classList.contains("card")) {
-    GameEventHandler.onDrop();
+    if (target.isSameNode(dragInvokerElement)) {
+      return;
+    }
+    var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
+    var targetInventory = getInventory(target.parentElement.getAttribute("data-inventoryType"));
+    var invoker = originInventory.getCard(dragInvokerElement.getAttribute("data-inventoryId"));
+    var target = targetInventory.getCard(target.getAttribute("data-inventoryId"));
+    GameEventHandler.onDrop(invoker,target);
     // If targeting card:
     //determine the inventory the card originates from
     //get the card info given the inventory id
@@ -185,7 +190,6 @@ function dropIntoInventory(target) {
   var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
   var targetInventory = getInventory(target.querySelector(".inventory").getAttribute("data-inventoryType"));
   var card = originInventory.getCard(inventoryId);
-  console.log(card);
 
   if (target.classList.contains("externalInventory")) {
     if (target.classList.contains("playerInventory")) {

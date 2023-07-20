@@ -8,10 +8,19 @@ class Card {
         this.stats = stats;
         this.inventory = undefined;
     }
+    remove() {
+        this.inventory.removeCard(this.inventoryId);
+    }
     get type() {
         return CardType.getById(this.id);
     }
+    get interactions() {
+        return this.type.interactions;
+    }
     static checkEquality(cardA,cardB) {
         return cardA.id == cardB.id && hasSameKeysAndValues(cardA.stats,cardB.stats);
+    }
+    static isCard(obj) {
+        return obj instanceof Card;
     }
 }

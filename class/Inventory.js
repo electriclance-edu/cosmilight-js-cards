@@ -54,11 +54,13 @@ class Inventory {
         }
         card.inventory = this;
         this.cards[++this.idTemplate] = card;
+        card.inventoryId = this.idTemplate;
         this.update();
         return this.idTemplate;
     }
     removeCard(id) {
         this.cards[id].inventory = undefined;
+        this.cards[id].inventoryId = undefined;
         delete this.cards[id];
         this.update();
     }

@@ -49,7 +49,7 @@ class GameEventHandler {
             target:target,
         };
 
-        if (!GameEventHandler.validEventArguments(target,stat,amt)) {
+        if (!GameEventHandler.validEventArguments(invoker,target)) {
             console.warn(`Event ${gameEvent.type} attempted to trigger, however arguments are invalid.`,arguments)
             return;
         }
