@@ -1,3 +1,12 @@
+// Picks the first not undefined amongst all of its arguments. If none, returns undefined.
+function selectFirstDefined(...args) {
+    for (var i = 0; i < args.length; i++) {
+        let arg = args[i];
+        if (!!arg) return arg;
+    }
+    return undefined;
+}
+
 // Checks if both objects contain the same keys, and the same values for those keys.
 function hasSameKeysAndValues(objA,objB) {
     return Object.keys(objA).every((objAKey) => objA[objAKey] == objB[objAKey]) && Object.keys(objB).every((objBKey) => objB[objBKey] == objA[objAKey]);
@@ -6,18 +15,25 @@ function hasSameKeysAndValues(objA,objB) {
 function checkIfSuperset(superset,subset) {
     return subset.every((elemInSubset) => superset.includes(elemInSubset));
 }
-// Uses checkIfSuperset to check if a given object has the right keys.
+// Uses checkIfSuperset to check if a given object has the right keys. If not, throws an error.
 function verifyIfValidKeys(obj, requiredKeys, errorMessage) {
     if (!checkIfSuperset(Object.keys(obj), requiredKeys)) {
         // console.warn(`Given object with keys ${Object.keys(obj)} does not have required keys ${requiredKeys}.`);
-        throw `${errorMessage} (Missing properties: ${findMissingKeys(obj,requiredKeys)})`;
+        throw `MissingPropertyError: ${errorMessage} (Missing properties: ${findMissingKeys(obj,requiredKeys)})`;
     }
 }
-
+// Checks if an object has the given property. If not, throws an error.
+function verifyIfHasProperty(obj, reqProperty, errorMessage) {
+    if (!obj.hasOwnProperty(reqProperty)) {
+        // console.warn(`Given object with keys ${Object.keys(obj)} does not have required keys ${requiredKeys}.`);
+        throw `MissingPropertyError: ${errorMessage} (Missing property: ${reqProperty})`
+    }
+}
 // Given a main object and a merger object, takes every key-value from the merger object that the main doesnt have, and puts it into the main.
-function mergeObject(main,merger) {
+function mergeObjects(main,merger) {
     //take every property from merger
         //if main doesnt include property ==> place into main
+    return {...merger, ...main};
 }
 // Generates a DOM element given certain properties.
 function elem(tag, className = false, innerHTML = false) {

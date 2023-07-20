@@ -6,6 +6,9 @@ class TileType {
         this.interactions = properties.interactions;
         this.amountOfSprites = properties.amountOfSprites;
     }
+    static getById(id) {
+        return TileType.tileTypes[id];
+    }
     static load(data) {
         TileType.tileTypes[data.id] = new TileType(data);
     }

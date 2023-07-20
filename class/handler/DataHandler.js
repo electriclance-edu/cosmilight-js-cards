@@ -14,18 +14,40 @@ class DataHandler {
     static toLoad = {
         CardType:[],
         TileType:[],
-        StructureType:[]
+        StructureType:[],
+        StatType:[],
     }
     // Loader functions, functions from each class that are constructor aliases
     static loaders = {
         CardType:CardType.load,
         TileType:TileType.load,
-        StructureType:StructureType.load
+        StructureType:StructureType.load,
+        StatType:StatType.load,
     }
-    static sources = []
+    static sources = [];
+    static isPerfectLoad = true;
 
+    static loadData(className, source, data) {
+        console.info(`Loading data of type "${className}" from source "${source}" [DataHandler.loadData()]`)
+        if (!DataHandler.sources.includes(source)) {
+            DataHandler.sources.push(source);
+        }
+
+        data.forEach((rawData) => {
+            // console.log("Loading",rawData,`of class ${className}`);
+            try {
+                DataHandler.loaders[className](rawData);
+            } catch (Error) {
+                DataHandler.isPerfectLoad = false;
+                console.group();
+                console.warn(`DataHandler.loadData(): Failed to load data of type "${className}" with data`,rawData);
+                console.error(Error);
+                console.groupEnd();
+            }
+        });
+    }
     static addObjectToLoad(className, source, data) {
-        console.info(`Adding data of type "${className}" from source "${source}" [DataHandler.addToLoad()]`);
+        console.info(`Adding data of type "${className}" from source "${source}" for batch load [DataHandler.addToLoad()]`);
         if (!DataHandler.sources.includes(source)) {
             DataHandler.sources.push(source);
         }
@@ -33,11 +55,10 @@ class DataHandler {
         DataHandler.toLoad[className] = DataHandler.toLoad[className].concat(data);
     }
     static loadAllData() {
-        var isPerfectLoad = true;
         // the monstrosity in ${} converts the list of sources into a separated list formatted like "source", "source", etc
         // the regex removes the last , at the end of the string list
         // there is definitely a better way to implement this but it's just a debug comment so, :D
-        console.info(`Loading all data from sources${DataHandler.sources.reduce((acc, val) => {
+        console.info(`Batch loading all data from source${DataHandler.sources.length > 1 ? "s" : ""}${DataHandler.sources.reduce((acc, val) => {
             return acc + ` "${val}",`;
         },"").replace(/.$/, '')} [DataHandler.loadAllData()]`);
 
@@ -48,7 +69,7 @@ class DataHandler {
                 try {
                     DataHandler.loaders[className](rawData);
                 } catch (Error) {
-                    isPerfectLoad = false;
+                    DataHandler.isPerfectLoad = false;
                     console.group();
                     console.warn(`DataHandler.loadAllData(): Failed to load data of type "${className}" with data`,rawData);
                     console.error(Error);
@@ -57,7 +78,7 @@ class DataHandler {
             });
         });
 
-        if (isPerfectLoad) {
+        if (DataHandler.isPerfectLoad) {
             console.info("Perfect load! [DataHandler.loadAllData()]");
         } else {
             var stupidDebug = randElem(DataHandler.imperfectLoadMessages);

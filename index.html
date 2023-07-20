@@ -5,11 +5,11 @@
     <title>Cosmilight</title>
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/animations.css">
+    <link rel="stylesheet" href="style/inventory.css">
     <link rel="stylesheet" href="style/card.css">
     <link rel="stylesheet" href="style/debug.css">
     <link rel="stylesheet" href="style/drag.css">
     <link rel="stylesheet" href="style/fonts.css">
-    <link rel="stylesheet" href="style/inventory.css">
     <link rel="stylesheet" href="style/light.css">
     <link rel="stylesheet" href="style/structures.css">
     <link rel="stylesheet" href="style/textlogging.css">
@@ -25,10 +25,8 @@
     <script src="class/Inventory.js"></script>
     <script src="class/CardType.js"></script>
     <script src="class/Card.js"></script>
-    <script src="class/actionHandling/Interaction.js"></script>
-    <script src="class/actionHandling/Consequence.js"></script>
-    <script src="class/actionHandling/Condition.js"></script>
-    <script src="class/actionHandling/Trigger.js"></script>
+    <script src="class/StatType.js"></script>
+    <script src="class/Stat.js"></script>
     <script src="class/StructureType.js"></script>
     <script src="class/Structure.js"></script>
     <script src="class/TileType.js"></script>
@@ -40,6 +38,7 @@
     <script src="class/handler/GUIHandler.js" defer></script>
     <script src="class/handler/GameTickHandler.js" defer></script>
     <script src="class/handler/DataHandler.js" defer></script>
+    <script src="data/base_game/data-StatType.js" defer></script>
     <script src="data/base_game/data-CardType.js" defer></script>
     <script src="data/base_game/data-TileType.js" defer></script>
     <script src="data/base_game/data-StructureType.js" defer></script>
@@ -55,10 +54,18 @@
           <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
           <div class="StructureDetailDisplay state-vanished" id="StructureDetailDisplay">
             <div class="titleContainer" onclick="toggleStructureDetailDisplay(false)">
-              <p class="structureTitle txt-size-header txt-lined txt-lined-after headerFont">Sapfire</p>
-              <p class="structureDescription txt-italic">Consumes plant fuel to produce heat and light.</p>
+              <p class="structureTitle txt-size-header txt-lined txt-lined-after headerFont" id="structureTitle">Sapfire</p>
+              <p class="structureDescription txt-italic" id="structureDescription">Consumes plant fuel to produce heat and light.</p>
             </div>
-            <div class="statContainer">
+            <div class="statContainer" style="--fill-abs-max:50" id="structureStatContainer">
+              <div class="progressBarParent" style="--fill:20;--fill-max:20;--fill-color:var(--color-health);--fill-color-complement:var(--color-health-complement);--fill-color-accent:var(--bg-main)">
+                <div class="progressBar">
+                  <div class="progressBar-icon-debug">🌢</div>
+                  <p class="progressBar-title headerFont">HEALTH</p>
+                  <div class="progressBar-fill"></div>
+                </div>
+                <p>20/20</p>
+              </div>
               <div class="progressBarParent" style="--fill:30;--fill-max:40;--fill-color:var(--color-water);--fill-color-complement:var(--color-water-complement);--fill-color-accent:var(--bg-main)">
                 <div class="progressBar">
                   <div class="progressBar-icon-debug">🌢</div>
@@ -96,75 +103,9 @@
           <div class="fillWindow LightCanvasContainer">
             <canvas id="LightCanvas"></canvas>
           </div>
-          <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer">
-            <div class="inventoryParent">
-              <div class="inventory-bg validInventoryDrop externalInventory" onclick="Game.world.closeInventory(this)"></div>
-              <p class="inventoryTitle txt-size-header headerFont txt-lined" id="inventoryTitle">???</p>
-              <div class="inventory" data-inventoryType="tile" id="externalInventoryCards"></div>
-            </div>
-          </div>
-          <div id="magicCircle" class="MagicCircle centered-absolute state-vanished" style="--runes-completed:0; --total-runes:6">
-            <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--aux-circle-extra:30px; --flicker-delay:1.3s;"></div>
-            <div class="MagicCircle magicCircle-auxiliary centered-absolute" style="--transition:2s"></div>
-            <div class="MagicCircle magicCircle-progress centered-absolute">
-              <div class="magicCircle-progress-fill"></div>
-            </div>
-            <div id="magicCircle-runeParent">
-              <!-- <div class="magicCircle-rune" style="--index:0">
-                <div class="magicCircle-rune-graphic">
-                  <div class="circle" style="--top:-170; --stroke-width:9px; "></div>
-                  <div class="circle" style="--top:-170; --stroke-width:3px; --diameter:150%"></div>
-                  <div class="circle" style="--diameter:50%; --stroke-width:3px; --top:-75;"></div>
-                  <div class="circle solid" style="--diameter:0; --top:75; --left:-25;"></div>
-                  <div class="circle solid" style="--diameter:0; --top:60; --left:-55;"></div>
-                  <div class="circle solid" style="--diameter:0; --top:30; --left:-70;"></div>
-                  <div class="circle solid" style="--diameter:0; --top:75; --left:25;"></div>
-                  <div class="circle solid" style="--diameter:0; --top:60; --left:55;"></div>
-                  <div class="circle solid" style="--diameter:0; --top:30; --left:70;"></div>
-                  <div class="circle solid" style="--diameter:50%; --top:-170"></div>
-                  <div class="circle solid" style="--diameter:25%; --top:0"></div>
-                  <div class="circle solid" style="--diameter:25%; --top:170"></div>
-                  <div class="line" style="--length:340; --rotation:90deg"></div>
-                </div>
-              </div>
-              <div class="magicCircle-rune" style="--index:1">
-                <div class="magicCircle-rune-graphic">
-                  <div class="circle solid" style="--diameter:25%; --left:80;"></div>
-                  <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
-                  <div class="circle solid" style="--diameter:50%"></div>
-                </div>
-              </div>
-              <div class="magicCircle-rune" style="--index:2">
-                <div class="magicCircle-rune-graphic">
-                  <div class="line" style="--length:300; --rotation:90deg"></div>
-                </div>
-              </div>
-              <div class="magicCircle-rune" style="--index:3">
-                <div class="magicCircle-rune-graphic">
-                  <div class="circle solid" style="--diameter:25%; --left:80;"></div>
-                  <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
-                  <div class="circle solid" style="--diameter:50%"></div>
-                </div>
-              </div>
-              <div class="magicCircle-rune" style="--index:4">
-                <div class="magicCircle-rune-graphic">
-                  <div class="line" style="--length:300; --rotation:90deg"></div>
-                </div>
-              </div>
-              <div class="magicCircle-rune" style="--index:5">
-                <div class="magicCircle-rune-graphic">
-                  <div class="circle solid" style="--diameter:25%; --left:80;"></div>
-                  <div class="circle solid" style="--diameter:25%; --left:-80;"></div>
-                  <div class="circle solid" style="--diameter:50%"></div>
-                </div>
-              </div> -->
-              <!-- filled with runes by initializeMagicCircle() -->
-            </div>
-          </div>
+          <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer"></div>
           <div class="TileBoard" id="TileBoard"></div>
-          <div class="PlayerHandContainer inventoryParent validInventoryDrop playerInventory" id="PlayerHandContainer">
-            <div class="inventory-bg validInventoryDrop playerInventory"></div>
-            <div class="PlayerHand inventory" id="playerInventoryCards"></div>
+          <div class="PlayerHandContainer playerInventory" id="PlayerHandContainer">
           </div>
       </div>
     </div>

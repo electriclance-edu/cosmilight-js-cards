@@ -37,6 +37,7 @@ function initialize() {
   centralTileInventory.addCard(new Card("release_heat"));
   GUIHandler.renderTile(new Point(0,0));
   // Game.world.openInventory(centralTileInventory);
+  GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
   Game.player.hand.addCard(new Card("blink"));
   Game.player.hand.addCard(new Card("blink"));
   
@@ -62,13 +63,12 @@ function retrieveCSSConstants() {
   tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height')));
   defaultPersistence = removePx(style.getPropertyValue('--log-persistence'));
 }
-function toggleStructureDetailDisplay(visible) {
+function toggleStructureDetailDisplay(visible = false,structure) {
   if (visible) {
+    GUIHandler.displayStructureDetails(structure);
     GUIHandler.StructureDetailDisplay.classList.remove("state-vanished");
-    GUIHandler.ExternalInventoryContainer.classList.remove("state-StructureDetailDisplay-vanished");
   } else {    
     GUIHandler.StructureDetailDisplay.classList.add("state-vanished");
-    GUIHandler.ExternalInventoryContainer.classList.add("state-StructureDetailDisplay-vanished");
 }
 }
 /*
@@ -146,9 +146,9 @@ function onDragEnd(e) {
 
   document.body.classList.remove("dragging");
 
-  if (target.classList.contains("validInventoryDrop")) {
+  if (target.classList.contains("inventory-bg")) {
     // If targeting inventory:
-    dropIntoInventory(target);
+    dropIntoInventory(target.parentElement);
   } else if (target.classList.contains("tile")) {
     // If targeting tile:
     var data = Game.board.getTile(coords);
@@ -161,42 +161,36 @@ function onDragEnd(e) {
     //Interaction.triggerAll(interactions, "onDrop-target");
   }
 }
+function getInventory(id) {
+  if (id == "THEGROUND") {
+    return Game.currentTile.inventory;
+  } else if (id == "PLAYERHAND") {
+    return Game.player.hand;
+  } else if (id == "INSTRUCTURE") {
+    return Game.currentTile.structure.inventory;
+  }
+}
 function dropIntoInventory(target) {
-  var inventoryType = dragInvokerElement.parentNode.getAttribute("data-inventoryType");
   var inventoryId = dragInvokerElement.getAttribute("data-inventoryId");
     
-  const playerHandInventory = Game.player.hand;
-  const externalInventory = Game.world.getCurrentlyOpenedTile().getInventory(inventoryType);
-  console.log(Game.world.getCurrentlyOpenedTile(),inventoryType);
-  let originInventory;
-  switch (dragInvokerElement.parentElement.id) {
-    case "playerInventoryCards":
-      originInventory = playerHandInventory;
-      break;
-    case "externalInventoryCards":
-      originInventory = externalInventory;
-      break;
-  }
+  var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
+  var targetInventory = getInventory(target.querySelector(".inventory").getAttribute("data-inventoryType"));
   var card = originInventory.getCard(inventoryId);
 
-  let verb = "move";
-  let targetInventory;
   if (target.classList.contains("externalInventory")) {
-    targetInventory = externalInventory;
-    GUIHandler.logText(`You drop the ${card.type.hasTag("spell") ? "spell" : "item"} ${targetInventory.title == "THE GROUND" ? "onto" : "into"} ${targetInventory.title.toLowerCase()}.`,"cursor",1000);
-  } else if (target.classList.contains("playerInventory")) {
-    GUIHandler.logText(`You take the ${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
-    targetInventory = playerHandInventory;
+    if (target.classList.contains("playerInventory")) {
+      GUIHandler.logText(`You take the ${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
+    } else {
+      GUIHandler.logText(`You drop the ${card.type.hasTag("spell") ? "spell" : "item"} ${targetInventory.title == "THE GROUND" ? "onto" : "into"} ${targetInventory.title.toLowerCase()}.`,"cursor",1000);
+    }
   }
-  originInventory.removeCard(inventoryId);
-  targetInventory.addCard(card);
+  originInventory.transferCard(inventoryId,targetInventory);
   
-  let world = Game.world;
-  let tile = world.currentBoard.getTile(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y);
+  let tile = Game.currentTile;
   if (tile.inventory.hasItems()) {
-    GUIHandler.addClassToTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
+    GUIHandler.addClassToTileElem(Game.world.currentlyOpenedTileCoords,"hasItems");
   } else {
-    GUIHandler.removeClassFromTileElem(world.currentlyOpenedTileCoords.x,world.currentlyOpenedTileCoords.y,"hasItems");
+    GUIHandler.removeClassFromTileElem(Game.world.currentlyOpenedTileCoords,"hasItems");
   }
 }
 function makeDraggable(elem) {
@@ -326,27 +320,29 @@ document.addEventListener('mousedown', (e) => {
   if (keyShiftPressed) {
     if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
       var inventoryId = e.target.getAttribute("data-inventoryId");
-
-      let currentlyOpenedInv = Game.world.currentlyOpenedInventory;
-      if (currentlyOpenedInv == "none") {
+      
+      let currentlyOpenedInv = getInventory("THEGROUND");
+      console.log(currentlyOpenedInv);
+      if (!currentlyOpenedInv) {
+        return;
+      } else if (!currentlyOpenedInv.isRendered) {
         return;
       }
 
       let verb;
       let originInventory, targetInventory;
-      switch (e.target.parentElement.id) {
-        case "playerInventoryCards":
-          verb = "place";
-          originInventory = Game.player.hand;
-          targetInventory = currentlyOpenedInv;
-          break;
-        case "externalInventoryCards":
-          verb = "take";
-          originInventory = currentlyOpenedInv;
-          targetInventory = Game.player.hand;
-          break;
+      var inventoryType = e.target.parentElement.getAttribute("data-inventoryType");
+      if (inventoryType == "PLAYERHAND") {
+        verb = "place";
+        originInventory = getInventory("PLAYERHAND");
+        targetInventory = getInventory("THEGROUND");
+      } else {
+        verb = "take";
+        originInventory = getInventory(inventoryType);
+        targetInventory = getInventory("PLAYERHAND");
       }
-      var card = originInventory.transferCard(inventoryId,targetInventory)
+
+      var card = originInventory.transferCard(inventoryId,targetInventory);
       GUIHandler.logText(`You quickly ${verb} the ${originInventory.amountOfCards() == 1 ? "last " : ""}${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
     
       let tile = Game.currentTile;
@@ -378,13 +374,15 @@ document.addEventListener('mousedown', (e) => {
       // var screenCoords = Point.translate(coords,Game.player.getRoundedLocation());
       // screenCoords = boardToMouseCoordinates(screenCoords.x,screenCoords.y);
       setTimeout(()=>{
-        toggleStructureDetailDisplay(true);
+        toggleStructureDetailDisplay(true,tile.getStructure());
         // GUIHandler.StructureDetailDisplay.style = `
         //   --x:${screenCoords.x};
         //   --y:${screenCoords.y};
         // `;
       },300);
     }
+
+    GUIHandler.displayInventories([tile.inventory]);
 
     if (Point.areEqual(coords,Game.world.currentlyOpenedTileCoords)) {
       return;
@@ -395,7 +393,6 @@ document.addEventListener('mousedown', (e) => {
       GUIHandler.removeClassFromTileElem(currentCoords,"selectedTile");
     }
 
-    Game.world.openInventory(tile.inventory);
     Game.world.currentlyOpenedTileCoords = coords;
     GUIHandler.addClassToTileElem(coords,"selectedTile");
   }

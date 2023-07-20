@@ -2,12 +2,15 @@
 Inventory represents a set of cards.
 */
 class Inventory {
-    constructor(size = 0, title = "INVENTORY", renderElement = "none") {
+    constructor(size = 0, title = "INVENTORY") {
         this.size = size;
         this.title = title;
-        this.renderElement = renderElement;
+        this.isRendered = false;
         this.cards = {}; //format: {id: card}
         this.idTemplate = 0;
+    }
+    get localId() {
+        return this.title.replace(/\s+/g, '');
     }
     getCard(id) {
         return this.cards[id];
@@ -27,6 +30,9 @@ class Inventory {
         acceptor.addCard(card);
         return card;
     }
+    setIsRendered(state) {
+        this.isRendered = state;
+    }
     amountOfCards() {
         return Object.keys(this.cards).length;
     }
@@ -34,10 +40,10 @@ class Inventory {
         return (this.size == 0) ? false : (this.cards.length < this.size);
     }
     render() {
-        if (this.renderElement == "none") {
-            return;
-        }
-        GUIHandler.renderInventoryIn(this.renderElement,this);
+        GUIHandler.displayInventory(this);
+    }
+    update() {
+        GUIHandler.updateInventory(this);
     }
     addCard(card) {
         // stop if there is no space in inventory
@@ -47,11 +53,11 @@ class Inventory {
             throw new Error();
         }
         this.cards[++this.idTemplate] = card;
-        this.render();
+        this.update();
         return this.idTemplate;
     }
     removeCard(id) {
         delete this.cards[id];
-        this.render();
+        this.update();
     }
 }

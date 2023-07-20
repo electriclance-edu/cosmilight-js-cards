@@ -7,19 +7,20 @@ class StructureType extends CardType {
     constructor(properties) {
         //verify
         const requiredProperties = ["cardProperties","structureProperties"];
-        verifyIfValidKeys(properties,requiredProperties,`StructureType.constructor(): Incomplete data`);
+        verifyIfValidKeys(properties,requiredProperties,`StructureType.constructor(): StructureType initialized has incomplete data`);
         
         //inherit from cardtype
         super(properties.cardProperties);
         CardType.addType(this.id,this);
 
         //verify structure properties
-        const requiredStructureProperties = ["interactionsWhilePlaced","amountOfSprites"];
+        const requiredStructureProperties = ["amountOfSprites"];
         verifyIfValidKeys(properties.structureProperties,requiredStructureProperties,`StructureType.constructor(): Structure properties of StructureType has incomplete data`);
 
         //setup structure properties
-        this.interactionsWhilePlaced = properties.structureProperties.interactionsWhilePlaced;
+        this.interactions = properties.structureProperties.interactions;
         this.amountOfSprites = properties.structureProperties.amountOfSprites;
+        this.stats = properties.structureProperties.stats;
     }
     static typeExists(id) {
         return Object.keys(this.structureTypes).includes(id);

@@ -5,25 +5,46 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
             lore:{
                 mainTitle:"Tree",
                 subTitle:"",
+                description:"Slowly absorbing, slowly producing.",
+            },
+            colorName:"worldObject",
+            tags:["structure","natural"]
+        },
+        structureProperties: {
+            amountOfSprites:1,
+            stats:[
+                new Stat("health",{value:20}),
+                new Stat("integrity",{value:20})
+            ]
+        }
+    },
+    {
+        cardProperties: {
+            id:"rock",
+            lore:{
+                mainTitle:"Rock",
+                subTitle:"",
                 description:"",
             },
             colorName:"worldObject",
-            tags:["structure","natural"],
-            interactions:[]
+            tags:["structure","natural"]
         },
         structureProperties: {
-            interactionsWhilePlaced:[
-                new Interaction({
-                    triggers:[
-                        new Trigger("perInterval",{ticks:20})
-                    ],
-                    conditions:[],
-                    consequences:[
-                        new Consequence("changeHealth",{amt:1}),
-                    ],
-                    target:"self"
-                }),
-            ],
+            amountOfSprites:1
+        }
+    },
+    {
+        cardProperties: {
+            id:"torchtree",
+            lore:{
+                mainTitle:"Torchtree",
+                subTitle:"",
+                description:"Bringer of heat to its floral brethren.",
+            },
+            colorName:"worldObject",
+            tags:["structure","natural"]
+        },
+        structureProperties: {
             amountOfSprites:1
         }
     },
@@ -31,55 +52,26 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
         cardProperties: {
             id:"fire",
             lore:{
-                mainTitle:"Flame",
+                mainTitle:"Sapflame",
                 subTitle:"",
-                description:"Where light is born.",
+                description:"Where light is born from plant.",
             },
             colorName:"worldObject",
             tags:["structure","artificial"],
-            interactions:[]
         },
         structureProperties: {
-            interactionsWhilePlaced:[
-                new Interaction({
-                    triggers:[
-                        new Trigger("perInterval",{ticks:10})
-                    ],
-                    conditions:[
-                        new Condition(
-                            "inventoryContains",
-                            {
-                                rank:"accessible",
-                                selectors:["#fuel"]
-                            }
-                        ),
-                        new Condition("lightLevel",{below:3})
-                    ],
-                    consequences:[
-                        new Consequence("changeLightLevel",{amt:0.1}),
-                    ],
-                    target:"self"
-                }),
-                new Interaction({
-                    triggers:[
-                        new Trigger("perInterval",{ticks:10})
-                    ],
-                    conditions:[
-                        new Condition(
-                            "inventoryContains",
-                            {
-                                rank:"accessible",
-                                selectors:["#fuel"]
-                            },
-                            false
-                        ),
-                        new Condition("lightLevel",{above:0})
-                    ],
-                    consequences:[
-                        new Consequence("changeLightLevel",{amt:-0.1}),
-                    ]
-                }),
-            ],
+            interactions:{
+                "onTick":(tickEvent)=>{
+                    if (!tickEvent.interval(10)) {
+                        return;
+                    }
+                    if (tickEvent.self.inventory.contains("#fuel")) {
+                        tickEvent.self.tile.changeLightLevel(0.1);
+                    } else {
+                        tickEvent.self.tile.changeLightLevel(-0.1);
+                    }
+                }
+            },
             amountOfSprites:1
         }
     }

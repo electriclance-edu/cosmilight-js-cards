@@ -15,7 +15,8 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
     //         }),
     //     ]
     // },
-    //Stores liquids.
+    
+    // Increases the player's liquidStorage stat by 10.
     {
         id:"flask",
         lore:{
@@ -25,21 +26,8 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         },
         colorName:"storage",
         tags:["storage"],
-        interactions:[
-            new Interaction({
-                triggers:["droppedInto"],
-                consequences:[
-                    new Consequence("addItem",{item:"#droppedItem"})
-                ],
-                target:"self"
-            }),
-            new Interaction({
-                triggers:["droppedInto"],
-                consequences:[
-                    new Consequence("itemRemove")
-                ],
-                target:"droppedItem"
-            })
+        stats:[
+            new Stat("liquidStorage",{value:10})
         ]
     },
     //Dummy
@@ -51,8 +39,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"its so joever.",
         },
         colorName:"light",
-        tags:["spell"],
-        interactions:[]
+        tags:["spell"]
     },
     //Harvests from a restricted inventory tier 1 (eg. the twigs, sap of a tree)
     {
@@ -64,12 +51,11 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         },
         colorName:"harvest",
         tags:["spell"],
-        interactions:[
-            new Interaction({
-                triggers:["onDrop"],
-                consequences:[new Consequence("harvest",{rank:1,target:"target"})]
-            }),
-        ]
+        interactions:{
+            "onDrop":(e)=>{
+                e.target.harvest({rank:1});
+            }
+        }
     },
     //Damages and releases some material from a restricted inventory tier 2 (what composes the structure)
     {
@@ -81,16 +67,13 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         },
         colorName:"fire",
         tags:["spell","harvester","damager"],
-        interactions:[
-            new Interaction({
-                triggers:["onDrop"],
-                consequences:[
-                    new Consequence("harvest",{rank:2}),
-                    new Consequence("changeHealth",{amt:-20})
-                ],
-                target:"drop"
-            }),
-        ]
+        interactions:{
+            "onDrop":(dropEvent)=>{
+                if (!Tile.isTile(dropEvent.target)) return;
+
+                dropEvent.target.tile.incrementStat("heat",player.takeStat("heat"));
+            }
+        }
     },
     //milo everyday
     {
@@ -101,8 +84,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"every day.",
         },
         colorName:"item",
-        tags:["item"],
-        interactions:[]
+        tags:["item"]
     },
     //milo everyday
     {
@@ -113,8 +95,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"warm and delicious.",
         },
         colorName:"item",
-        tags:["item"],
-        interactions:[]
+        tags:["item"]
     },
     //milo everyday
     {
@@ -125,8 +106,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"sticky!",
         },
         colorName:"item",
-        tags:["item"],
-        interactions:[]
+        tags:["item"]
     },
     //milo everyday
     {
@@ -137,8 +117,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"stick!",
         },
         colorName:"item",
-        tags:["item"],
-        interactions:[]
+        tags:["item"]
     },
     //milo everyday
     {
@@ -148,8 +127,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             description:"pebble!",
         },
         colorName:"item",
-        tags:["item"],
-        interactions:[]
+        tags:["item"]
     },
     //Damages and releases some material from a restricted inventory tier 2 (what composes the structure)
     {
@@ -160,15 +138,21 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         },
         colorName:"fire",
         tags:["spell","harvester","damager"],
-        interactions:[
-            new Interaction({
-                triggers:["onDrop"],
-                consequences:[
-                    new Consequence("harvest",{rank:2}),
-                    new Consequence("changeHealth",{amt:-20})
-                ],
-                target:"drop"
-            }),
-        ]
+        interactions:{
+            "onDrop":(dropEvent)=>{
+                if (!Card.isCard(dropEvent.target)) return;
+
+                if (dropEvent.target.type == "stone") {
+                    GameEvent.craftCard({
+                        cardType:"order",
+                        inventory:dropEvent.target.inventory,
+                        cardIngredients:[
+                        ]
+                    });
+                    dropEvent.target,
+                    dropEvent.invoker
+                }
+            }
+        }
     }
 ])

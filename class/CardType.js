@@ -4,7 +4,7 @@ class CardType {
     constructor(properties) {
         //verify
         const requiredProperties = [
-            "id","colorName","tags","interactions","lore"
+            "id","colorName","tags","lore"
         ];
         verifyIfValidKeys(properties,requiredProperties,`CardType.constructor(): Incomplete data`);
 
@@ -14,6 +14,9 @@ class CardType {
         this.interactions = properties.interactions;
 
         this.lore = properties.lore;
+    }
+    getTitle() {
+        return `${this.lore.superTitle ? this.lore.superTitle + " ": ""}${this.lore.mainTitle}${this.lore.subTitle ? " " + this.lore.subTitle: ""}`;
     }
     static load(data) {
         CardType.cardTypes[data.id] = new CardType(data);

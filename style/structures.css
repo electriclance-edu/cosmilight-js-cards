@@ -4,8 +4,9 @@ STRUCTURE SELECTORS
 .StructureDetailDisplay {
   z-index:15000;
   position:absolute;
-  top:20px;
+  top:50%;
   right:20px;
+  transform:translatey(-50%);
   translate:0px 0;
   /* transform:translate(calc((var(--x) * 1px) + (var(--tile-width) / 2)),calc((var(--y) * 1px) + (-50% - 20px))); */
   opacity:1;
@@ -40,7 +41,7 @@ STRUCTURE SELECTORS
   color:var(--fill-color);
 }
 .progressBar {
-  --calc-width:calc(var(--fill-max) * 4px + 80px);
+  --calc-width:calc(var(--fill-max) / var(--fill-abs-max) * 100% + 80px);
   width:clamp(10px,var(--calc-width),100%);
   height:30px;
   background-color:var(--bg-shadow);
@@ -49,11 +50,13 @@ STRUCTURE SELECTORS
   box-sizing:border-box;
   border-radius:20px;
   padding-left:40px;
+  padding-right:10px;
   margin:3px 0;
   transition:0.3s;
   display:flex;
   align-items:center;
   background-image:linear-gradient(120deg, transparent 50%, var(--bg-main) 100%);
+  /* filter:grayscale(1); */
 }
 .progressBar:hover {
   height:30px;
@@ -83,7 +86,6 @@ STRUCTURE SELECTORS
   transform:rotate(45deg) translatey(-50%);
   z-index:3;
   background-image:url("../resources/img/cards/resource/water.png");
-
 }
 .progressBar-title {
   z-index:2;
@@ -100,5 +102,6 @@ STRUCTURE SELECTORS
   height:calc(100% + var(--overflow-padding-combat) * 2);
   width:calc(var(--fill) / var(--fill-max) * 100% + var(--overflow-padding-combat));
   background-color:var(--fill-color);
-  background-image:linear-gradient(90deg, transparent 50%, var(--fill-color-complement) 100%);
+  background-image:linear-gradient(90deg, transparent 30%, var(--fill-color-complement) 100%);
+  /* background-size:300px; */
 }

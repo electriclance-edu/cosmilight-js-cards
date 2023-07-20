@@ -9,12 +9,27 @@ INVENTORY SELECTORS
   justify-content:center;
   padding:0 calc(var(--card-width) * 0.5);
   transition:0.3s;
+  opacity:1;
+}
+.ExternalInventoryContainer .inventoryParent.state-vanished {
+  opacity:0;
 }
 .inventory {
   display:flex;
   /* width:100%; */
   /* overflow:hidden;
   justify-content:center; */
+}
+.PlayerHandContainer {
+  position:absolute;
+  left:50%; 
+  transform:translatex(-50%);
+  z-index:14000;
+  bottom:0;
+  display:flex;
+}
+.PlayerHandContainer .inventoryParent {
+  transform:translate(-50%,-100%);
 }
 .ExternalInventoryContainer {
   position:absolute;
@@ -23,10 +38,7 @@ INVENTORY SELECTORS
   z-index:14000;
   bottom:100%;
   transition:opacity 0.2s,padding-right 0.3s;
-  padding-right:400px;
-}
-.ExternalInventoryContainer.state-StructureDetailDisplay-vanished {
-  padding-right:0;
+  display:flex;
 }
 .ExternalInventoryContainer .inventoryParent {
   position:relative;
@@ -34,6 +46,8 @@ INVENTORY SELECTORS
   translate:0 40%;
   transition:translate 0.2s, opacity 0.2s;
   opacity:1;
+  min-width:calc(var(--card-width) * 1.5);
+  margin:0 15px;
 }
 .ExternalInventoryContainer .inventoryParent:hover {
   translate:0 100%;
@@ -51,18 +65,25 @@ INVENTORY SELECTORS
   top:0;
   left:0;
   filter:drop-shadow(0 0 10px var(--bg-accent));
-  background:linear-gradient(var(--rotation), var(--bg-inventory) 0%, transparent 100%);
+  background-color:var(--bg-inventory);
+  background-image:url("../resources/img/cosmilight-bg-circles-translucent.png");
+  background-size:contain;
+  background-repeat:round;
+  background-position:center;
   translate:0 calc(20%);
   transition:translate 0.2s;
+  -webkit-mask:linear-gradient(var(--rotation), black 0%, transparent 100%);
+  /* -webkit-mask-composite:intersect; */
+  /* mask:url("../resources/img/bg-mask.png"); */
 }
 .ExternalInventoryContainer .inventoryParent:hover .inventory-bg {
   translate:0 0;
 }
 body:not(.dragging) .ExternalInventoryContainer .inventory-bg:hover {
-  background:linear-gradient(var(--rotation), var(--bg-shadow-red) 0%, transparent 100%);
+  background-color:var(--bg-shadow-red);
 }
 body.dragging .inventory-bg:hover {
-  background:linear-gradient(var(--rotation), var(--bg-accent-light) 0%, transparent 100%);
+  background-color:var(--bg-accent-light);
 }
 .ExternalInventoryContainer .inventoryTitle {
   position:absolute;
@@ -76,6 +97,10 @@ body.dragging .inventory-bg:hover {
   user-select:none;
   translate:0 calc(var(--card-height) + 40px);
   transition:translate 0.2s;
+  filter:drop-shadow(0 0 5px black) drop-shadow(0 0 10px black);
+}
+.PlayerHandContainer .inventoryTitle {
+  display:none;
 }
 .ExternalInventoryContainer .inventoryParent:hover > .inventoryTitle {
   translate:0 0;

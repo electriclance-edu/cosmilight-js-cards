@@ -40,14 +40,8 @@ class World {
         this.currentlyOpenedInventory.addCard(card);
     }
     closeInventory() {
-        this.currrentlyOpenedInventory = "none";
         GUIHandler.removeClassFromTileElem(this.currentlyOpenedTileCoords.x,this.currentlyOpenedTileCoords.y,"selectedTile");
-        this.currentlyOpenedTileCoords = new Point(0,0);
+        this.currentlyOpenedTileCoords = "none";
         GUIHandler.closeInventory();
-    }
-    openInventory(inventory) {
-        this.currentlyOpenedInventory = inventory;
-        this.currentlyOpenedInventory.renderElement = GUIHandler.ExternalInventoryElem;
-        GUIHandler.displayInventory(inventory);
     }
 }

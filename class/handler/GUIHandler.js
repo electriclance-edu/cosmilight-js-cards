@@ -1,15 +1,13 @@
 class GUIHandler {
     static tileElements = {};
     static TileBoard;
-    static PlayerInventoryElem;
-    static ExternalInventoryElem;
+    static PlayerHandContainer;
+    static GroundInventoryElem;
     
     static initialize() {
         GUIHandler.TileBoard = document.getElementById("TileBoard");
-        GUIHandler.PlayerInventoryElem = document.getElementById("playerInventoryCards");
-        Game.player.hand.renderElement = GUIHandler.PlayerInventoryElem;
+        GUIHandler.PlayerHandContainer = document.getElementById("PlayerHandContainer");
         GUIHandler.ExternalInventoryContainer = document.getElementById("ExternalInventoryContainer");
-        GUIHandler.ExternalInventoryElem = document.getElementById("externalInventoryCards");
         GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
     }
     static renderCurrentTileBoard() {
@@ -90,23 +88,101 @@ class GUIHandler {
 
         return parseHTML(tileHTML);
     }
-    static displayInventory(inventory) {
-        GUIHandler.ExternalInventoryContainer.classList.add("state-hidden");
+    static clearInventories(container = GUIHandler.ExternalInventoryContainer) {
+        container.innerHTML = "";
+    }
+    static displayInventory(inventory, parent = GUIHandler.ExternalInventoryContainer, vanishable = true) {
+        GUIHandler.displayInventories([inventory],parent,vanishable);
+    }
+    static displayInventories(inventoryArray, parent = GUIHandler.ExternalInventoryContainer, vanishable = true) {
+        parent.classList.add("state-hidden");
         setTimeout(()=>{
-            GUIHandler.ExternalInventoryContainer.classList.remove("state-hidden");
-            document.getElementById("inventoryTitle").innerHTML = inventory.title;
-            this.renderInventoryIn(GUIHandler.ExternalInventoryElem,inventory); 
+            inventoryArray.forEach((inventory) => { 
+                var possiblePreexistingElement = parent.querySelector(`#${inventory.localId}`);
+                if (!!possiblePreexistingElement) {
+                    possiblePreexistingElement.remove();
+                }
+                var elem = GUIHandler.createInventoryElem(inventory,vanishable);
+                parent.appendChild(elem);
+                inventory.setIsRendered(true);
+                // console.log(elem);
+                parent.classList.remove("state-hidden");
+            });
         },300);
     }
-    static closeInventory() {
-        GUIHandler.ExternalInventoryContainer.classList.add("state-hidden");
+    static closeInventory(elem) {
+        elem.classList.add("state-vanished");
+        setTimeout(()=>{
+            getInventory(elem.querySelector(".inventory").getAttribute("data-inventoryType")).setIsRendered(false);
+            elem.remove();
+        },300);
     }
-    static renderInventoryIn(elem, inventory) {
-        elem.innerHTML = "";
+    static createInventoryElem(inventory,vanishable) {
+        var inventoryHTML = `
+            <div class="inventoryParent" id="${inventory.localId}">
+                <div class="inventory-bg validInventoryDrop externalInventory" ${vanishable ? 'onclick="GUIHandler.closeInventory(this.parentNode)' : ''}"></div>
+                <p class="inventoryTitle txt-size-header headerFont txt-lined">${inventory.title}</p>
+                <div class="inventory" data-inventoryType="${inventory.localId}" id="inventoryCards"></div>
+            </div>
+        `;
+        var fragment = parseHTMLDocumentFragment(inventoryHTML);
+        var cardParent = fragment.querySelector("#inventoryCards");
+        cardParent.id = "";
+        GUIHandler.placeInventoryCardElem(inventory,cardParent);
+
+        return fragment.firstElementChild;
+    }
+    static displayStructureDetails(structure) {
+        var type = structure.type;
+        console.log(structure);
+        document.getElementById("structureTitle").innerHTML = type.getTitle();
+        document.getElementById("structureDescription").innerHTML = type.lore.description;
+        
+        var statContainer = document.getElementById("structureStatContainer");
+        statContainer.innerHTML = "";
+
+        if (structure.hasStats()) {
+            structure.stats.forEach((stat) => {
+                if (stat.type.style.visibility == "visible") {
+                    statContainer.appendChild(GUIHandler.generateStatElem(stat));
+                }
+            });
+        }
+    }
+    static generateStatElem(stat) {
+        var type = stat.type;
+        var statStyle = `
+            --fill:${stat.value};
+            --fill-max:${stat.max};
+            --fill-color:${type.style.fillColor};
+            --fill-color-complement:${type.style.fillColorComplement};
+            --fill-color-accent:${type.style.fillColorAccent};
+        `;
+        var statHTML = `
+            <div class="progressBarParent" style="${statStyle}">
+                <div class="progressBar">
+                    <div class="progressBar-icon"></div>
+                    <p class="progressBar-title headerFont">${type.name.toUpperCase()}</p>
+                    <div class="progressBar-fill"></div>
+                </div>
+            </div>
+        `
+        var elem = parseHTML(statHTML);
+        return elem;
+    }
+    static updateInventory(inventory) {
+        if (!inventory.isRendered) {
+            return;
+        }
+        var cardParent = document.getElementById(inventory.localId).querySelector(".inventory");
+        cardParent.innerHTML = "";
+        GUIHandler.placeInventoryCardElem(inventory,cardParent);
+    }
+    static placeInventoryCardElem(inventory,parent) {
         Object.entries(inventory.cards).forEach(([inventoryId, card]) => {
             var cardElem = GUIHandler.generateRawCardElement(CardType.getById(card.id));
             cardElem.setAttribute("data-inventoryid",inventoryId);
-            elem.appendChild(cardElem);
+            parent.appendChild(cardElem);
         });
     }
     static moveTileBoard(x,y) {
