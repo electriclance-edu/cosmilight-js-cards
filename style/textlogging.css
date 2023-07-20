@@ -39,7 +39,7 @@ LOG SELECTORS
   --y-wobble:0;
   opacity:0.3;
   animation:1s calc(var(--mod-index) * 0.1s) infinite linear alternate-reverse shake,
-            0.4s calc(var(--index) * 0.05s) forwards log-opaque;
+            0.4s calc(var(--index) * 0.04s + 0.7s) forwards log-opaque;
   display:inline-block;
   translate:calc(var(--x-shake) * 0.5px) calc(var(--y-shake) * 0.5px);
   white-space:pre;

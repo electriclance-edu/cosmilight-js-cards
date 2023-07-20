@@ -9,7 +9,6 @@ class StatType {
         this.style.fillColorComplement = props.style.fillColorComplement;
         this.style.fillColorAccent = props.style.fillColorAccent ? props.style.fillColorAccent : "var(--bg-white)";
         this.style.visibility = props.style.visibility ? props.style.visibility : "visible";
-        this.defaults = props.defaults ? props.defaults : {};
         this.strictLimits = mergeObjects(props.strictLimits,{min:100000,max:100000});
     }
     static typeExists(id) {

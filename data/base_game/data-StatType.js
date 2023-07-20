@@ -25,9 +25,6 @@ DataHandler.loadData("StatType","baseCosmilight",[
                 name:"health",
                 desc:"One's distance from death."
             },
-            defaults:{
-                value:10
-            },
             strictLimits:{
                 min:0
             }
@@ -39,14 +36,12 @@ DataHandler.loadData("StatType","baseCosmilight",[
             style:{
                 fillColor:"white",
                 fillColorComplement:"white",
+                fillColorAccent:"var(--bg-accent)",
                 visibility:"hidden",
             },
             lore:{
                 name:"integrity",
                 desc:"The strength of one's body."
-            },
-            defaults:{
-                value:10,
             },
             strictLimits:{
                 min:0
@@ -64,10 +59,6 @@ DataHandler.loadData("StatType","baseCosmilight",[
             lore:{
                 name:"water",
                 desc:"The lifeblood of magic, the carrier of life."
-            },
-            defaults:{
-                value:30,
-                max:40
             }
         }
     },
@@ -81,10 +72,20 @@ DataHandler.loadData("StatType","baseCosmilight",[
             lore:{
                 name:"fuel",
                 desc:"Energy in bound, physical form."
+            }
+        }
+    },
+    {
+        id:"heating",
+        properties:{
+            style:{
+                fillColor:"var(--color-fire-complement)",
+                fillColorComplement:"var(--color-fire)",
+                fillColorAccent:"var(--bg-main)",
             },
-            defaults:{
-                value:12,
-                max:15
+            lore:{
+                name:"heating",
+                desc:"The amount of heat produced."
             }
         }
     },
@@ -98,10 +99,6 @@ DataHandler.loadData("StatType","baseCosmilight",[
             lore:{
                 name:"heat",
                 desc:"Motion, condensed."
-            },
-            defaults:{
-                value:5,
-                max:20
             }
         }
     },
@@ -116,10 +113,34 @@ DataHandler.loadData("StatType","baseCosmilight",[
             lore:{
                 name:"light",
                 desc:"That which pierces the darkness."
+            }
+        }
+    },
+    {
+        id:"hairLuxuriousness",
+        properties:{
+            style:{
+                fillColor:"var(--color-water)",
+                fillColorComplement:"var(--color-harvest)",
+                fillColorAccent:"var(--bg-main)"
             },
-            defaults:{
-                value:8,
-                max:10
+            lore:{
+                name:"hair luxury",
+                desc:"Strength that befits a god."
+            }
+        }
+    },
+    {
+        id:"rat",
+        properties:{
+            style:{
+                fillColor:"var(--color-fire)",
+                fillColorComplement:"var(--color-health)",
+                fillColorAccent:"var(--bg-main)"
+            },
+            lore:{
+                name:"rat",
+                desc:"rat."
             }
         }
     },

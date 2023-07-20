@@ -29,10 +29,8 @@ function verifyIfHasProperty(obj, reqProperty, errorMessage) {
         throw `MissingPropertyError: ${errorMessage} (Missing property: ${reqProperty})`
     }
 }
-// Given a main object and a merger object, takes every key-value from the merger object that the main doesnt have, and puts it into the main.
+// Merges two objects, prioritizing the values of the main object.
 function mergeObjects(main,merger) {
-    //take every property from merger
-        //if main doesnt include property ==> place into main
     return {...merger, ...main};
 }
 // Generates a DOM element given certain properties.

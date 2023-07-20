@@ -18,7 +18,7 @@ class StructureType extends CardType {
         verifyIfValidKeys(properties.structureProperties,requiredStructureProperties,`StructureType.constructor(): Structure properties of StructureType has incomplete data`);
 
         //setup structure properties
-        this.interactions = properties.structureProperties.interactions;
+        this.interactions = mergeObjects(properties.structureProperties.interactions,GameEventHandler.defaultInteractions);
         this.amountOfSprites = properties.structureProperties.amountOfSprites;
         this.stats = properties.structureProperties.stats;
     }

@@ -52,11 +52,13 @@ class Inventory {
             console.warn("Inventory.addCard(): Tried to add card to inventory, however inventory has no space.");
             throw new Error();
         }
+        card.inventory = this;
         this.cards[++this.idTemplate] = card;
         this.update();
         return this.idTemplate;
     }
     removeCard(id) {
+        this.cards[id].inventory = undefined;
         delete this.cards[id];
         this.update();
     }

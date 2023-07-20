@@ -3,7 +3,7 @@ class TileType {
 
     constructor(properties) {
         this.id = properties.id;
-        this.interactions = properties.interactions;
+        this.interactions = mergeObjects(properties.interactions,GameEventHandler.defaultInteractions);
         this.amountOfSprites = properties.amountOfSprites;
     }
     static getById(id) {

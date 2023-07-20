@@ -1,13 +1,14 @@
 class Tile {
     constructor(typeId = "grass") {
         this.typeId = typeId;
-        this.structure = Structure.none;
+        this.structure = undefined;
         this.inventory = new Inventory(0,"THE GROUND");
     }
     setStructure(struct) {
         if (!StructureType.typeExists(struct.getTypeId())) {
             console.warn(`Tile.constructor(): Tile constructed with structure "${struct.getTypeId()}", however no such StructureType exists.`);
         }
+        struct.position = this.position;
         this.structure = struct;
     }
     getInventory(type) {

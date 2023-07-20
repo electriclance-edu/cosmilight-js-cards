@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="style/tiles.css">
     <link rel="icon" href="resources/img/favicon.ico">
     <script src="script/helper.js"></script>
+    <script src="class/handler/GameEventHandler.js"></script>
     <script src="class/generic/RGBA.js"></script>
     <script src="class/generic/Point.js"></script>
     <script src="class/game/Game.js"></script>
@@ -31,8 +32,8 @@
     <script src="class/Structure.js"></script>
     <script src="class/TileType.js"></script>
     <script src="class/Tile.js"></script>
-    <script src="script/main.js" defer></script>
     <script src="class/LightPoint.js"></script>
+    <script src="script/main.js" defer></script>
     <script src="class/handler/FPSHandler.js" defer></script>
     <script src="class/handler/LightHandler.js" defer></script>
     <script src="class/handler/GUIHandler.js" defer></script>
@@ -57,7 +58,7 @@
               <p class="structureTitle txt-size-header txt-lined txt-lined-after headerFont" id="structureTitle">Sapfire</p>
               <p class="structureDescription txt-italic" id="structureDescription">Consumes plant fuel to produce heat and light.</p>
             </div>
-            <div class="statContainer" style="--fill-abs-max:50" id="structureStatContainer">
+            <div class="statContainer" style="--fill-abs-max:0" id="structureStatContainer">
               <div class="progressBarParent" style="--fill:20;--fill-max:20;--fill-color:var(--color-health);--fill-color-complement:var(--color-health-complement);--fill-color-accent:var(--bg-main)">
                 <div class="progressBar">
                   <div class="progressBar-icon-debug">🌢</div>

@@ -11,7 +11,7 @@ class CardType {
         this.id = properties.id;
         this.colorName = properties.colorName;
         this.tags = properties.tags;
-        this.interactions = properties.interactions;
+        this.interactions = mergeObjects(properties.interactions,GameEventHandler.defaultInteractions);
 
         this.lore = properties.lore;
     }

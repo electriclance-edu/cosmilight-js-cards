@@ -48,11 +48,19 @@ function initialize() {
     FPSHandler.updateElement();
   },200);
 
-  GUIHandler.logText("Feel the ground here.");
-  setTimeout(()=>{GUIHandler.logText("It is hard. Cold. Ancient.")},3000);
-  setTimeout(()=>{GUIHandler.logText("The warmth of your hand is the first heat it has touched in eons.")},7000);
-  setTimeout(()=>{GUIHandler.logText("But with time... perhaps this whole world will feel the resplendence of heat once again.")},12000);
-  setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
+  GUIHandler.logText(randElem([
+    "The ground crunches below your feet.",
+    "A cold breeze blows past.",
+    "The howling of silence echoes.",
+    "The dim starlight is all that lets you see beyond.",
+    "An ancient world awaits.",
+    "The darkness threatens to encroach.",
+  ]))
+  // GUIHandler.logText("Feel the ground here.");
+  // setTimeout(()=>{GUIHandler.logText("It is hard. Cold. Ancient.")},3000);
+  // setTimeout(()=>{GUIHandler.logText("The warmth of your hand is the first heat it has touched in eons.")},7000);
+  // setTimeout(()=>{GUIHandler.logText("But with time... perhaps this whole world will feel the resplendence of heat once again.")},12000);
+  // setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
 }
 function initializeGame() {
   new Game(new World(), new Player());
@@ -154,6 +162,7 @@ function onDragEnd(e) {
     var data = Game.board.getTile(coords);
     console.log("targeting tile with data",data);
   } else if (target.classList.contains("card")) {
+    GameEventHandler.onDrop();
     // If targeting card:
     //determine the inventory the card originates from
     //get the card info given the inventory id
@@ -176,6 +185,7 @@ function dropIntoInventory(target) {
   var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
   var targetInventory = getInventory(target.querySelector(".inventory").getAttribute("data-inventoryType"));
   var card = originInventory.getCard(inventoryId);
+  console.log(card);
 
   if (target.classList.contains("externalInventory")) {
     if (target.classList.contains("playerInventory")) {
@@ -212,13 +222,6 @@ function mouseToBoardCoordinates(e) {
 
   return decentralizePoint(Game.player.getRoundedLocation(),new Point(x,y));
 }
-/*
---------------
-TEXT DISPLAY FUNCTIONS
---------------
-*/
-
-
 /*
 --------------
 DEBUG FUNCTIONS
@@ -322,7 +325,6 @@ document.addEventListener('mousedown', (e) => {
       var inventoryId = e.target.getAttribute("data-inventoryId");
       
       let currentlyOpenedInv = getInventory("THEGROUND");
-      console.log(currentlyOpenedInv);
       if (!currentlyOpenedInv) {
         return;
       } else if (!currentlyOpenedInv.isRendered) {
@@ -343,7 +345,7 @@ document.addEventListener('mousedown', (e) => {
       }
 
       var card = originInventory.transferCard(inventoryId,targetInventory);
-      GUIHandler.logText(`You quickly ${verb} the ${originInventory.amountOfCards() == 1 ? "last " : ""}${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
+      GUIHandler.logText(`You quickly ${verb} the ${originInventory.amountOfCards() == 0 ? "last " : ""}${card.type.hasTag("spell") ? "spell" : "item"}.`,"cursor",1000);
     
       let tile = Game.currentTile;
       if (tile.inventory.hasItems()) {

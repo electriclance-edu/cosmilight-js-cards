@@ -16,44 +16,63 @@ class Board {
     }
     populateBoard() {
         //currently debug code
-        const boardSize = {x:8,y:8};
-        var tileData;
+        const boardSize = new Point(30,30);
         var shaperPointA = new Point(randIntNeg(3), randIntNeg(3));
+        shaperPointA.x *= 4;
+        shaperPointA.y *= 4;
         var shaperPointB = new Point(randIntNeg(3), randIntNeg(3));
+        shaperPointB.x *= 2;
+        shaperPointB.y *= 2;
         for (var y = -boardSize.y; y <= boardSize.y; y++) {
             for (var x = -boardSize.x; x <= boardSize.x; x++) {
-                var distFromCenter = dist(new Point(x, y), new Point(0,0));
-                var distFromStoneShaper = dist(new Point(x, y), shaperPointA);
-                var distFromGrassShaper = dist(new Point(x, y), shaperPointB);
+                let tile;
+                let distFromCenter = dist(new Point(x, y), new Point(0,0));
+                let distFromStoneShaper = dist(new Point(x, y), shaperPointA);
+                let distFromGrassShaper = dist(new Point(x, y), shaperPointB);
                 // Points can generate if they are any of the following distances from two points
                 // Shaper point exists to add another disc on top of the central disc for a more interesting, albeit useless shape  
                 if (distFromCenter < 4.5 || distFromStoneShaper < 3.5 || distFromGrassShaper < 3.5) {
-                    if (distFromGrassShaper < 2.5) {
-                        tileData = new Tile(randElem(["grass","grass","grass","flowered_grass","stone"]));
-                    } else if (distFromStoneShaper < 2.5) {
-                        tileData = new Tile(randElem(["stone","stone","stone","stone","grass"]));
+                    if (distFromStoneShaper < 4.5) {
+                        tile = new Tile(randElem(["stone","stone","stone","stone","grass"]));
+                    } else if (distFromGrassShaper < 4.5) {
+                        tile = new Tile(randElem(["grass","grass","grass","flowered_grass","stone"]));
                     } else {
-                        tileData = new Tile(randElem(["stone","grass","grass","stone","grass","grass","stone","grass","grass","grass","grass","flowered_grass"]));
+                        tile = new Tile(randElem(["stone","grass","grass","stone","grass","grass","stone","grass","grass","grass","grass","flowered_grass"]));
                     }
+                    
+                    tile.position = new Point(x,y);
+
                     if (x == 0 && y == 0) {
-                        tileData.setStructure(new Structure("fire"));
-                    } else if (chance(0.2)) {  
+                        tile.setStructure(new Structure("fire"));
+                    } 
+                    if (tile.typeId == "grass" || tile.typeId == "flowered_grass") {
+                        if (distFromCenter < 3.5) {
+
+                        } else if (chance(0.4)) {  
+                            if (chance(0.02)) {
+                                tile.setStructure(new Structure("rat"));
+                            } else if (chance(0.3)) {
+                                tile.setStructure(new Structure("torchtree"));
+                                tile.inventory.addCard(new Card(randElem(["sap","wood","hearthberry"])));
+                            } else if (chance(0.7)) {
+                                tile.setStructure(new Structure("plainsTree"));
+                                tile.inventory.addCard(new Card(randElem(["sap","wood"])));
+                                tile.inventory.addCard(new Card(randElem(["sap","wood"])));
+                                tile.inventory.addCard(new Card(randElem(["sap","wood"])));
+                            }
+                        }
+                    } else {
                         if (chance(0.3)) {
-                            tileData.setStructure(new Structure("torchtree"));
-                            LightHandler.addLight(`#${x},${y}`,new LightPoint(x,y,{strength:1.5,waver:0.05,faintness:0.3}));
-                            tileData.inventory.addCard(new Card(randElem(["sap","wood","hearthberry"])));
-                        } else if (chance(0.7)) {
-                            tileData.setStructure(new Structure("plainsTree"));
-                            tileData.inventory.addCard(new Card(randElem(["sap","wood"])));
-                            tileData.inventory.addCard(new Card(randElem(["sap","wood"])));
-                            tileData.inventory.addCard(new Card(randElem(["sap","wood"])));
-                        } else {
-                            tileData.setStructure(new Structure("rock"));
-                            tileData.inventory.addCard(new Card("pebble"));
-                            tileData.inventory.addCard(new Card("pebble"));
+                            tile.setStructure(new Structure(randElem(["rock","boulder"])));
+                            tile.inventory.addCard(new Card("pebble"));
+                            tile.inventory.addCard(new Card("pebble"));
                         }
                     }
-                    this.setTile(new Point(x,y),tileData);
+                    
+                    this.setTile(new Point(x,y),tile);
+                    if (!!tile.structure) {
+                        GameEventHandler.onSpawn(tile.structure);
+                    }
                 }
             }
         }

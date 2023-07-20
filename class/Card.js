@@ -6,6 +6,7 @@ class Card {
             console.warn(`Card.constructor(): Card instanced with given type ${id}, however no such CardType with the given id exists.`)
         }
         this.stats = stats;
+        this.inventory = undefined;
     }
     get type() {
         return CardType.getById(this.id);

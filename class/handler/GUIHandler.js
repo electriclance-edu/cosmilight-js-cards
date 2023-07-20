@@ -134,15 +134,15 @@ class GUIHandler {
     }
     static displayStructureDetails(structure) {
         var type = structure.type;
-        console.log(structure);
         document.getElementById("structureTitle").innerHTML = type.getTitle();
         document.getElementById("structureDescription").innerHTML = type.lore.description;
         
         var statContainer = document.getElementById("structureStatContainer");
+        statContainer.setAttribute("data-fillAbsMax",0);
         statContainer.innerHTML = "";
 
         if (structure.hasStats()) {
-            structure.stats.forEach((stat) => {
+            Object.values(structure.stats).forEach((stat) => {
                 if (stat.type.style.visibility == "visible") {
                     statContainer.appendChild(GUIHandler.generateStatElem(stat));
                 }
@@ -150,6 +150,11 @@ class GUIHandler {
         }
     }
     static generateStatElem(stat) {
+        var statContainer = document.getElementById("structureStatContainer");
+        if (stat.max > statContainer.getAttribute("data-fillAbsMax")) {
+            statContainer.style = `--fill-abs-max:${stat.max}`;
+            statContainer.setAttribute("data-fillAbsMax",stat.max);
+        }
         var type = stat.type;
         var statStyle = `
             --fill:${stat.value};
@@ -165,6 +170,7 @@ class GUIHandler {
                     <p class="progressBar-title headerFont">${type.name.toUpperCase()}</p>
                     <div class="progressBar-fill"></div>
                 </div>
+                <p>${stat.value}/${stat.max}</p>
             </div>
         `
         var elem = parseHTML(statHTML);

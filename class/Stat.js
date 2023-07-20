@@ -10,18 +10,27 @@ class Stat {
             console.warn(`Stat.constructor(): StatType with id "${typeId}" does not exist.`);
         }
         var type = StatType.getById(typeId);
-        this.#value = selectFirstDefined(props.value,type.defaults.value,0);
-        this.#max = selectFirstDefined(props.max,type.defaults.max,100000);
-        this.#min = selectFirstDefined(props.min,type.defaults.min,0);
+        this.#value = selectFirstDefined(props.value,0);
+        this.#max = selectFirstDefined(props.max,100);
+        this.#min = selectFirstDefined(props.min,0);
     }
     get value() {
         return this.#value;
     }
+    set value(value) {
+        this.#value = value;
+    }
     get max() {
         return this.#max;
     }
+    set max(max) {
+        this.#max = max;
+    }
     get min() {
         return this.#min;
+    }
+    set min(min) {
+        this.#min = min;
     }
     get type() {
         return StatType.getById(this.typeId);
