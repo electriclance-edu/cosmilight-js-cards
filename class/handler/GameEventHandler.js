@@ -14,6 +14,20 @@ class GameEventHandler {
     static validEventArguments(...args) {
         return args.every((elem)=>!!elem);
     }
+    static onTick(invoker,time) {
+        var gameEvent = {
+            type:"onTick",
+            invoker:invoker,
+            time:time
+        };
+        
+        if (!GameEventHandler.validEventArguments(invoker)) {
+            console.warn(`Event ${gameEvent.type} attempted to trigger, however arguments are invalid.`,arguments)
+            return;
+        }
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
     static onSpawn(invoker) {
         var gameEvent = {
             type:"onSpawn",

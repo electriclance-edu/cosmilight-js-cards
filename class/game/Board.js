@@ -7,12 +7,24 @@ class Board {
     }
     getTile(point) {
         if (!Object.keys(this.tiles).includes(point.str)) {
-            console.log(`Board.getTile(${point.str}): Tile does not exist`);
+            // console.log(`Board.getTile(${point.str}): Tile does not exist`);
         }
         return this.tiles[point.str];
     }
     setTile(point,tile) {
         this.tiles[point.str] = tile;
+    }
+    isRendered(point) {
+        var tile = this.getTile(point);
+        if (!!tile) {
+            return tile.isRendered;
+        }
+    }
+    setIsRendered(point,state) {
+        var tile = this.getTile(point);
+        if (!!tile) {
+            tile.setIsRendered(state);
+        }
     }
     populateBoard() {
         //currently debug code

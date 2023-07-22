@@ -1,15 +1,38 @@
 //Represents all the data behind a game that needs to be saved.
 class Game {
+    // Objects with an "onTick" interaction.
     static #current;
     #player; 
     #world;
 
-    constructor(world, player, tickHandler) {
-        this.#world = world;
-        this.#player = player;
-        this.tickHandler = tickHandler;
-        
-        Game.#current = this;
+    constructor() {
+        Game.current = this;
+        this.onTickObjects = [];
+        this.#world = new World();
+        this.#player = new Player();
+        this.time = 0;
+
+
+        setInterval(()=>{
+            Game.#current.time++;
+            Game.onTickObjects.forEach((obj)=>{
+                GameEventHandler.onTick(obj,Game.#current.time);
+            });
+        },50);
+    }
+    static addOnTickObject(obj) {
+        if (obj.interactions.hasOwnProperty("onTick")) {
+            Game.onTickObjects.push(obj);
+        }
+    }
+    static set current(obj) {
+        Game.#current = obj;
+    }
+    static get current() {
+        return Game.#current;
+    }
+    static get onTickObjects() {
+        return Game.#current.onTickObjects;
     }
     static set world(world) {
         Game.#current.#world = world;

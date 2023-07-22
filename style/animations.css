@@ -1,9 +1,28 @@
 /*############
 ANIMATIONS
 #############*/
+@keyframes tile-fadeOut {
+  0% {
+    opacity:1;
+    translate:0 0px;
+  }
+  100% {
+    opacity:0;
+    translate:0 100px;
+  }
+}
+@keyframes tile-fadeIn {
+  0% {
+    opacity:0;
+    translate:0 100px;
+  }
+  100% {
+    opacity:1;
+    translate:0 0px;
+  }
+}
 @keyframes flash {
   0% {
-    scale:1.01;
     filter:brightness(2);
   }
   100% {

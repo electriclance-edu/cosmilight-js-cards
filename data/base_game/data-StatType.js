@@ -1,5 +1,19 @@
 DataHandler.loadData("StatType","baseCosmilight",[
     {
+        id:"interactionDistance",
+        properties:{
+            style:{
+                fillColor:"white",
+                fillColorComplement:"white",
+                visibility:"hidden"
+            },
+            lore:{
+                name:"Interaction Distance",
+                desc:"How far you can reach."
+            }
+        }
+    },
+    {
         id:"liquidStorage",
         properties:{
             style:{

@@ -5,11 +5,14 @@ class Structure {
         }
         this.typeId = typeId;
         this.initializeStats(this.type.stats);
+        if (this.type.hasOwnProperty("interactions")) {
+            Game.addOnTickObject(this);
+        }
     }
     initializeStats(statArray = []) {
         this.stats = {};
         statArray.forEach((stat) => {
-            this.stats[stat.typeId] = stat;
+            this.stats[stat.typeId] = stat.copy();
         });
     }
     hasStats() {
@@ -24,6 +27,10 @@ class Structure {
     get tile() {
         if (!!this.position) {
             return Game.currentBoard.getTile(this.position);
+        }
+
+        if (this.type.hasOwnProperty("interactions")) {
+            Game.addOnTickObject(this);
         }
     }
     get interactions() {

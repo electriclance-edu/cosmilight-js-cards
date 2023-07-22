@@ -1,7 +1,12 @@
+//Clamps the given value between a minimum and maximum value.
+function clamp(value,min,max) {
+    return Math.min(Math.max(value, min), max);
+}
 // Picks the first not undefined amongst all of its arguments. If none, returns undefined.
 function selectFirstDefined(...args) {
     for (var i = 0; i < args.length; i++) {
         let arg = args[i];
+        if (arg === 0) return arg;
         if (!!arg) return arg;
     }
     return undefined;

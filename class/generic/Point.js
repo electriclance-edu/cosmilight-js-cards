@@ -9,6 +9,9 @@ class Point {
         translated.y -= translator.y;
         return translated;
     }
+    asInt() {
+        return new Point(parseInt(this.x),parseInt(this.y));
+    }
     setX(x) {
         this.x = x;
     }

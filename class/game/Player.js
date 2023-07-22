@@ -3,6 +3,9 @@ class Player {
         this.hand = new Inventory(4,"PLAYER HAND");
         this.location = new Point(0,0);
         this.movementVelocity = 0.07;
+        this.stats = [
+            new Stat("interactionDistance",{value:1}),
+        ];
     }
     getRoundedLocation() {
         return new Point(
@@ -17,6 +20,10 @@ class Player {
         this.location = new Point(x,y);
     }
     translate(x,y) {
+        GUIHandler.updateScreenCull(new Point(
+            parseInt(this.location.x) + x, 
+            parseInt(this.location.y) + y
+        ));
         //Move by 1/10th towards the desired position
         const deltaX = x / 5;
         const deltaY = y / 5;

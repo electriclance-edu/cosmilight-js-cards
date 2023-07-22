@@ -11,12 +11,12 @@ class GUIHandler {
         GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
     }
     static renderCurrentTileBoard() {
-        var tileCoordinates = Object.keys(Game.board.tiles);
+        // var tileCoordinates = Object.keys(Game.board.tiles);
 
-        tileCoordinates.forEach((coordinate) => {
-            var coords = Point.stringToPoint(coordinate);
-            GUIHandler.renderTile(coords);
-        });
+        // tileCoordinates.forEach((coordinate) => {
+        //     var coords = Point.stringToPoint(coordinate);
+        //     GUIHandler.renderTile(coords);
+        // });
     }
     static logText(string,location = "center",persistence = 15000) {
         var elem = document.createElement("p");
@@ -56,26 +56,46 @@ class GUIHandler {
         var elem = document.getElementById(tileId);
         elem.classList.add(className);
     }
+    static unrenderTile(point) {
+        document.getElementById(`${point.x},${point.y}`).classList.add("state-invisible");
+        Game.board.setIsRendered(point,false);
+        setTimeout(()=>{
+            try {
+                if (!Game.board.getTile(point).isRendered) {
+                    document.getElementById(`${point.x},${point.y}`).remove();
+                    GUIHandler.tileElements[point.str] = false;
+                }
+            } catch (Error) {
+                //if tile doesnt exist, do nothing
+            }
+        },300);
+    }
     static renderTile(point) {
         var tileId = point.str;
 
-        //if the tile is already rendered, delete it first before rendering it
-        if (Object.keys(GUIHandler.tileElements).includes(tileId)) {
-            GUIHandler.tileElements[tileId].remove();
+        //if the tile is already rendered, aint do nothin
+        if (GUIHandler.tileElements[tileId]) {
+            return;
+        }
+
+        if (Game.board.isRendered(point)) {
+            return;
         }
 
         //create the tile
+        Game.board.setIsRendered(point,true);
         var tileData = Game.board.getTile(point);
         var elem = this.generateTileElem(tileData);
         elem.id = tileId;
         elem.draggable = false;
         elem.style = `--x:${point.x};--y:${point.y};`;
+        this.toggleElemVisibility(elem,true);
 
         if (tileData.inventory.hasItems()) {
             elem.classList.add("hasItems")
         }
 
-        GUIHandler.tileElements[tileId] = elem;
+        GUIHandler.tileElements[tileId] = true;
         GUIHandler.TileBoard.appendChild(elem);
     }
     static generateTileElem(tileData) {
@@ -144,10 +164,92 @@ class GUIHandler {
         if (structure.hasStats()) {
             Object.values(structure.stats).forEach((stat) => {
                 if (stat.type.style.visibility == "visible") {
-                    statContainer.appendChild(GUIHandler.generateStatElem(stat));
+                    let elem = GUIHandler.generateStatElem(stat);
+                    stat.renderElem = elem;
+                    statContainer.appendChild(elem);
                 }
             });
         }
+    }
+    static updateScreenCull(newPosition = Game.player.location) {
+        newPosition = newPosition.asInt();
+        //get all tiles visible on screen
+        var screenWidthInTiles = new Point(
+            Math.ceil(window.innerWidth / tileWidth / 2 - 1.5),
+            Math.ceil(window.innerHeight / tileHeight / 2 - 0.5)
+        );
+        // var screenWidthInTiles = new Point(3,3);
+
+        this.cullTileRectangle(
+            new Point(
+                parseInt(newPosition.x - screenWidthInTiles.x),
+                parseInt(newPosition.y + screenWidthInTiles.y) 
+            ),
+            new Point(
+                parseInt(newPosition.x + screenWidthInTiles.x),
+                parseInt(newPosition.y - screenWidthInTiles.y)
+            )
+        )
+    }
+    static cullTileRectangle(cornerA,cornerB) {
+        var cullCornerA = new Point(cornerA.x - 2,cornerA.y + 2);
+        var cullCornerB = new Point(cornerB.x + 2, cornerB.y - 2);
+        //hide all displayed tiles
+        Array.from(document.getElementById("TileBoard").children).forEach((elem)=>{
+            let x = elem.style.getPropertyValue("--x");
+            let y = elem.style.getPropertyValue("--y");
+            if ((x < cullCornerA.x || x > cullCornerB.x) || (y > cullCornerA.y || y < cullCornerB.y)) {
+                this.toggleTileVisibility(new Point(x,y),false);
+            }
+        });
+        //cull border of rectangle
+        // for (var x = cullCornerA.x; x <= cullCornerB.x; x++) {
+        //     [cullCornerA.y,cullCornerB.y].forEach((y)=>{
+        //         this.toggleTileVisibility(new Point(x,y),false);
+        //     });
+        // }
+        // for (var y = cullCornerA.y - 1; y >= cullCornerB.y + 1; y--) {
+        //     [cullCornerA.x,cullCornerB.x].forEach((x)=>{
+        //         this.toggleTileVisibility(new Point(x,y),false);
+        //     });
+        // }
+        //display inside of rectangle
+        for (var x = cornerA.x; x <= cornerB.x; x++) {
+            for (var y = cornerA.y; y >= cornerB.y; y--) {
+                this.toggleTileVisibility(new Point(x,y),true);
+            }
+        }
+    }
+    static toggleTileVisibility(point,state = false) {
+        try {
+            if (state) {
+                GUIHandler.renderTile(point);
+            } else {
+                GUIHandler.unrenderTile(point);
+            }
+        } catch (Error) {
+            // do nothing, most likely error occurs when tile doesnt exist or isnt rendered 
+        }
+    }
+    static toggleElemVisibility(elem,state) {
+        if (state) {
+            elem.classList.remove("state-invisible");
+            elem.style.display = "block";
+            elem.classList.add("state-visible");
+        } else {
+            elem.classList.remove("state-visible");
+            elem.classList.add("state-invisible");
+            setTimeout(()=>{
+                elem.style.display = "none";
+            },300);
+        }
+        // elem.style.visibility = state ? "visible" : "hidden";
+    }
+    static updateStatElem(value,max,elem) {
+        var parentStyle = elem.style;
+        parentStyle.setProperty("--fill",value);
+        parentStyle.setProperty("--fill-max",max);
+        elem.querySelector(".progressBar-text").innerHTML = `${Math.round(value)}/${Math.round(max)}`;
     }
     static generateStatElem(stat) {
         var statContainer = document.getElementById("structureStatContainer");
@@ -170,7 +272,7 @@ class GUIHandler {
                     <p class="progressBar-title headerFont">${type.name.toUpperCase()}</p>
                     <div class="progressBar-fill"></div>
                 </div>
-                <p>${stat.value}/${stat.max}</p>
+                <p class="progressBar-text">${Math.round(stat.value)}/${Math.round(stat.max)}</p>
             </div>
         `
         var elem = parseHTML(statHTML);

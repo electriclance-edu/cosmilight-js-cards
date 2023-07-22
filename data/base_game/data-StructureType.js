@@ -74,11 +74,23 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
             ],
             interactions:{
                 "onSpawn":(e)=>{
+                    e.invoker.getStat("integrity").value = randInt(20) + 20;
                     e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
                 },
                 "changeStat":(e)=>{
                     gameEvent.target.getStat(gameEvent.stat).increment(gameEvent.amt,true);
                     e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
+                },
+                "onTick":(tickEvent)=>{
+                    // if (tickEvent.time % 1 != 0) {
+                    //     return;
+                    // }
+                    tickEvent.invoker.getStat("health").increment(-0.05);
+                    // if (tickEvent.invoker.inventory.contains("#fuel")) {
+                    //     tickEvent.invoker.tile.changeLightLevel(0.1);
+                    // } else {
+                    //     tickEvent.invoker.tile.changeLightLevel(-0.1);
+                    // }
                 }
             }
         }
@@ -158,8 +170,8 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
         },
         structureProperties: {
             stats:[
-                new Stat("light",{value:8,max:10}),
-                new Stat("heating",{value:9,max:10}),
+                new Stat("light",{value:8,max:15}),
+                new Stat("heating",{value:5,max:30}),
             ],
             interactions:{
                 "onSpawn":(e)=>{
@@ -168,14 +180,15 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
                     LightHandler.addLight(`#${x},${y}`,new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}));
                 },
                 "onTick":(tickEvent)=>{
-                    if (!tickEvent.interval(10)) {
-                        return;
-                    }
-                    if (tickEvent.invoker.inventory.contains("#fuel")) {
-                        tickEvent.invoker.tile.changeLightLevel(0.1);
-                    } else {
-                        tickEvent.invoker.tile.changeLightLevel(-0.1);
-                    }
+                    // if (tickEvent.time % 20 != 0) {
+                    //     return;
+                    // }
+                    tickEvent.invoker.getStat("heating").increment(0.05);
+                    // if (tickEvent.invoker.inventory.contains("#fuel")) {
+                    //     tickEvent.invoker.tile.changeLightLevel(0.1);
+                    // } else {
+                    //     tickEvent.invoker.tile.changeLightLevel(-0.1);
+                    // }
                 }
             },
             amountOfSprites:1

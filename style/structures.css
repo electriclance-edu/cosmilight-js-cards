@@ -34,11 +34,15 @@ STRUCTURE SELECTORS
   display:flex;
   align-items:center;
   width:100%;
+  padding-right:80px;
+  box-sizing:border-box;
+  position:relative;
 }
-.progressBarParent > p {
-  margin-left:auto;
-  padding-left:20px;
+.progressBarParent > .progressBar-text {
   color:var(--fill-color);
+  position:absolute;
+  right:5px;
+  top:8.5px;
 }
 .progressBar {
   --calc-width:calc(var(--fill-max) / var(--fill-abs-max) * 100%);
@@ -97,6 +101,7 @@ STRUCTURE SELECTORS
   border-radius:20px;
   position:absolute;
   z-index:1;
+  transition:1s;
   top:calc(var(--overflow-padding-combat) * -1);
   left:calc(var(--overflow-padding-combat) * -1);
   height:calc(100% + var(--overflow-padding-combat) * 2);

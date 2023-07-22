@@ -3,6 +3,10 @@ class Tile {
         this.typeId = typeId;
         this.structure = undefined;
         this.inventory = new Inventory(0,"THE GROUND");
+        this.isRendered = false;
+    }
+    setIsRendered(state) {
+        this.isRendered = state;
     }
     setStructure(struct) {
         if (!StructureType.typeExists(struct.getTypeId())) {

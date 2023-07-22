@@ -21,7 +21,7 @@ function onload() {
 }
 function initialize() {
   DataHandler.loadAllData();
-  initializeGame();
+  new Game();
   retrieveCSSConstants();
   GUIHandler.initialize();
   LightHandler.initialize();
@@ -48,6 +48,7 @@ function initialize() {
     FPSHandler.updateElement();
   },200);
 
+  GUIHandler.updateScreenCull();
   GUIHandler.logText(randElem([
     "The ground crunches below your feet.",
     "A cold breeze blows past.",
@@ -62,9 +63,6 @@ function initialize() {
   // setTimeout(()=>{GUIHandler.logText("But with time... perhaps this whole world will feel the resplendence of heat once again.")},12000);
   // setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
 }
-function initializeGame() {
-  new Game(new World(), new Player());
-}
 function retrieveCSSConstants() {
   var style = getComputedStyle(document.body);
   tileWidth = parseInt(removePx(style.getPropertyValue('--tile-width')));
@@ -77,6 +75,7 @@ function toggleStructureDetailDisplay(visible = false,structure) {
     GUIHandler.StructureDetailDisplay.classList.remove("state-vanished");
   } else {    
     GUIHandler.StructureDetailDisplay.classList.add("state-vanished");
+    Array.from(document.getElementById("structureStatContainer").children).forEach((child)=>setTimeout(()=>{child.remove()},300));
 }
 }
 /*
@@ -265,6 +264,7 @@ document.addEventListener('keypress', (e) => {
 function onresize() {
   windowHeight = window.innerHeight;
   windowWidth = window.innerWidth;
+  GUIHandler.updateScreenCull;
 }
 document.addEventListener('keyup', (e)=>{
   var key = e.code;
@@ -367,7 +367,7 @@ document.addEventListener('mousedown', (e) => {
     document.addEventListener('mouseup', dragEnder, true);
   } else if (e.target.classList.contains("tile")) {
     let coords = mouseToBoardCoordinates(e);
-    if (Game.player.distanceTo(coords) > 1.5) {
+    if (Game.player.distanceTo(coords) > 0.5 + Game.player.stats.interactionDistance) {
       GUIHandler.logText("Too far!","cursor",1000);
       return;
     }

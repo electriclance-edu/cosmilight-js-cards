@@ -7,6 +7,10 @@ class Card {
         }
         this.stats = stats;
         this.inventory = undefined;
+
+        if (this.type.hasOwnProperty("interactions")) {
+            Game.addOnTickObject(this);
+        }
     }
     remove() {
         this.inventory.removeCard(this.inventoryId);

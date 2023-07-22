@@ -13,6 +13,15 @@ class Stat {
         this.#value = selectFirstDefined(props.value,0);
         this.#max = selectFirstDefined(props.max,100);
         this.#min = selectFirstDefined(props.min,0);
+
+        this.renderElem = undefined;
+    }
+    copy() {
+        return new Stat(this.typeId,{
+            value:this.value,
+            max:this.max,
+            min:this.min
+        });
     }
     get value() {
         return this.#value;
@@ -35,13 +44,13 @@ class Stat {
     get type() {
         return StatType.getById(this.typeId);
     }
-    increment(value,limited = true) {
+    increment(amt,limited = true) {
+        this.value += amt;
         if (limited) {
-            this.value = Math.clamp(this.value += amt, this.min, this.max);
-        } else {
-            this.value += amt;
+            this.value = clamp(this.value, this.min, this.max);
         }
-        var type = this.type;
-        this.value = Math.clamp(this.value,type.strictLimits.min,type.strictLimits.max);
+        if (!!this.renderElem) {
+            GUIHandler.updateStatElem(this.value,this.max,this.renderElem);
+        }
     }
 }
