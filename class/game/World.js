@@ -14,7 +14,7 @@ class World {
     constructor() {
         this.currentBoardCoords = new Point(0,0);
         this.worldBoard = {};
-        this.currentlyOpenedTileCoords = "none";
+        this.currentlyOpenedTileCoords = undefined;
 
         this.populateWorldBoard();
     }

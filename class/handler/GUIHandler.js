@@ -40,6 +40,11 @@ class GUIHandler {
             elem.classList.add("log-cursor");
             elem.style = `--log-persistence:${persistence}ms;--x:${mousePosition.x};--y:${mousePosition.y}`;
             document.getElementById("FollowCursorTextDisplay").appendChild(elem);
+        } else if (location == "player") {
+            elem.innerHTML = string;
+            elem.classList.add("log-cursor");
+            elem.style = `--log-persistence:${persistence}ms;--x:${window.innerWidth / 2};--y:${window.innerHeight / 2}`;
+            document.getElementById("FollowCursorTextDisplay").appendChild(elem);
         }
         
         setTimeout(()=>{
@@ -130,6 +135,11 @@ class GUIHandler {
             });
         },300);
     }
+    static closeAllInventories() {
+        Array.from(GUIHandler.ExternalInventoryContainer.children).forEach((child)=>{
+            GUIHandler.closeInventory(child);
+        });
+    }
     static closeInventory(elem) {
         elem.classList.add("state-vanished");
         setTimeout(()=>{
@@ -174,11 +184,11 @@ class GUIHandler {
     static updateScreenCull(newPosition = Game.player.location) {
         newPosition = newPosition.asInt();
         //get all tiles visible on screen
-        var screenWidthInTiles = new Point(
-            Math.ceil(window.innerWidth / tileWidth / 2 - 1.5),
-            Math.ceil(window.innerHeight / tileHeight / 2 - 0.5)
-        );
-        // var screenWidthInTiles = new Point(3,3);
+        // var screenWidthInTiles = new Point(
+        //     Math.ceil(window.innerWidth / tileWidth / 2 - 1.5),
+        //     Math.ceil(window.innerHeight / tileHeight / 2 - 0.5)
+        // );
+        var screenWidthInTiles = new Point(3,3);
 
         this.cullTileRectangle(
             new Point(
@@ -354,7 +364,11 @@ class GUIHandler {
 
         //split title into characters
         lore.mainTitle.split("").forEach(letter => {
-            var char = elem("div","card-title-char headerFont",letter.toUpperCase());
+            if (letter != " ") {
+                var char = elem("div","card-title-char headerFont",letter.toUpperCase());
+            } else {
+                var char = elem("div","flex-break card-title-char headerFont",letter.toUpperCase());
+            }
             cardTitle.append(char);
         });
 

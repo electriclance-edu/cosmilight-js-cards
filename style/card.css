@@ -102,6 +102,7 @@ body .card:active {
 }
 .card-title .card-title-char {
   font-size:1.6em;
+  margin-top:-4px;
   color:var(--bg);
 }
 .card.castable .card-title .card-title-char {
@@ -114,6 +115,9 @@ body .card:active {
   color: var(--color-text);
   font-size: 1em;
   max-width:1.3em;
+}
+.card-title .card-supertitle-char {
+  margin-bottom:4px;
 }
 /* .card-desc {
   position:absolute;

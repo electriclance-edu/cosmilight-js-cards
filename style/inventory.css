@@ -29,6 +29,9 @@ INVENTORY SELECTORS
   display:flex;
 }
 .PlayerHandContainer .inventoryParent {
+  transform:translate(-50%,-50%);
+}
+.PlayerHandContainer .inventoryParent:hover {
   transform:translate(-50%,-100%);
 }
 .ExternalInventoryContainer {

@@ -44,6 +44,14 @@ class Stat {
     get type() {
         return StatType.getById(this.typeId);
     }
+    setValue(val,limited = true) {
+        if (limited) {
+            this.value = clamp(val, this.min, this.max);
+        }
+        if (!!this.renderElem) {
+            GUIHandler.updateStatElem(this.value,this.max,this.renderElem);
+        }
+    }
     increment(amt,limited = true) {
         this.value += amt;
         if (limited) {

@@ -43,6 +43,7 @@ LOG SELECTORS
   display:inline-block;
   translate:calc(var(--x-shake) * 0.5px) calc(var(--y-shake) * 0.5px);
   white-space:pre;
+  will-change:transform;
 }
 .FollowCursorTextDisplay {
   position:absolute;
@@ -55,4 +56,5 @@ LOG SELECTORS
   left:calc(var(--x) * 1px);
   translate:-50% 400%;
   white-space:nowrap;
+  will-change:transform;
 }

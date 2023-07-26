@@ -19,5 +19,12 @@ DataHandler.addObjectToLoad("TileType","baseCosmilight",[
 
         ],
         amountOfSprites:3
+    },
+    {
+        id:"deep_water",
+        interaction:[
+
+        ],
+        amountOfSprites:8
     }
 ])

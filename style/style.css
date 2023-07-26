@@ -24,6 +24,7 @@ Z-INDEX LAYERS
   --bg-inventory: rgb(35, 31, 57);
   --bg-shadow: rgba(15, 0, 30, 0.6);
   --bg-shadow-red: rgba(100, 32, 56, 0.6);
+  --color-nature: #2fbb7a;
   --color-harvest: #2FD5AA;
   --color-energy: #8753c3;
   --color-energy-complement: #db4885;
@@ -36,9 +37,10 @@ Z-INDEX LAYERS
   /* --color-item: #bea0ca; */
   --color-light: #ffd864;
   --color-light-complement: rgb(255, 252, 236);
+  --color-cycle: #48286d;
+  --color-cycle-complement: #9c4c7d;
   --color-text: rgb(230,230,230);
-  --color-item: #6798c0;
-  --color-darkness: #714688;
+  --color-item: #3d5870;
   --color-dark: #69666f;
   --color-text-accent: rgb(200, 200, 200);
   --card-width: 130px; /*default calc(var(--card-height) * 0.70)*/

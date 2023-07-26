@@ -12,24 +12,25 @@ TILE SELECTORS
   filter:drop-shadow(0 20px 20px var(--bg-accent));
   transform:translate(calc(var(--x) * 1px),calc(var(--y) * 1px));
   transition:transform 0.1s;
+  will-change:transform;
 }
 .tile {
-  --margin-width:0px;
-  --tile-thickness:20px;
+  /* --tile-thickness:20px; */
   --x:0;
   --y:0;
-  width:calc(var(--tile-width) - var(--margin-width));
-  height:calc(var(--tile-height) - var(--margin-width));
+  width:150px;
+  height:150px;
+  /* width:var(--tile-width);
+  height:var(--tile-height); */
   position:absolute;
   transform:translate(calc(-50% + var(--x) * var(--tile-width)),calc(-50% - var(--y) * var(--tile-height)));
-  --color:#676271;
-  border-radius:10px;
-  box-sizing:border-box;
-  background-color:transparent;
-  box-shadow:0 calc(var(--tile-thickness)) 0 var(--shadow);
+  /* border-radius:10px; */
+  /* box-sizing:border-box; */
+  /* background-color:transparent; */
+  /* box-shadow:0 calc(var(--tile-thickness)) 0 var(--shadow); */
   z-index:calc(var(--y) * -2);
   user-select:none;
-  transition:0.1s;
+  will-change:transform;
 }
 .tile.state-visible {
   animation:0.3s forwards ease-in-out tile-fadeIn;
@@ -87,3 +88,6 @@ TILE SELECTORS
 .tile:active, .tile.selectedTile {
   animation:0.5s forwards flash, 0.3s forwards ease-in-out tile-fadeIn;
 }
+/* .tile.deep_water {
+  animation:0.5s forwards flash, 0.3s forwards ease-in-out tile-fadeIn, 10s alternate-reverse infinite bob;
+} */

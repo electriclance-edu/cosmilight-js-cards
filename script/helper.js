@@ -1,3 +1,8 @@
+//Converts a decimal coordinate into a solid tile coordinate.
+function roundCoordinate(num) {
+    let val = parseFloat(num) + 0.499;
+    return Math.floor(val);
+}
 //Clamps the given value between a minimum and maximum value.
 function clamp(value,min,max) {
     return Math.min(Math.max(value, min), max);
@@ -97,7 +102,7 @@ function randFloatNeg(max) {
     return randFloat(max) * randSign();
 }
 function randSign() {
-    return randInt(1) == 1 ? -1 : 1; 
+    return randInt(2) ? -1 : 1; 
 }
 function randFloat(max) {
      return Math.random()*max;

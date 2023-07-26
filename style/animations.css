@@ -1,6 +1,14 @@
 /*############
 ANIMATIONS
 #############*/
+/* @keyframes bob {
+  0% {
+    translate: 0 10px;
+  }
+  100% {
+    translate: 0 -10px;
+  }
+} */
 @keyframes tile-fadeOut {
   0% {
     opacity:1;

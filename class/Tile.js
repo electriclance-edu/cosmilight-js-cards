@@ -2,8 +2,18 @@ class Tile {
     constructor(typeId = "grass") {
         this.typeId = typeId;
         this.structure = undefined;
-        this.inventory = new Inventory(0,"THE GROUND");
+        this.inventory = new Inventory(0,"TILE");
         this.isRendered = false;
+        this.lightPointInformation = {
+            maxDeterminers:{
+                structure:0,
+                other:0
+            },
+            valueDeterminers:{
+                structure:0,
+                other:0,
+            },
+        }
     }
     setIsRendered(state) {
         this.isRendered = state;

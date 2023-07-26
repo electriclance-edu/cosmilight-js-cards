@@ -1,6 +1,8 @@
 class LightHandler {
+    static dark = new RGBA(0,0,0,0);
+    // static dark = new RGBA(15,0,30,0.85);
     static lightPoints = {
-        "player":new LightPoint(0,0,{strength:1.5,waver:0.12,color:new RGBA(50,100,255,0.1)}),
+        "player":new LightPoint(0,0,{strength:2.5,waver:0.05,color:new RGBA(0,0,0,0),faintness:1}),
         // "fire":new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}),
         // "#2,2":new LightPoint(2,2,{strength:1.5,waver:0.1,color:new RGBA(255,0,200,0.1)}),
         // "#-1,1":new LightPoint(-1,1,{strength:1,waver:0.05,color:new RGBA(0,0,0,0)}),
@@ -45,7 +47,7 @@ class LightHandler {
         ctx.globalCompositeOperation = "source-over";
         ctx.beginPath();
         ctx.rect(0,0,LightHandler.canvas.width,LightHandler.canvas.height);
-        ctx.fillStyle = "rgba(15,0,30,0.8)";
+        ctx.fillStyle = `rgba(${this.dark.r},${this.dark.g},${this.dark.b},${this.dark.a})`;
         ctx.fill();
     }
     static renderAllLight() {
@@ -53,15 +55,26 @@ class LightHandler {
         LightHandler.canvasSetBase();
 
         var lightPointIds = Object.keys(LightHandler.lightPoints);
+
         lightPointIds.forEach((id) => {
             let light = LightHandler.getLight(id);
             let strength = LightHandler.renderLightStrength(light);
+
+            if (strength <= 0.05) {
+                return;
+            }
+
             let square = LightHandler.renderLightPosition(light,strength);
             LightHandler.renderLightMask(light,strength,square);
         });
         lightPointIds.forEach((id) => {
             let light = LightHandler.getLight(id);
             let strength = LightHandler.renderLightStrength(light);
+
+            if (strength <= 0.05) {
+                return;
+            }
+
             let square = LightHandler.renderLightPosition(light,strength);
             LightHandler.renderLightColor(light,strength,square);
         });

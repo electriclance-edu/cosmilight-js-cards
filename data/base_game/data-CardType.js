@@ -18,10 +18,10 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
     
     // Increases the player's liquidStorage stat by 10.
     {
-        id:"flask",
+        id:"liquid_ampoule",
         lore:{
             superTitle:"liquid",
-            mainTitle:"flask",
+            mainTitle:"ampoule",
             description:"A water-tight container for anything that flows.",
         },
         colorName:"storage",
@@ -41,6 +41,24 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         colorName:"light",
         tags:["spell"]
     },
+    //Gives the player spell cards.
+    {
+        id:"old_spellbook",
+        lore:{
+            superTitle:"Old",
+            mainTitle:"Spell book",
+            description:"Who knows how long it has been gathering dust.",
+        },
+        colorName:"harvest",
+        tags:["spell"],
+        interactions:{
+            "onTick":(e)=>{
+                if (e.time % 40 == 0) {
+                    // e.invoker.inventory.addCard(new Card("breakfast"));
+                }
+            }
+        }
+    },
     //Harvests from a restricted inventory tier 1 (eg. the twigs, sap of a tree)
     {
         id:"harvest",
@@ -54,6 +72,11 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         interactions:{
             "onDrop":(e)=>{
                 e.target.harvest({rank:1});
+            },
+            "onTick":(e)=>{
+                if (e.time % 40 == 0) {
+                    // e.invoker.inventory.addCard(new Card("breakfast"));
+                }
             }
         }
     },
@@ -113,7 +136,6 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         id:"wood",
         lore:{
             mainTitle:"wood",
-            subTitle:"stick",
             description:"stick!",
         },
         colorName:"item",

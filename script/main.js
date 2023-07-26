@@ -39,14 +39,24 @@ function initialize() {
   // Game.world.openInventory(centralTileInventory);
   GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
   Game.player.hand.addCard(new Card("sap"));
-  Game.player.hand.addCard(new Card("pebble"));
+  Game.player.hand.addCard(new Card("old_spellbook"));
   
   setInterval(() => {
     FPSHandler.updateFrames();
   },16.6);
   setInterval(() => {
     FPSHandler.updateElement();
-  },200);
+  },1000);
+  setInterval(() => {
+    let mov = Game.player.movement;
+    var x = Game.player.movement.direction["+x"]*Game.player.speed - Game.player.movement.direction["-x"]*Game.player.speed;
+    var y = Game.player.movement.direction["+y"]*Game.player.speed - Game.player.movement.direction["-y"]*Game.player.speed;
+    Game.player.translate(x,y);
+
+    if (mov.excessSpeed > 0) {
+      mov.excessSpeed -= 0.04;
+    }
+  },50);
 
   GUIHandler.updateScreenCull();
   GUIHandler.logText(randElem([
@@ -175,7 +185,7 @@ function onDragEnd(e) {
   }
 }
 function getInventory(id) {
-  if (id == "THEGROUND") {
+  if (id == "TILE") {
     return Game.currentTile.inventory;
   } else if (id == "PLAYERHAND") {
     return Game.player.hand;
@@ -225,6 +235,29 @@ function mouseToBoardCoordinates(e) {
 
   return decentralizePoint(Game.player.getRoundedLocation(),new Point(x,y));
 }
+function openTile(coords) {
+  let tile = Game.board.getTile(coords);
+
+  toggleStructureDetailDisplay(false);
+  if (tile.hasStructure()) {
+    setTimeout(()=>{
+      toggleStructureDetailDisplay(true,tile.getStructure());
+    },300);
+  }
+
+  GUIHandler.displayInventories([tile.inventory]);
+
+  if (!!Game.currentTileCoords) {
+    if (Point.areEqual(coords,Game.currentTileCoords)) {
+      return;
+    }
+    if (Game.currentTileCoords != "none") {
+      GUIHandler.removeClassFromTileElem(Game.currentTileCoords,"selectedTile");
+    }
+  }
+  Game.world.currentlyOpenedTileCoords = coords;
+  GUIHandler.addClassToTileElem(coords,"selectedTile");
+}
 /*
 --------------
 DEBUG FUNCTIONS
@@ -272,6 +305,23 @@ document.addEventListener('keyup', (e)=>{
   if (key == "ShiftLeft") {
     keyShiftPressed = false;
   }
+
+  if (key == "ArrowLeft" || key == "KeyA") {
+    e.preventDefault();
+    Game.player.movement.direction["-x"] = 0;
+  } 
+  if (key == "ArrowUp" || key == "KeyW") {
+    e.preventDefault();
+    Game.player.movement.direction["+y"] = 0;
+  } 
+  if (key == "ArrowRight" || key == "KeyD") {
+    e.preventDefault();
+    Game.player.movement.direction["+x"] = 0;
+  } 
+  if (key == "ArrowDown" || key == "KeyS") {
+    e.preventDefault();
+    Game.player.movement.direction["-y"] = 0;
+  }
 });
 document.addEventListener('keydown', function(e) {
   if (e.repeat) {
@@ -281,36 +331,30 @@ document.addEventListener('keydown', function(e) {
 
   if (key == "ShiftLeft") {
     keyShiftPressed = true;
+    if (Game.player.moving) {
+      Game.player.dash();
+    }
   }
 
-  var movement = {
-    "+y":0,
-    "-y":0,
-    "-x":0,
-    "+x":0
+  if (key == "Space") {
+    console.log(Game.player.location,Game.player.getRoundedLocation());
+    openTile(Game.player.getRoundedLocation());
   }
-
-  let attemptMovement = false;
   if (key == "ArrowLeft" || key == "KeyA") {
-    attemptMovement = true;
-    movement["-x"] = 1;
-  } else if (key == "ArrowUp" || key == "KeyW") {
-    attemptMovement = true;
-    movement["+y"] = 1;
-  } else if (key == "ArrowRight" || key == "KeyD") {
-    attemptMovement = true;
-    movement["+x"] = 1;
-  } else if (key == "ArrowDown" || key == "KeyS") {
-    attemptMovement = true;
-    movement["-y"] = 1;
-  }
-
-  if (attemptMovement) {
     e.preventDefault();
-    let player = Game.player;
-    var x = movement["+x"] - movement["-x"];
-    var y = movement["+y"] - movement["-y"];
-    player.translate(x,y);
+    Game.player.movement.direction["-x"] = 1;
+  } 
+  if (key == "ArrowUp" || key == "KeyW") {
+    e.preventDefault();
+    Game.player.movement.direction["+y"] = 1;
+  } 
+  if (key == "ArrowRight" || key == "KeyD") {
+    e.preventDefault();
+    Game.player.movement.direction["+x"] = 1;
+  } 
+  if (key == "ArrowDown" || key == "KeyS") {
+    e.preventDefault();
+    Game.player.movement.direction["-y"] = 1;
   }
 });
 window.addEventListener("resize", (e) => {
@@ -328,7 +372,7 @@ document.addEventListener('mousedown', (e) => {
     if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
       var inventoryId = e.target.getAttribute("data-inventoryId");
       
-      let currentlyOpenedInv = getInventory("THEGROUND");
+      let currentlyOpenedInv = getInventory("TILE");
       if (!currentlyOpenedInv) {
         return;
       } else if (!currentlyOpenedInv.isRendered) {
@@ -341,7 +385,7 @@ document.addEventListener('mousedown', (e) => {
       if (inventoryType == "PLAYERHAND") {
         verb = "place";
         originInventory = getInventory("PLAYERHAND");
-        targetInventory = getInventory("THEGROUND");
+        targetInventory = getInventory("TILE");
       } else {
         verb = "take";
         originInventory = getInventory(inventoryType);
@@ -367,39 +411,11 @@ document.addEventListener('mousedown', (e) => {
     document.addEventListener('mouseup', dragEnder, true);
   } else if (e.target.classList.contains("tile")) {
     let coords = mouseToBoardCoordinates(e);
-    if (Game.player.distanceTo(coords) > 0.5 + Game.player.stats.interactionDistance) {
+    if (Game.player.distanceTo(coords) > 0.5 + Game.player.getStat("interactionDistance").value) {
       GUIHandler.logText("Too far!","cursor",1000);
       return;
     }
 
-    let tile = Game.board.getTile(coords);
-
-    // Commented code was for handling positioning of StructureDetailDisplay to beside the structure tile that has just been opened
-    toggleStructureDetailDisplay(false);
-    if (tile.hasStructure()) {
-      // var screenCoords = Point.translate(coords,Game.player.getRoundedLocation());
-      // screenCoords = boardToMouseCoordinates(screenCoords.x,screenCoords.y);
-      setTimeout(()=>{
-        toggleStructureDetailDisplay(true,tile.getStructure());
-        // GUIHandler.StructureDetailDisplay.style = `
-        //   --x:${screenCoords.x};
-        //   --y:${screenCoords.y};
-        // `;
-      },300);
-    }
-
-    GUIHandler.displayInventories([tile.inventory]);
-
-    if (Point.areEqual(coords,Game.world.currentlyOpenedTileCoords)) {
-      return;
-    }
-
-    let currentCoords = Game.world.currentlyOpenedTileCoords;
-    if (currentCoords != "none") {
-      GUIHandler.removeClassFromTileElem(currentCoords,"selectedTile");
-    }
-
-    Game.world.currentlyOpenedTileCoords = coords;
-    GUIHandler.addClassToTileElem(coords,"selectedTile");
+    openTile(coords);
   }
 });

@@ -14,6 +14,32 @@ DataHandler.loadData("StatType","baseCosmilight",[
         }
     },
     {
+        id:"cycle",
+        properties:{
+            style:{
+                fillColor:"var(--color-cycle)",
+                fillColorComplement:"var(--color-cycle-complement)"
+            },
+            lore:{
+                name:"Cycle",
+                desc:"One of the few remaining blessings of the warden of time."
+            }
+        }
+    },
+    {
+        id:"sap",
+        properties:{
+            style:{
+                fillColor:"var(--color-nature)",
+                fillColorComplement:"var(--color-nature)"
+            },
+            lore:{
+                name:"Sap",
+                desc:"The blood of plants."
+            }
+        }
+    },
+    {
         id:"liquidStorage",
         properties:{
             style:{

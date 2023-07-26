@@ -14,6 +14,7 @@ class FPSHandler {
         this.lastLoop = this.thisLoop;
     }
     static updateElement() {
-        this.elem.innerHTML = `FPS: ${(1000/this.frameTime).toFixed(1)}`;
+        console.log(`FPS: ${(1000/this.frameTime).toFixed(1)}`);
+        // this.elem.innerHTML = `FPS: ${(1000/this.frameTime).toFixed(1)}`;
     }
 }
