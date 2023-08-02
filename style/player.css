@@ -1,3 +1,46 @@
 /*##############
 PLAYER SELECTORS
 ##############*/
+
+.playerStatDisplay {
+    --fill-abs-max:1;
+    position:absolute;
+    left:10px;
+    bottom:10px;
+    z-index:15000;
+    width:400px;
+}
+.playerStatDisplay .progressBar {
+    transition:0.3s;
+}
+.PlayerHandContainer .inventory-bg {
+  --rotation:0deg;
+  top:-20px;
+  padding-top:20px;
+  padding-bottom:10px;
+}
+.PlayerHand * {
+  pointer-events:all;
+}
+.PlayerHandContainer {
+  position:absolute;
+  left:50%; 
+  transform:translatex(-50%);
+  z-index:14000;
+  bottom:10px;
+  padding-top:0px;
+  z-index:14000;
+  display:flex;
+}
+.PlayerHandContainer .inventoryParent {
+  transform:translate(-50%,-50%);
+}
+.PlayerHandContainer .inventoryParent:hover {
+  transform:translate(-50%,-100%);
+}
+.PlayerHandContainer .inventoryTitle {
+  display:none;
+}
+.PlayerHandContainer .card.state-new {
+    animation:0.5s forwards flash, 3s forwards glow;
+}

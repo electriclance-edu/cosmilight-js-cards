@@ -1,3 +1,7 @@
+/*
+STATS THAT COULD EXIST
+Consumption - for biological things?
+*/
 DataHandler.loadData("StatType","baseCosmilight",[
     {
         id:"interactionDistance",
@@ -14,15 +18,58 @@ DataHandler.loadData("StatType","baseCosmilight",[
         }
     },
     {
+        id:"cycleSpeed",
+        properties:{
+            style:{
+                fillColor:"var(--color-cycle-cycle-complement)",
+                fillColorComplement:"var(--color-cycle)",
+                visibility:"hidden"
+            },
+            lore:{
+                name:"Cycle Speed",
+                desc:"Attunement to one's time."
+            }
+        }
+    },
+    {
+        id:"upkeep",
+        properties:{
+            style:{
+                fillColor:"white",
+                fillColorComplement:"white",
+                // visibility:"hidden"
+            },
+            lore:{
+                name:"Upkeep",
+                desc:"Liam is so upkeep"
+            }
+        }
+    },
+    {
+        id:"lore",
+        properties:{
+            style:{
+                fillColor:"white",
+                fillColorComplement:"white",
+                // visibility:"hidden"
+            },
+            lore:{
+                name:"Lore",
+                desc:"Innate knowledge stored within."
+            }
+        }
+    },
+    {
         id:"cycle",
         properties:{
             style:{
                 fillColor:"var(--color-cycle)",
-                fillColorComplement:"var(--color-cycle-complement)"
+                fillColorComplement:"var(--color-cycle-complement)",
+                visibility:"hidden"
             },
             lore:{
                 name:"Cycle",
-                desc:"One of the few remaining blessings of the warden of time."
+                desc:"One of the few remaining blessings of the custodian of time."
             }
         }
     },
@@ -31,7 +78,8 @@ DataHandler.loadData("StatType","baseCosmilight",[
         properties:{
             style:{
                 fillColor:"var(--color-nature)",
-                fillColorComplement:"var(--color-nature)"
+                fillColorComplement:"var(--color-nature)",
+                visibility:"hidden"
             },
             lore:{
                 name:"Sap",
@@ -139,6 +187,20 @@ DataHandler.loadData("StatType","baseCosmilight",[
             lore:{
                 name:"heat",
                 desc:"Motion, condensed."
+            }
+        }
+    },
+    {
+        id:"mana",
+        properties:{
+            style:{
+                fillColor:"var(--color-energy)",
+                fillColorComplement:"var(--color-energy-complement)",
+                fillColorAccent:"var(--bg-main)"
+            },
+            lore:{
+                name:"Mana",
+                desc:"The energy that pervades this new world."
             }
         }
     },

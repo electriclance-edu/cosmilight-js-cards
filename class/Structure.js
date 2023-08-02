@@ -4,10 +4,10 @@ class Structure {
             console.warn(`Structure.constructor(): StructureType with id "${typeId}" does not exist.`);
         }
         this.typeId = typeId;
-        this.initializeStats(this.type.stats);
         if (this.type.hasOwnProperty("interactions")) {
             Game.addOnTickObject(this);
         }
+        this.initializeStats(this.type.stats);
     }
     initializeStats(statArray = []) {
         this.stats = {};

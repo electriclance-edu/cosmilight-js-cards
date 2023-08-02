@@ -43,13 +43,18 @@ class Board {
                 let distFromGrassShaper = dist(new Point(x, y), shaperPointB);
                 // Points can generate if they are any of the following distances from two points
                 // Shaper point exists to add another disc on top of the central disc for a more interesting, albeit useless shape  
-                if (distFromCenter < 3.5 || distFromStoneShaper < 2.5 || distFromGrassShaper < 2.5) {
+                if (distFromCenter < 7.5 || distFromStoneShaper < 2.5 || distFromGrassShaper < 2.5) {
                     if (distFromStoneShaper < 3.5) {
-                        tile = new Tile(randElem(["deep_water","stone","stone","stone","grass"]));
+                        if (distFromStoneShaper < 2.9) {
+                            tile = new Tile(randElem(["stone","soil","soil","soil"]));
+                        } else {
+                            tile = new Tile("soil");
+
+                        }
                     } else if (distFromGrassShaper < 3.5) {
-                        tile = new Tile(randElem(["grass","grass","grass","flowered_grass","stone"]));
+                        tile = new Tile(randElem(["grass","grass","grass","flowered_grass"]));
                     } else {
-                        tile = new Tile(randElem(["stone","grass","grass","stone","grass","grass","stone","grass","grass","grass","grass","flowered_grass"]));
+                        tile = new Tile("grass");
                     }
                     
                     tile.position = new Point(x,y);
@@ -62,11 +67,8 @@ class Board {
                             if (distFromCenter < 3.5) {
     
                             } else if (chance(0.4)) {  
-                                if (chance(0.02)) {
+                                if (chance(0.005)) {
                                     tile.setStructure(new Structure("rat"));
-                                } else if (chance(0.3)) {
-                                    tile.setStructure(new Structure("torchtree"));
-                                    tile.inventory.addCard(new Card(randElem(["sap","wood","hearthberry"])));
                                 } else if (chance(0.7)) {
                                     tile.setStructure(new Structure("plainsTree"));
                                     tile.inventory.addCard(new Card(randElem(["sap","wood"])));
@@ -76,9 +78,10 @@ class Board {
                             }
                         } else {
                             if (chance(0.3)) {
-                                tile.setStructure(new Structure(randElem(["rock","boulder"])));
+                                tile.setStructure(new Structure(randElem(["boulder","clay","clay","clay","clay","clay"])));
                                 tile.inventory.addCard(new Card("pebble"));
-                                tile.inventory.addCard(new Card("pebble"));
+                            } else if (chance(0.3)) {
+                                tile.setStructure(new Structure("taproot"));
                             }
                         }
                     }

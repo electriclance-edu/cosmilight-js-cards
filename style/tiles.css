@@ -30,7 +30,6 @@ TILE SELECTORS
   /* box-shadow:0 calc(var(--tile-thickness)) 0 var(--shadow); */
   z-index:calc(var(--y) * -2);
   user-select:none;
-  will-change:transform;
 }
 .tile.state-visible {
   animation:0.3s forwards ease-in-out tile-fadeIn;
@@ -87,6 +86,9 @@ TILE SELECTORS
 }
 .tile:active, .tile.selectedTile {
   animation:0.5s forwards flash, 0.3s forwards ease-in-out tile-fadeIn;
+}
+.tile.selectedTile .structureSprite {
+  animation:0.5s forwards flash;
 }
 /* .tile.deep_water {
   animation:0.5s forwards flash, 0.3s forwards ease-in-out tile-fadeIn, 10s alternate-reverse infinite bob;

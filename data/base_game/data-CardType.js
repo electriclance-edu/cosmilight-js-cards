@@ -30,33 +30,191 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             new Stat("liquidStorage",{value:10})
         ]
     },
-    //Dummy
+    // Consumes mana to damage a target.
     {
-        id:"blink",
+        id:"condense_light",
         lore:{
-            mainTitle:"blink",
-            subTitle:"fire",
-            description:"its so joever.",
+            superTitle:"condense",
+            mainTitle:"light",
+            description:"A piece of the eminent moon's command.",
+            technical_description:"Consumes some light to create mana."
         },
-        colorName:"light",
-        tags:["spell"]
+        colorName:"harvest",
+        tags:["spell","orb_consumable"],
+        interactions:{
+            "onDrop":(e)=>{
+                GUIHandler.logText("Light condensed into mana.","cursor",1000);
+                Game.player.getStat("mana").increment(5);
+                e.invoker.remove();
+            },
+        }
+    },
+    // Consumes mana to damage a target with fire   .
+    {
+        id:"blaze_orb",
+        lore:{
+            mainTitle:"blaze",
+            subTitle:"orb",
+            description:"A piece of the radiant sun descends.",
+            technical_description:"Releases the energy stored within you to create a damaging, firey orb."
+        },
+        colorName:"harvest",
+        tags:["spell","orb_consumable"]
+    },
+    // Consumes mana to damage a target with fire   .
+    {
+        id:"waterburst",
+        lore:{
+            superTitle:"water",
+            mainTitle:"burst",
+            description:"Water holds energy dangerous and powerful.",
+            technical_description:"Releases the energy stored within water to create a strong blast."
+        },
+        colorName:"harvest",
+        tags:["spell","orb_consumable"]
+    },
+    // Basic Research
+    {
+        id:"research_theorycrafting",
+        lore:{
+            mainTitle:"Theory",
+            subTitle:"Crafting",
+            description:"The bedrock of scientific understanding.",
+            technical_description:"Affects the <b>Research Table</b>, increasing the yield and complexity of the research process."
+        },
+        cost:{
+            "stat-water":10,
+            "card-fiber":10
+        },
+        colorName:"researchStructure",
+        tags:["research"],
+        interactions:{
+            "onSelect":(e)=>{
+                console.log("Theorycrafting!",e.target);
+            }
+        }
+    },
+    {
+        id:"research_threadmaking",
+        lore:{
+            mainTitle:"Thread",
+            subTitle:"Making",
+            description:"A versatile, tough material.",
+            technical_description:"Unlocks <b>Thread</b>, used for crafting items that increase stat maximums."
+        },
+        cost:{
+            "stat-water":10,
+            "card-fiber":10
+        },
+        colorName:"researchGeneral",
+        tags:["research"],
+        interactions:{
+            "onSelect":(e)=>{
+                console.log("Threadmaking!",e.target)
+            }
+        }
+    },
+    {
+        id:"research_carvedspells",
+        lore:{
+            mainTitle:"Carved",
+            subTitle:"Spells",
+            description:"Robust spells etched into ceramic.",
+            technical_description:"Unlocks <b>Carved Spells</b>, stronger spells created at a Carving Station."
+        },
+        cost:{
+            "stat-water":10,
+            "card-fiber":10
+        },
+        colorName:"researchSpell",
+        tags:["research"],
+        interactions:{
+            "onSelect":(e)=>{
+                console.log("Carved spells!",e.target)
+            }
+        }
+    },
+    {
+        id:"research_ignition",
+        lore:{
+            mainTitle:"Ignition",
+            description:"The foundation of the old world.",
+            technical_description:"Unlocks the <b>Woodfire</b>. Opens up research into methods for manipulating Heat."
+        },
+        cost:{
+            "stat-water":10,
+            "card-fiber":10
+        },
+        colorName:"researchStructure",
+        tags:["research"],
+        interactions:{
+            "onSelect":(e)=>{
+                console.log("Ignition!",e.target)
+            }
+        }
+    },
+    // Basic Research Item
+    {
+        id:"trinket_1",
+        lore:{
+            superTitle:"Strange",
+            mainTitle:"Trinket",
+            description:"Who knows how long this has been gathering dust.",
+        },
+        colorName:"researchItem",
+        tags:["item","researchable"],
+        stats:[
+            new Stat("lore",{value:30})
+        ],
+        interactions:{}
     },
     //Gives the player spell cards.
     {
-        id:"old_spellbook",
+        id:"old_orb",
         lore:{
             superTitle:"Old",
-            mainTitle:"Spell book",
-            description:"Who knows how long it has been gathering dust.",
+            mainTitle:"Orb",
+            description:"It glitters like a star fallen from the heavens.",
+            technical_description:"When touched (<span class='input'>clicked</span>), produces a basic spell."
         },
-        colorName:"harvest",
-        tags:["spell"],
+        colorName:"activeItem",
+        tags:["instrument"],
+        stats:[
+            new Stat("cycle",{value:0,max:10}),
+            new Stat("upkeep",{value:1})
+        ],
         interactions:{
-            "onTick":(e)=>{
-                if (e.time % 40 == 0) {
-                    // e.invoker.inventory.addCard(new Card("breakfast"));
+            "onClick":(e)=>{
+                if (!Game.player.getStat("water").consume(e.invoker.getStat("upkeep").value)) {
+                    GUIHandler.logText("Not enough water.","cursor",1000);
+                    return;
                 }
-            }
+                var cycle = e.invoker.getStat("cycle");
+
+                if (cycle.value == 10) {
+                    Game.player.hand.addCard(new Card("blaze_orb"));
+                } else {
+                    if (chance(0.5)) {
+                        Game.player.hand.addCard(new Card("waterburst"));
+                    } else {
+                        Game.player.hand.addCard(new Card("condense_light"));
+                    }
+                }
+                GUIHandler.logText("Spell manifested.","cursor",1000);
+
+                cycle.cyclicIncrement(1);
+            },
+            "onDrop":(e)=>{
+                // if target is researchitem, yield ideas
+                if (e.target.type.hasTag("researchable")) {
+                    console.log("hell yeah!");
+                } else if (e.target.type.hasTag("orb_consumable")) {
+                    e.target.remove();
+                    Game.player.getStat("water").increment(parseFloat(e.invoker.getStat("upkeep").value) * 0.5);
+                }
+            },
+            // "onTick":(e)=>{
+            // }
         }
     },
     //Harvests from a restricted inventory tier 1 (eg. the twigs, sap of a tree)

@@ -12,7 +12,7 @@ class CardType {
         this.colorName = properties.colorName;
         this.tags = properties.tags;
         this.interactions = mergeObjects(properties.interactions,GameEventHandler.defaultInteractions);
-
+        this.stats = properties.stats;
         this.lore = properties.lore;
     }
     getTitle() {

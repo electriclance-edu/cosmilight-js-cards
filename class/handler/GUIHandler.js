@@ -1,14 +1,18 @@
 class GUIHandler {
     static tileElements = {};
     static TileBoard;
-    static PlayerHandContainer;
-    static GroundInventoryElem;
     
     static initialize() {
         GUIHandler.TileBoard = document.getElementById("TileBoard");
         GUIHandler.PlayerHandContainer = document.getElementById("PlayerHandContainer");
+        GUIHandler.PlayerStatContainer = document.getElementById("PlayerStatContainer");
         GUIHandler.ExternalInventoryContainer = document.getElementById("ExternalInventoryContainer");
         GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
+        GUIHandler.DarkOverlay = document.getElementById("DarkOverlay");
+        GUIHandler.DarkOverlayBg = document.getElementById("darkOverlay-bg");
+        GUIHandler.SelectionCardContainer = document.getElementById("cardSelection-cardContainer");
+        GUIHandler.SelectionDesc = document.getElementById("cardSelection-desc");
+        GUIHandler.SelectionTitle = document.getElementById("cardSelection-title");
     }
     static renderCurrentTileBoard() {
         // var tileCoordinates = Object.keys(Game.board.tiles);
@@ -106,7 +110,7 @@ class GUIHandler {
     static generateTileElem(tileData) {
         var tileHTML = `
             <div class="tile ${tileData.typeId}">
-                ${tileData.hasStructure() ? `<img class="structureSprite ${randElem(["flipped",""])}" src="resources/img/structure/${tileData.getStructure().typeId}.png" style="--rand-x-offset:${randInt(10)}px; --rand-y-offset:${randInt(10)}px;"/>` : ""}
+                ${tileData.hasStructure() ? `<img class="structureSprite ${randElem(["flipped",""])}" src="resources/img/structure/${tileData.getStructure().typeId}${tileData.getStructure().type.amountOfSprites > 1 ? `/${randInt(tileData.getStructure().type.amountOfSprites)}` : ""}.png" style="--rand-x-offset:${randInt(10)}px; --rand-y-offset:${randInt(10)}px;"/>` : ""}
                 <img class="tileSprite ${randElem(["flipped",""])}" style="--rand-x-offset:${randInt(7)}px; --rand-y-offset:${randInt(5)}px; filter:hue-rotate(${randInt(30) - 20}deg) brightness(${randFloat(0.1) + 0.9})" src="resources/img/tiles/${tileData.typeId}/${randInt(tileData.getType().amountOfSprites)}.png"/>
             </div>
         `;
@@ -158,7 +162,7 @@ class GUIHandler {
         var fragment = parseHTMLDocumentFragment(inventoryHTML);
         var cardParent = fragment.querySelector("#inventoryCards");
         cardParent.id = "";
-        GUIHandler.placeInventoryCardElem(inventory,cardParent);
+        GUIHandler.placeInventoryCardElements(inventory,cardParent);
 
         return fragment.firstElementChild;
     }
@@ -172,14 +176,17 @@ class GUIHandler {
         statContainer.innerHTML = "";
 
         if (structure.hasStats()) {
-            Object.values(structure.stats).forEach((stat) => {
-                if (stat.type.style.visibility == "visible") {
-                    let elem = GUIHandler.generateStatElem(stat);
-                    stat.renderElem = elem;
-                    statContainer.appendChild(elem);
-                }
-            });
+            GUIHandler.displayStats(structure.stats,statContainer);
         }
+    }
+    static displayStats(stats,container) {
+        Object.values(stats).forEach((stat) => {
+            if (stat.type.style.visibility == "visible") {
+                let elem = GUIHandler.generateStatElem(stat,container);
+                stat.renderElem = elem;
+                container.appendChild(elem);
+            }
+        });
     }
     static updateScreenCull(newPosition = Game.player.location) {
         newPosition = newPosition.asInt();
@@ -241,10 +248,10 @@ class GUIHandler {
             // do nothing, most likely error occurs when tile doesnt exist or isnt rendered 
         }
     }
-    static toggleElemVisibility(elem,state) {
+    static toggleElemVisibility(elem,state,display = "block") {
         if (state) {
             elem.classList.remove("state-invisible");
-            elem.style.display = "block";
+            elem.style.display = display;
             elem.classList.add("state-visible");
         } else {
             elem.classList.remove("state-visible");
@@ -261,11 +268,10 @@ class GUIHandler {
         parentStyle.setProperty("--fill-max",max);
         elem.querySelector(".progressBar-text").innerHTML = `${Math.round(value)}/${Math.round(max)}`;
     }
-    static generateStatElem(stat) {
-        var statContainer = document.getElementById("structureStatContainer");
-        if (stat.max > statContainer.getAttribute("data-fillAbsMax")) {
-            statContainer.style = `--fill-abs-max:${stat.max}`;
-            statContainer.setAttribute("data-fillAbsMax",stat.max);
+    static generateStatElem(stat,container) {
+        if (stat.max > container.getAttribute("data-fillAbsMax")) {
+            container.style = `--fill-abs-max:${stat.max}`;
+            container.setAttribute("data-fillAbsMax",stat.max);
         }
         var type = stat.type;
         var statStyle = `
@@ -294,11 +300,14 @@ class GUIHandler {
         }
         var cardParent = document.getElementById(inventory.localId).querySelector(".inventory");
         cardParent.innerHTML = "";
-        GUIHandler.placeInventoryCardElem(inventory,cardParent);
+        GUIHandler.placeInventoryCardElements(inventory,cardParent);
     }
-    static placeInventoryCardElem(inventory,parent) {
+    static placeInventoryCardElements(inventory,parent) {
         Object.entries(inventory.cards).forEach(([inventoryId, card]) => {
             var cardElem = GUIHandler.generateRawCardElement(CardType.getById(card.id));
+            if (inventory.isNew(card)) {
+                cardElem.classList.add("state-new");
+            }
             cardElem.setAttribute("data-inventoryid",inventoryId);
             parent.appendChild(cardElem);
         });
@@ -313,6 +322,8 @@ class GUIHandler {
         let type;
         if (cardType.hasTag("spell")) {
             type = "spell";
+        } else if (cardType.hasTag("instrument")) {
+            type = "instrument";
         } else if (cardType.hasTag("item")) {
             type = "item";
         }
@@ -383,5 +394,65 @@ class GUIHandler {
         }
         
         return cardTitle;
+    }
+    static minimizeDOM() {
+        document.getElementById("Screen-Start").remove();
+        document.getElementById("Screen-Credits").remove();
+    }
+    static displaySelection(cards,lore) {
+        GUIHandler.SelectionCardContainer.innerHTML = "";
+        Game.player.paralyze();
+        GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,true,"flex");
+        GUIHandler.DarkOverlayBg.onclick = () => {
+            Game.player.unparalyze();
+            GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
+        };
+        GUIHandler.DarkOverlay.classList.add("state-onclickVanishable");
+
+        GUIHandler.SelectionTitle.innerHTML = lore.title;
+        GUIHandler.SelectionDesc.innerHTML = lore.description;
+        let index = 0;
+        cards.forEach((card)=>{
+            let element = GUIHandler.generateRawCardElement(card.type);
+            element.classList.add("undraggable");
+            element.classList.add("starCard");
+            element.querySelector(".card-bg").style.backgroundPosition = `${randInt(100)}% ${randInt(100)}%`;
+            element.setAttribute("data-index",index++);
+            element.appendChild(elem("div","card-desc",card.type.lore.technical_description));
+            element.addEventListener("click",(e)=>{
+                GameEventHandler.onSelect(cards[e.target.getAttribute('data-index')]);
+            });
+            GUIHandler.SelectionCardContainer.appendChild(element);
+            if (index < cards.length) {
+                let spacer = elem("div","spacer");
+                GUIHandler.SelectionCardContainer.appendChild(spacer);
+            }
+        });
+    }
+    static renderCredits() {
+        let meCard = new Card("credits_lanceLibatique");
+        let me = GUIHandler.generateRawCardElement(meCard.type);
+        me.classList.add("undraggable");
+        me.classList.add("starCard");
+        me.querySelector(".card-bg").style.backgroundPosition = `${randInt(100)}% ${randInt(100)}%`;
+        me.appendChild(elem("div","card-desc",meCard.type.lore.description));
+        document.getElementById("credits-me").appendChild(me);
+        [
+            new Card("credits_bea"),
+            new Card("credits_migs"),
+            new Card("credits_paolo"),
+            new Card("credits_lanceChiu"),
+            new Card("credits_leandro"),
+        ].forEach((card)=>{
+            let element = GUIHandler.generateRawCardElement(card.type);
+            element.classList.add("undraggable");
+            element.classList.add("starCard");
+            element.querySelector(".card-bg").style.backgroundPosition = `${randInt(100)}% ${randInt(100)}%`;
+            element.appendChild(elem("div","card-desc",card.type.lore.description));
+            document.getElementById("credits-friends").appendChild(element);
+        });
+    }
+    static giveHoverDescription(elem,desc) {
+        console.log("TODO: make me");
     }
 }

@@ -44,6 +44,15 @@ class Stat {
     get type() {
         return StatType.getById(this.typeId);
     }
+    consume(amt, limited = true) {
+        let newValue = this.value - amt;
+        if (newValue < 0) {
+            return false;
+        } else {
+            this.setValue(newValue);
+            return true;
+        }
+    }
     setValue(val,limited = true) {
         if (limited) {
             this.value = clamp(val, this.min, this.max);
@@ -51,6 +60,11 @@ class Stat {
         if (!!this.renderElem) {
             GUIHandler.updateStatElem(this.value,this.max,this.renderElem);
         }
+    }
+    cyclicIncrement(amt) {
+        this.increment(1,false);
+        let newValue = (this.value > this.max) ? 1 : this.value;
+        this.setValue(newValue);
     }
     increment(amt,limited = true) {
         this.value += amt;

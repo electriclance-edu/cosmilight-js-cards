@@ -1,10 +1,6 @@
 /*--------------
 GLOBALS
 --------------*/
-var magicCircleActivated = false;
-var currentRune = 0;
-const magicCircle = getElem("magicCircle");
-const magicCircleRunes = getElem("magicCircle-runeParent");
 var tileWidth = undefined;
 var tileHeight = undefined;
 var defaultPersistence = undefined;
@@ -20,6 +16,7 @@ function onload() {
   setTimeout(() => {initialize()},0);
 }
 function initialize() {
+  toggleScreen("Start");
   DataHandler.loadAllData();
   new Game();
   retrieveCSSConstants();
@@ -27,19 +24,32 @@ function initialize() {
   LightHandler.initialize();
   FPSHandler.initialize();
 
+  GUIHandler.renderCredits();
   GUIHandler.renderCurrentTileBoard();
 
-  var centralTileInventory = Game.board.getTile(new Point(0,0)).inventory;
-  centralTileInventory.addCard(new Card("harvest"));
-  centralTileInventory.addCard(new Card("harvest"));
-  centralTileInventory.addCard(new Card("release_heat"));
-  centralTileInventory.addCard(new Card("release_heat"));
-  centralTileInventory.addCard(new Card("release_heat"));
-  GUIHandler.renderTile(new Point(0,0));
+  // var centralTileInventory = Game.board.getTile(new Point(0,0)).inventory;
+  // centralTileInventory.addCard(new Card("harvest"));
+  // centralTileInventory.addCard(new Card("harvest"));
+  // centralTileInventory.addCard(new Card("release_heat"));
+  // centralTileInventory.addCard(new Card("release_heat"));
+  // centralTileInventory.addCard(new Card("release_heat"));
+  // GUIHandler.renderTile(new Point(0,0));
   // Game.world.openInventory(centralTileInventory);
   GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
-  Game.player.hand.addCard(new Card("sap"));
-  Game.player.hand.addCard(new Card("old_spellbook"));
+  Game.player.hand.addCard(new Card("old_orb"));
+  GUIHandler.displayStats(Object.values(Game.player.stats),GUIHandler.PlayerStatContainer);
+
+  setTimeout(()=>{
+    GUIHandler.displaySelection([
+      new Card("research_theorycrafting"),
+      new Card("research_threadmaking"),
+      new Card("research_carvedspells"),
+      new Card("research_ignition"),
+    ],{
+      title:"Select a research.",
+      description:"Break open paths to new knowledge."
+    });
+  },3000);
   
   setInterval(() => {
     FPSHandler.updateFrames();
@@ -66,6 +76,7 @@ function initialize() {
     "The dim starlight is all that lets you see beyond.",
     "An ancient world awaits.",
     "The darkness threatens to encroach.",
+    "Your toes curl in quaking anticipation.",
   ]))
   // GUIHandler.logText("Feel the ground here.");
   // setTimeout(()=>{GUIHandler.logText("It is hard. Cold. Ancient.")},3000);
@@ -109,6 +120,15 @@ function setUniqueState(element, state = "none") {
     }
   });
   element.classList.add(`state-${state}`);
+}
+function toggleScreen(id) {
+  Array.from(document.getElementById("ScreenContainer").children).forEach((child)=>{
+    if (child.id == "Screen-" + id) {
+      child.classList.remove("hidden");
+    } else {
+      child.classList.add("hidden");
+    }
+  });
 }
 /*
 --------------
@@ -166,22 +186,27 @@ function onDragEnd(e) {
     dropIntoInventory(target.parentElement);
   } else if (target.classList.contains("tile")) {
     // If targeting tile:
-    var data = Game.board.getTile(coords);
-    console.log("targeting tile with data",data);
+    // Invoker: card
+    // Target : tile
+    var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
+    var invoker = originInventory.getCard(dragInvokerElement.getAttribute("data-inventoryId"));
+    var tile = Game.board.getTile(coords);
+    GameEventHandler.onDrop(invoker,tile);
   } else if (target.classList.contains("card")) {
+    // If targeting card:
+    
+    var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
+    var invoker = originInventory.getCard(dragInvokerElement.getAttribute("data-inventoryId"));
+
     if (target.isSameNode(dragInvokerElement)) {
+      GameEventHandler.onClick(invoker);
       return;
     }
-    var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
+    // Invoker: card
+    // Target : card
     var targetInventory = getInventory(target.parentElement.getAttribute("data-inventoryType"));
-    var invoker = originInventory.getCard(dragInvokerElement.getAttribute("data-inventoryId"));
     var target = targetInventory.getCard(target.getAttribute("data-inventoryId"));
     GameEventHandler.onDrop(invoker,target);
-    // If targeting card:
-    //determine the inventory the card originates from
-    //get the card info given the inventory id
-    //Interaction.triggerAll(interactions, "onDrop-actor");
-    //Interaction.triggerAll(interactions, "onDrop-target");
   }
 }
 function getInventory(id) {
@@ -287,13 +312,6 @@ function getElem(id) {
 LISTENERS
 --------------
 */
-document.addEventListener('keypress', (e) => {
-  var code = e.code;
-
-  if (magicCircleActivated) {
-    magicCircleProcessKey(code);
-  }
-}, false);
 function onresize() {
   windowHeight = window.innerHeight;
   windowWidth = window.innerWidth;
@@ -337,7 +355,6 @@ document.addEventListener('keydown', function(e) {
   }
 
   if (key == "Space") {
-    console.log(Game.player.location,Game.player.getRoundedLocation());
     openTile(Game.player.getRoundedLocation());
   }
   if (key == "ArrowLeft" || key == "KeyA") {
@@ -368,6 +385,9 @@ document.addEventListener('mousemove', (e) => {
 });
 document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {
+  if (e.target.classList.contains("undraggable")) {
+    return;
+  }
   if (keyShiftPressed) {
     if (e.target.classList.contains("draggable") && e.target.classList.contains("card")) {
       var inventoryId = e.target.getAttribute("data-inventoryId");

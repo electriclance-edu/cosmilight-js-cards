@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="style/light.css">
     <link rel="stylesheet" href="style/stats.css">
     <link rel="stylesheet" href="style/player.css">
+    <link rel="stylesheet" href="style/darkOverlay.css">
     <link rel="stylesheet" href="style/structures.css">
     <link rel="stylesheet" href="style/textlogging.css">
     <link rel="stylesheet" href="style/tiles.css">
@@ -38,8 +39,9 @@
     <script src="script/main.js" defer></script>
     <script src="class/handler/FPSHandler.js" defer></script>
     <script src="class/handler/LightHandler.js" defer></script>
-    <script src="class/handler/GUIHandler.js" defer></script>
     <script src="class/handler/DataHandler.js" defer></script>
+    <script src="data/base_game/data-CardType-Credits.js" defer></script>
+    <script src="class/handler/GUIHandler.js" defer></script>
     <script src="data/base_game/data-StatType.js" defer></script>
     <script src="data/base_game/data-CardType.js" defer></script>
     <script src="data/base_game/data-TileType.js" defer></script>
@@ -50,7 +52,109 @@
       <!-- <h1 class="debug-fps txt-white" id="debug-fps">FPS: </h1> -->
       <div class="fillWindow Vignette"></div>
       <div class="ScreenContainer fillWindow" id="ScreenContainer">
+        <div class="Screen-Start flex-centered fillWindow" id="Screen-Start">
+          <div class="flex-centered flex-column pos-absolute">
+            <div class="skyContainer">
+              <div class="starLayer starLayerOne"></div>
+              <div class="starLayer starLayerTwo"></div>
+              <div class="starLayer starLayerThree"></div>
+            </div>
+            <div class="rotatingCircles filter-aberration-extreme">
+              <div class="circle" style="
+                --rad:9.3;
+                --thickness:3;
+                opacity:0.15;
+                --spinSpeed:10s"
+              ></div>
+              <div class="circle" style="
+                --rad:9;
+                --thickness:3;
+                opacity:0.15;
+                --spinSpeed:10s"
+              ></div>
+              <div class="circle" style="
+                --rad:4.8;
+                --color:var(--color-cycle);
+                --thickness:9;
+                opacity:0.15;
+                --spinSpeed:10s"
+              ></div>
+              <div class="circle" style="
+                --rad:4.5;
+                --color:var(--color-cycle);
+                --thickness:6;
+                opacity:0.3;
+                --spinSpeed:10000000s"
+              ></div>
+              <div class="circle" style="
+                --rad:4;
+                opacity:0.4"
+              ></div>
+              <div class="circle" style="
+                --rad:2.3;
+                --color:var(--color-cycle);
+                --thickness:3;
+                opacity:0.2;
+                --spinSpeed:50s"
+              ></div>
+              <div class="circle" style="
+                --rad:2;
+                opacity:0.6;
+                --spinSpeed:20s"
+              ></div>
+              <div class="circle" style="
+                --rad:1.2;
+                opacity:0.2"
+              ></div>
+              <div class="circle" style="
+                --rad:0.8;
+                --color:var(--color-light);
+                --thickness:9;
+                opacity:0.05"
+              ></div>
+            </div>
+            <p class="gameHeader txt-size-massive">
+              <span class="headerFont" style="--index:0">C</span><span class="headerFont" style="--index:1">o</span><span class="headerFont" style="--index:2">s</span><span class="headerFont" style="--index:3">m</span><span class="headerFont" style="--index:4">i</span><span class="headerFont" style="--index:4.5">l</span><span class="headerFont" style="--index:3.5">i</span><span class="headerFont" style="--index:2.5">g</span><span class="headerFont" style="--index:1.5">h</span><span class="headerFont" style="--index:0.5">t</span>
+            </p>
+            <p class="clickable" onclick="toggleScreen('GameBoard'); GUIHandler.minimizeDOM()">PLAY</p>
+            <p class="clickable" onclick="toggleScreen('Credits')">CREDITS</p>
+          </div>
+        </div>
+        <div class="Screen-Credits screen fillWindow flex-column flex-centered" id="Screen-Credits">
+          <div onclick="toggleScreen('Start')" class="darkOverlay-bg fillWindow">
+            <div class="starLayer starLayerOne"></div>
+            <div class="starLayer starLayerTwo"></div>
+            <div class="starLayer starLayerThree"></div>
+          </div>
+          <p class="clickable" onclick="toggleScreen('Start')">Return to Menu</p>
+          <p>Without this person, this game wouldn't be possible. From the bottom of my heart, thank you for working so hard.</p>
+          <div class="flex-centered flex-row credits-me" id="credits-me"></div>
+          <p>These people helped as well a little, thank you your a cool!!</p>
+          <div class="flex-centered flex-row" id="credits-friends"></div>
+        </div>
         <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-GameBoard">
+          <div class="controls">
+            <p>Move with <span class="input">WASD</span> or <span class="input">↑ ← ↓ →</span></p>
+            <p>Dash with <span class="input">Left Shift</span></p>
+            <p>Access a tile inventory with <span class="input">Click</span> or <span class="input">Space</span></p>
+          </div>
+          <div class="DarkOverlay fillWindow state-invisible flex-centered" id="DarkOverlay">
+            <div class="darkOverlay-bg fillWindow" id="darkOverlay-bg">
+              <div class="starLayer starLayerOne"></div>
+              <div class="starLayer starLayerTwo"></div>
+              <div class="starLayer starLayerThree"></div>
+            </div>
+            <div class="controls">
+              <p><span class="input">Click</span> on the reddened sides to cancel the selection.</p>
+            </div>
+            <div class="CardSelection flex-column flex-centered">
+              <p class="headerFont txt-size-header txt-lined cardSelection-title" id="cardSelection-title">Title</p>
+              <p class="cardSelection-desc txt-italic filter-aberration" id="cardSelection-desc">Desc</p>
+              <div class="cardSelection-cardContainer flex-row flex-centered" id="cardSelection-cardContainer">
+
+              </div>
+            </div>
+          </div>
           <div class="Crosshair">+</div>
           <div class="FollowCursorTextDisplay textDisplay fillWindow" id="FollowCursorTextDisplay"></div>
           <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
@@ -66,8 +170,8 @@
           </div>
           <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer"></div>
           <div class="TileBoard" id="TileBoard"></div>
-          <div class="PlayerHandContainer playerInventory" id="PlayerHandContainer">
-          </div>
+          <div class="PlayerHandContainer playerInventory" id="PlayerHandContainer"></div>
+          <div class="playerStatDisplay statContainer" id="PlayerStatContainer"></div>
       </div>
     </div>
   </body>

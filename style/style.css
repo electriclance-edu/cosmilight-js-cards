@@ -3,33 +3,44 @@
 Z-INDEX LAYERS 
 ##############
 --- debug layer = 100,000
---- debug-fps
+debug-fps = 100,000
+
+.DarkOverlay = 40,000
+
 .TextDisplay = 30,000
+
 .drag_ghost = 20,000
+
 .Crosshair = 15,000
 .StructureDetailDisplay = 15,000
+.PlayerStatContainer = 15,000
 .ExternalInventoryDisplay = 14,000
 .PlayerHand = 14,000
+
 ---- world layer max: 9999
 .Vignette = 9999
 .LightCanvas = 6,000
 .TileBoard = 5,000
+
+.controls are 20000 relative to their current position.
 */
 :root {
   --bg-main: #1F3042;
   --bg-accent: rgb(15, 23, 31);
   --bg-white: #deebee;
+  --bg-white-dark: #cddcdf;
   --bg-accent-light: #99acbe75;
   --bg-accent-translucent: rgba(23, 35, 48, 0.6);
   --bg-inventory: rgb(35, 31, 57);
   --bg-shadow: rgba(15, 0, 30, 0.6);
+  --bg-shadow-dark: rgba(10, 0, 20, 0.8);
   --bg-shadow-red: rgba(100, 32, 56, 0.6);
   --color-nature: #2fbb7a;
   --color-harvest: #2FD5AA;
   --color-energy: #8753c3;
   --color-energy-complement: #db4885;
   --color-health: #f52787;
-  --color-health-complement: #6bebab;
+  --color-health-complement: #d8afaf;
   --color-water: #94e6ff;
   --color-water-complement: #6b4afc;
   --color-fire: #ff4664;
@@ -40,8 +51,12 @@ Z-INDEX LAYERS
   --color-cycle: #48286d;
   --color-cycle-complement: #9c4c7d;
   --color-text: rgb(230,230,230);
-  --color-item: #3d5870;
-  --color-dark: #69666f;
+  --color-item: #46627a;
+  --color-researchItem: #bd84ff;
+  --color-activeItem: #ffca84;
+  --color-researchSpell: rgb(14, 162, 189);
+  --color-researchStructure: rgb(135, 47, 207);
+  --color-researchGeneral: rgb(201, 53, 122);
   --color-text-accent: rgb(200, 200, 200);
   --card-width: 130px; /*default calc(var(--card-height) * 0.70)*/
   --card-height: 170px; /*default 200px, rougly 20vh*/
@@ -62,6 +77,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  background-color:black;
   background-image: linear-gradient(rgba(0,0,0,0.3) 0%,rgba(0,0,0,0.3) 100%), url("../resources/img/void-bg.png");
   background-size: cover;
   background-position: center;
@@ -82,7 +98,13 @@ h1, h2, h3, h4, .headerFont {
   font-size:1em;
   font-family: Overpass;
 }
-p, span {
+button {
+  border:3px solid var(--bg-accent-light);
+  border-radius:30px;
+  padding:2px 30px;
+  background-color:var(--bg-inventory);
+}
+p, span, button {
   font-size:1.2em;
   color: var(--color-text);
   font-family: Overpass;
@@ -159,14 +181,20 @@ GENERAL SELECTORS
   content:"—— — – -";
   margin-left:var(--margin);
 }
+.txt-size-massive {
+  font-size:4em;
+}
 .txt-size-header {
   font-size:1.6em;
 }
 .txt-white {
   color: white;
 }
-.txt-harvest {
-  color: var(--color-harvest);
+.filter-aberration {
+  filter:drop-shadow(2px 1px 2px rgb(198, 32, 74)) drop-shadow(-2px -1px 2px rgb(29, 45, 187));
+}
+.filter-aberration-extreme {
+  filter:drop-shadow(4px 1px 2px rgb(198, 32, 74)) drop-shadow(-4px -1px 2px rgb(29, 45, 187));
 }
 .txt-italic {
   font-style: italic;
@@ -183,9 +211,45 @@ GENERAL SELECTORS
 .hidden {
   display:none;
 }
+.controls {
+  position:absolute;
+  bottom:20px;
+  right:30px;
+  font-size:0.7em;
+  z-index:20000;
+  text-align:right;
+  filter:drop-shadow(0 0 15px var(--bg-shadow)) drop-shadow(0 0 12px var(--bg-shadow)) drop-shadow(0 0 10px var(--bg-shadow));
+}
+.controls p {
+  margin-top:5px;
+}
+.input {
+  padding:3px 15px;
+  margin:0 3px;
+  padding-bottom:0;
+  background-color:var(--bg-white-dark);
+  border-radius:5px;
+  color:var(--bg-main);
+  font-weight:bold;
+  font-size:0.9em;
+  position:relative;
+  top:-1.5px;
+  transition:0.05s;
+  box-shadow:0 3px 0 var(--bg-accent-light);
+}
+.input:hover {
+  top:1.5px;
+  box-shadow:0 0 0 var(--bg-accent-light);
+}
 /*####################
 MISC SELECTORS
 ####################*/
+.clickable {
+  text-decoration:underline;
+}
+.clickable:hover {
+  filter:drop-shadow(2px 1px 2px rgb(198, 32, 74)) drop-shadow(-2px -1px 2px rgb(29, 45, 187));
+}
 .Crosshair {
   pointer-events:none;
   z-index:15000;
@@ -195,4 +259,105 @@ MISC SELECTORS
   left:50%;
   top:50%;
   transform:translate(-50%,calc(-50% - 10px));
+}
+.Screen-Start:before {
+  content:"";
+  display:block;
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:-2;
+  width:100vw;
+  height:100vh;
+  background-color:var(--bg-shadow-dark);
+  -webkit-mask:radial-gradient(circle, black 60%, transparent 90%);
+}
+.Screen-Start:after {
+  content:"";
+  display:block;
+  position:absolute;
+  left:0;
+  top:0;
+  opacity:0.3;
+  z-index:-3;
+  width:100vw;
+  height:100vh;
+  background:url(../resources/img/night-sky.png);
+  background-size:cover;
+  background-repeat:no-repeat;
+}
+.gameHeader {
+  margin-bottom:20px;
+  text-shadow:0 0 50px rgba(255,255,255,0.7);
+  /* filter:drop-shadow(0 0 50px rgb(0,0,0,0)) drop-shadow(2px 1px 2px rgb(198, 32, 74)) drop-shadow(-2px -1px 2px rgb(29, 45, 187)); */
+}
+.rotatingCircles {
+  position:absolute;
+  top:47px;
+  left:50%;
+  transform:translatex(-50%);
+  /* left:70px; */
+  opacity:0.8;
+  width:3px;
+  height:3px;
+  z-index:-1;
+  /* background-color:blue; */
+}
+.circle {
+  --rad:2;
+  --spinSpeed:10s;
+  --color:var(--color-cycle-complement);
+  --thickness:1;
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:calc(var(--rad) * 200px);
+  height:calc(var(--rad) * 200px);
+  border:calc(3px * var(--thickness)) solid var(--color);
+  border-radius:1000px;
+  animation:var(--spinSpeed) infinite alternate-reverse centeredSpin;
+  opacity:0.5;
+}
+.gameHeader span {
+  --x-shake:1;
+  --y-shake:1;
+  --y-wobble:1;
+  animation:3s calc(var(--index) * 0.1s) infinite linear alternate-reverse shake,
+              3s calc(var(--index) * 0.3s) infinite linear alternate wobble;
+  display:inline-block;
+  translate:calc(var(--x-shake) * 0.3px) calc((var(--y-shake) * 0.3px) + (var(--y-wobble) * 3px));
+}
+.skyContainer {
+  background-color:var(--bg-shadow-dark);
+  -webkit-mask:radial-gradient(circle, black 30%, transparent 70%);
+  background-size:cover;
+  z-index:-2;
+  width:70vw;
+  height:100vh;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+}
+/*####################
+CREDITS SELECTORS
+####################*/
+.Screen-Credits {
+  pointer-events:none;
+  z-index:20000;
+}
+.Screen-Credits > * {
+  pointer-events:all;
+}
+.Screen-Credits .credits-me {
+  margin-bottom:100px;
+}
+.Screen-Credits > p {
+  margin-top:20px;
+}
+.Screen-Credits .flex-row {
+  margin-top:10px;
+}
+.Screen-Credits .flex-row .card {
+  margin:0 10px;
 }

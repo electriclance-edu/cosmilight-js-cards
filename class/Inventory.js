@@ -45,6 +45,14 @@ class Inventory {
     update() {
         GUIHandler.updateInventory(this);
     }
+    isNew(card) {
+        if (card.externalInformation.inventory.isNew) {
+            card.externalInformation.inventory.isNew = false;
+            return true;
+        } else {
+            return false;
+        }
+    }
     addCard(card) {
         // stop if there is no space in inventory
         if (this.isFull()) {
@@ -53,6 +61,7 @@ class Inventory {
             throw new Error();
         }
         card.inventory = this;
+        card.externalInformation.inventory.isNew = true;
         this.cards[++this.idTemplate] = card;
         card.inventoryId = this.idTemplate;
         this.update();

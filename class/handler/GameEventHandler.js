@@ -5,7 +5,14 @@ class GameEventHandler {
         }
     };
     static callInteractions(eventObject,interactions) {
+        if (!interactions) {
+            return;
+        }
+
         if (interactions.hasOwnProperty(eventObject.type)) {
+            if (eventObject.type == "onSelection") {
+                console.log(interactions[eventObject.type]);
+            }
             interactions[eventObject.type](eventObject);
         } else {
             // console.warn(`GameEventHandler.callInteractions(): Attempted to call interaction of type ${eventObject.type}, however interactions object given has no such type.`,eventObject,interactions);
@@ -14,6 +21,11 @@ class GameEventHandler {
     static validEventArguments(...args) {
         return args.every((elem)=>!!elem);
     }
+    static verifyArgs(args,type) {
+        if (!GameEventHandler.validEventArguments(...args)) {
+            console.error(`Event ${type} attempted to trigger, however arguments are invalid.`,args)
+        }
+    }
     static onTick(invoker,time) {
         var gameEvent = {
             type:"onTick",
@@ -21,10 +33,7 @@ class GameEventHandler {
             time:time
         };
         
-        if (!GameEventHandler.validEventArguments(invoker)) {
-            console.warn(`Event ${gameEvent.type} attempted to trigger, however arguments are invalid.`,arguments)
-            return;
-        }
+        GameEventHandler.verifyArgs([invoker],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
@@ -34,10 +43,7 @@ class GameEventHandler {
             invoker:invoker
         };
         
-        if (!GameEventHandler.validEventArguments(invoker)) {
-            console.warn(`Event ${gameEvent.type} attempted to trigger, however arguments are invalid.`,arguments)
-            return;
-        }
+        GameEventHandler.verifyArgs([invoker],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
@@ -49,12 +55,29 @@ class GameEventHandler {
             amt:amt
         };
 
-        if (!GameEventHandler.validEventArguments(target,stat,amt)) {
-            console.warn(`Event ${gameEvent.type} attempted to trigger, however arguments are invalid.`,arguments)
-            return;
-        }
+        GameEventHandler.verifyArgs([target,stat,amt],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,target.interactions);
+    }
+    static onSelect(target) {
+        var gameEvent = {
+            type:"onSelect",
+            target:target
+        };
+
+        GameEventHandler.verifyArgs([target],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,target.interactions);
+    }
+    static onClick(invoker) {
+        var gameEvent = {
+            type:"onClick",
+            invoker:invoker
+        };
+
+        GameEventHandler.verifyArgs([invoker],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
     static onDrop(invoker,target) {
         var gameEvent = {
@@ -63,10 +86,7 @@ class GameEventHandler {
             target:target,
         };
 
-        if (!GameEventHandler.validEventArguments(invoker,target)) {
-            console.warn(`Event ${gameEvent.type} attempted to trigger, however arguments are invalid.`,arguments)
-            return;
-        }
+        GameEventHandler.verifyArgs([invoker,target],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
 

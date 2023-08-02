@@ -26,5 +26,12 @@ DataHandler.addObjectToLoad("TileType","baseCosmilight",[
 
         ],
         amountOfSprites:8
+    },
+    {
+        id:"soil",
+        interaction:[
+
+        ],
+        amountOfSprites:4
     }
 ])

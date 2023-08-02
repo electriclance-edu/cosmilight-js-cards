@@ -1,6 +1,6 @@
 class LightHandler {
-    static dark = new RGBA(0,0,0,0);
-    // static dark = new RGBA(15,0,30,0.85);
+    // static dark = new RGBA(0,0,0,0);
+    static dark = new RGBA(15,0,30,0.6);
     static lightPoints = {
         "player":new LightPoint(0,0,{strength:2.5,waver:0.05,color:new RGBA(0,0,0,0),faintness:1}),
         // "fire":new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}),
@@ -15,11 +15,12 @@ class LightHandler {
     static canvasCenter;
     static yScaleFactor;
     static initialize() {
+        // return;
         clearInterval(LightHandler.updateLoop);
 
         var canvas = document.getElementById("LightCanvas");
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         LightHandler.canvas = canvas;
         LightHandler.canvasCenter = new Point(LightHandler.canvas.width/2,LightHandler.canvas.height/2);
 

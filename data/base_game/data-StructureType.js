@@ -27,34 +27,34 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
             }
         }
     },
-    {
-        cardProperties: {
-            id:"rock",
-            lore:{
-                mainTitle:"Rock",
-                subTitle:"",
-                description:"",
-            },
-            colorName:"worldObject",
-            tags:["structure","natural"]
-        },
-        structureProperties: {
-            amountOfSprites:1,
-            stats:[
-                new Stat("health",{value:50}),
-                new Stat("integrity",{value:50,max:50})
-            ],
-            interactions:{
-                "onSpawn":(e)=>{
-                    e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
-                },
-                "changeStat":(e)=>{
-                    gameEvent.target.getStat(gameEvent.stat).increment(gameEvent.amt,true);
-                    e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
-                }
-            }
-        }
-    },
+    // {
+    //     cardProperties: {
+    //         id:"rock",
+    //         lore:{
+    //             mainTitle:"Rock",
+    //             subTitle:"",
+    //             description:"",
+    //         },
+    //         colorName:"worldObject",
+    //         tags:["structure","natural"]
+    //     },
+    //     structureProperties: {
+    //         amountOfSprites:1,
+    //         stats:[
+    //             new Stat("health",{value:50}),
+    //             new Stat("integrity",{value:50,max:50})
+    //         ],
+    //         interactions:{
+    //             "onSpawn":(e)=>{
+    //                 e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
+    //             },
+    //             "changeStat":(e)=>{
+    //                 gameEvent.target.getStat(gameEvent.stat).increment(gameEvent.amt,true);
+    //                 e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
+    //             }
+    //         }
+    //     }
+    // },
     {
         cardProperties: {
             id:"boulder",
@@ -97,6 +97,29 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
     },
     {
         cardProperties: {
+            id:"clay",
+            lore:{
+                mainTitle:"Clay",
+                subTitle:"",
+                description:"",
+            },
+            colorName:"worldObject",
+            tags:["structure","natural"]
+        },
+        structureProperties: {
+            amountOfSprites:3,
+            stats:[
+                new Stat("health",{value:10,max:10})
+            ],
+            interactions:{
+                "changeStat":(e)=>{
+                    gameEvent.target.getStat(gameEvent.stat).increment(gameEvent.amt,true);
+                }
+            }
+        }
+    },
+    {
+        cardProperties: {
             id:"rat",
             lore:{
                 mainTitle:"rat",
@@ -127,44 +150,49 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
     },
     {
         cardProperties: {
-            id:"torchtree", 
+            id:"taproot", 
             lore:{
-                mainTitle:"Torchtree",
+                mainTitle:"Taproot",
                 subTitle:"",
-                description:"Bringer of heat to its floral brethren.",
+                description:"Bringer of heat to its fungal brethren.",
             },
             colorName:"worldObject",
             tags:["structure","natural"]
         },
         structureProperties: {
-            amountOfSprites:1,
+            amountOfSprites:4,
             stats:[
+                new Stat("health",{value:10}),
                 new Stat("light",{value:1,max:1}),
-                new Stat("health",{value:20}),
-                new Stat("integrity",{value:20,max:20}),
+                new Stat("integrity",{value:10,max:10}),
                 new Stat("sap",{value:0,max:10}),
                 new Stat("water",{value:0,max:10}),
                 new Stat("cycle",{value:1,max:4}),
+                new Stat("cycleSpeed",{value:7,max:10}),
             ],
             interactions:{
                 "onSpawn":(e)=>{
+                    e.invoker.getStat("cycleSpeed").value += randFloat(3);
                     e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
                     var x = e.invoker.position.x;
                     var y= e.invoker.position.y;
-                    LightHandler.addLight(`#${x},${y}`,new LightPoint(x,y,{strength:1.5,waver:0.05,faintness:0.3}));
+                    LightHandler.addLight(`#${x},${y}`,new LightPoint(
+                        x,y,
+                        {
+                            strength:1,
+                            waver:0.05,
+                            faintness:0.6
+                        }
+                    ));
                 },
                 "changeStat":(e)=>{
                     e.target.getStat(e.stat).increment(e.amt,true);
                     e.target.getStat("health").max = e.target.getStat("integrity").value;
                 },
                 "onTick":(tickEvent)=>{
-                    // every two seconds, update cycle
-                    // add an innate cyclespeed modifier to all cyclic structures, slightly changes how long a cycle takes
                     if (tickEvent.time % 40 == 0) {
                         var cycle = tickEvent.invoker.getStat("cycle");
-                        cycle.increment(1,false);
-                        let newValue = (cycle.value > cycle.max) ? 1 : cycle.value;
-                        cycle.setValue(newValue);
+                        cycle.cyclicIncrement(1);
 
                         switch (cycle.value) {
                             case 1:
@@ -194,6 +222,75 @@ DataHandler.addObjectToLoad("StructureType","baseCosmilight",[
             }
         }
     },
+    // {
+    //     cardProperties: {
+    //         id:"torchtree", 
+    //         lore:{
+    //             mainTitle:"Torchtree",
+    //             subTitle:"",
+    //             description:"Bringer of heat to its floral brethren.",
+    //         },
+    //         colorName:"worldObject",
+    //         tags:["structure","natural"]
+    //     },
+    //     structureProperties: {
+    //         amountOfSprites:1,
+    //         stats:[
+    //             new Stat("light",{value:1,max:1}),
+    //             new Stat("health",{value:20}),
+    //             new Stat("integrity",{value:20,max:20}),
+    //             new Stat("sap",{value:0,max:10}),
+    //             new Stat("water",{value:0,max:10}),
+    //             new Stat("cycle",{value:1,max:4}),
+    //         ],
+    //         interactions:{
+    //             "onSpawn":(e)=>{
+    //                 e.invoker.getStat("health").max = e.invoker.getStat("integrity").value;
+    //                 var x = e.invoker.position.x;
+    //                 var y= e.invoker.position.y;
+    //                 LightHandler.addLight(`#${x},${y}`,new LightPoint(x,y,{strength:1.5,waver:0.05,faintness:0.3}));
+    //             },
+    //             "changeStat":(e)=>{
+    //                 e.target.getStat(e.stat).increment(e.amt,true);
+    //                 e.target.getStat("health").max = e.target.getStat("integrity").value;
+    //             },
+    //             "onTick":(tickEvent)=>{
+    //                 // every two seconds, update cycle
+    //                 // add an innate cyclespeed modifier to all cyclic structures, slightly changes how long a cycle takes
+    //                 if (tickEvent.time % 40 == 0) {
+    //                     var cycle = tickEvent.invoker.getStat("cycle");
+    //                     cycle.increment(1,false);
+    //                     let newValue = (cycle.value > cycle.max) ? 1 : cycle.value;
+    //                     cycle.setValue(newValue);
+
+    //                     switch (cycle.value) {
+    //                         case 1:
+    //                             //produce water
+    //                             GameEventHandler.changeStat(tickEvent.invoker,"water",0.5);
+    //                             break;
+    //                         case 2:
+    //                             //consume water, produce sap
+    //                             if (tickEvent.invoker.getStat("water").value > 5) {
+    //                                 GameEventHandler.changeStat(tickEvent.invoker,"water",-0.4);
+    //                                 GameEventHandler.changeStat(tickEvent.invoker,"sap",0.3);
+    //                             }
+    //                             break;
+    //                         case 3:
+    //                             //consume sap, produce satisfaction
+                                
+    //                             //update light/heat
+    //                             break;
+    //                     }
+    //                 }
+    //                 // if (tickEvent.invoker.inventory.contains("#fuel")) {
+    //                 //     tickEvent.invoker.tile.changeLightLevel(0.1);
+    //                 // } else {
+    //                 //     tickEvent.invoker.tile.changeLightLevel(-0.1);
+    //                 // }
+    //             }
+    //         }
+    //     }
+    // },
     {
         cardProperties: {
             id:"fire",

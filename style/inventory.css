@@ -20,20 +20,6 @@ INVENTORY SELECTORS
   /* overflow:hidden;
   justify-content:center; */
 }
-.PlayerHandContainer {
-  position:absolute;
-  left:50%; 
-  transform:translatex(-50%);
-  z-index:14000;
-  bottom:0;
-  display:flex;
-}
-.PlayerHandContainer .inventoryParent {
-  transform:translate(-50%,-50%);
-}
-.PlayerHandContainer .inventoryParent:hover {
-  transform:translate(-50%,-100%);
-}
 .ExternalInventoryContainer {
   position:absolute;
   left:50%; 
@@ -102,27 +88,10 @@ body.dragging .inventory-bg:hover {
   transition:translate 0.2s;
   filter:drop-shadow(0 0 5px black) drop-shadow(0 0 10px black);
 }
-.PlayerHandContainer .inventoryTitle {
-  display:none;
-}
 .ExternalInventoryContainer .inventoryParent:hover > .inventoryTitle {
   translate:0 0;
 }
 .ExternalInventoryContainer * {
-  pointer-events:all;
-}
-.PlayerHandContainer { 
-  bottom:10px;
-  padding-top:0px;
-  z-index:14000;
-}
-.PlayerHandContainer .inventory-bg {
-  --rotation:0deg;
-  top:-20px;
-  padding-top:20px;
-  padding-bottom:10px;
-}
-.PlayerHand * {
   pointer-events:all;
 }
 .inventory .card {

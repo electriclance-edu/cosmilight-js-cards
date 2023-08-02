@@ -3,6 +3,7 @@ class Player {
         this.hand = new Inventory(4,"PLAYER HAND");
         this.location = new Point(0,0);
         this.movement = {
+            paralyzed:false,
             excessSpeed:0,
             speed:0.1,
             direction:{
@@ -13,6 +14,9 @@ class Player {
             }
         };
         this.stats = {
+            "health":new Stat("health",{value:30,max:30}),
+            "water":new Stat("water",{value:20,max:20}),
+            "mana":new Stat("mana",{value:5,max:15}),
             "interactionDistance":new Stat("interactionDistance",{value:1}),
         };
     }
@@ -26,6 +30,12 @@ class Player {
         } else {
             return this.movement.speed + Math.max(this.movement.excessSpeed,0);
         }
+    }
+    paralyze() {
+        this.movement.paralyzed = true;
+    }
+    unparalyze() {
+        this.movement.paralyzed = false;
     }
     getRoundedLocation() {
         return new Point(
@@ -43,11 +53,14 @@ class Player {
         return this.stats[id];
     } 
     dash() {
+        if (this.movement.paralyzed) {
+            return;
+        }
         if (this.movement.excessSpeed > 0.01) {
             return;
         }
 
-        GUIHandler.logText("Dashing.","player",1000);
+        // GUIHandler.logText("Dashing","player",1000);
         this.movement.excessSpeed = 0.08;
         setTimeout(()=>{
             this.movement.excessSpeed += 0.16;
@@ -57,6 +70,10 @@ class Player {
         },50);
     }
     translate(x,y) {
+        if (this.movement.paralyzed) {
+            return;
+        }
+
         var newPosition = new Point(
             (parseFloat(Game.player.location.x) + x).toFixed(2), 
             (parseFloat(Game.player.location.y) + y).toFixed(2)

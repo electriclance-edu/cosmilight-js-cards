@@ -1,14 +1,14 @@
 /*############
 ANIMATIONS
 #############*/
-/* @keyframes bob {
+@keyframes bob {
   0% {
-    translate: 0 10px;
+    translate: 0 5px;
   }
   100% {
-    translate: 0 -10px;
+    translate: 0 -5px;
   }
-} */
+}
 @keyframes tile-fadeOut {
   0% {
     opacity:1;
@@ -19,6 +19,14 @@ ANIMATIONS
     translate:0 100px;
   }
 }
+@keyframes scrollBg {
+  0% {
+    background-position:0%;
+  }
+  100% {
+    background-position:1000%;
+  }
+}
 @keyframes tile-fadeIn {
   0% {
     opacity:0;
@@ -27,6 +35,17 @@ ANIMATIONS
   100% {
     opacity:1;
     translate:0 0px;
+  }
+}
+@keyframes glow {
+  0% {
+    box-shadow:0 0 5px var(--color-light);
+  }
+  30% {
+    box-shadow:0 0 20px var(--color-light);
+  }
+  100% {
+    box-shadow:0 0 0px transparent;
   }
 }
 @keyframes flash {
@@ -164,5 +183,22 @@ ANIMATIONS
 @keyframes log-opaque {
   100% {
     opacity:1;
+  }
+}
+
+@keyframes rainbow {
+  from {
+    filter:hue-rotate(0deg);
+  }
+  to {
+    filter:hue-rotate(360deg);
+  }
+}
+@keyframes centeredSpin {
+  from {
+    transform:translate(-50%,-50%) rotate(0deg) scale(1.08);
+  }
+  to {
+    transform:translate(-50%,-50%) rotate(360deg) scale(1.0);
   }
 }
