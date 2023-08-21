@@ -23,7 +23,7 @@ class GameEventHandler {
     }
     static verifyArgs(args,type) {
         if (!GameEventHandler.validEventArguments(...args)) {
-            console.error(`Event ${type} attempted to trigger, however arguments are invalid.`,args)
+            console.warn(`Event ${type} attempted to trigger, however arguments are invalid.`,args)
         }
     }
     static onTick(invoker,time) {
@@ -36,6 +36,16 @@ class GameEventHandler {
         GameEventHandler.verifyArgs([invoker],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    static onRemove(target) {
+        var gameEvent = {
+            type:"onRemove",
+            target:target
+        };
+        
+        GameEventHandler.verifyArgs([target],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,target.interactions);
     }
     static onSpawn(invoker) {
         var gameEvent = {
@@ -59,6 +69,29 @@ class GameEventHandler {
 
         GameEventHandler.callInteractions(gameEvent,target.interactions);
     }
+    // When a Selection event invoked by something succeeds.
+    static onSelectionInvocationSuccess(invoker) {
+        var gameEvent = {
+            type:"onSelectionInvocationSuccess",
+            invoker:invoker
+        };
+
+        GameEventHandler.verifyArgs([invoker],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    // When a Selection event invoked by something is cancelled, or fails.
+    static onSelectionInvocationFailure(invoker) {
+        var gameEvent = {
+            type:"onSelectionInvocationFailure",
+            invoker:invoker
+        };
+
+        GameEventHandler.verifyArgs([invoker],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    // When a card during a Selection event is selected.
     static onSelect(target) {
         var gameEvent = {
             type:"onSelect",

@@ -102,6 +102,23 @@ DataHandler.loadData("StatType","baseCosmilight",[
         }
     },
     {
+        id:"knowledge",
+        properties:{
+            style:{
+                fillColor:"var(--color-knowledge)",
+                fillColorComplement:"var(--color-knowledge-complement)",
+                fillColorAccent:"var(--bg-main)"
+            },
+            lore:{
+                name:"Experience",
+                desc:"Familiarity with aspects of the universe."
+            },
+            strictLimits:{
+                min:0
+            }
+        }
+    },
+    {
         id:"health",
         properties:{
             style:{
@@ -151,6 +168,19 @@ DataHandler.loadData("StatType","baseCosmilight",[
         }
     },
     {
+        id:"slumber",
+        properties:{
+            style:{
+                fillColor:"var(--color-energy)",
+                fillColorComplement:"var(--color-energy-complement)",
+            },
+            lore:{
+                name:"Slumber",
+                desc:"."
+            }
+        }
+    },
+    {
         id:"fuel",
         properties:{
             style:{
@@ -187,6 +217,48 @@ DataHandler.loadData("StatType","baseCosmilight",[
             lore:{
                 name:"heat",
                 desc:"Motion, condensed."
+            }
+        }
+    },
+    {
+        id:"fruitsGiven",
+        properties:{
+            style:{
+                fillColor:"var(--color-fire)",
+                fillColorComplement:"var(--color-fire-complement)",
+                visibility:"hidden",
+            },
+            lore:{
+                name:"fruits given",
+                desc:"Light fruits given."
+            }
+        }
+    },
+    {
+        id:"glow",
+        properties:{
+            style:{
+                fillColor:"var(--color-light)",
+                fillColorComplement:"var(--color-light-complement)",
+                fillColorAccent:"var(--bg-main)"
+            },
+            lore:{
+                name:"Glow",
+                desc:"The protective energy of the old world."
+            }
+        }
+    },
+    {
+        id:"unlocks",
+        properties:{
+            style:{
+                fillColor:"var(--color-light)",
+                fillColorComplement:"var(--color-light-complement)",
+                fillColorAccent:"var(--bg-main)"
+            },
+            lore:{
+                name:"Unlocks",
+                desc:"Scoring for ALAB 2023 Computron Fundraising Booth."
             }
         }
     },

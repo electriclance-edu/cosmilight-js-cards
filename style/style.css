@@ -7,7 +7,7 @@ debug-fps = 100,000
 
 .DarkOverlay = 40,000
 
-.TextDisplay = 30,000
+.TextDisplay = 90,000
 
 .drag_ghost = 20,000
 
@@ -36,7 +36,9 @@ debug-fps = 100,000
   --bg-shadow-dark: rgba(10, 0, 20, 0.8);
   --bg-shadow-red: rgba(100, 32, 56, 0.6);
   --color-nature: #2fbb7a;
-  --color-harvest: #2FD5AA;
+  --color-spell: #2fcfd5;
+  --color-spell-gather: #2FD5AA;
+  --color-spell-damaging: #cf365c;
   --color-energy: #8753c3;
   --color-energy-complement: #db4885;
   --color-health: #f52787;
@@ -50,16 +52,18 @@ debug-fps = 100,000
   --color-light-complement: rgb(255, 252, 236);
   --color-cycle: #48286d;
   --color-cycle-complement: #9c4c7d;
+  --color-knowledge: #12d48a;
+  --color-knowledge-complement: #257ec7;
   --color-text: rgb(230,230,230);
   --color-item: #46627a;
   --color-researchItem: #bd84ff;
   --color-activeItem: #ffca84;
-  --color-researchSpell: rgb(14, 162, 189);
+  --color-researchSpell: rgb(8, 137, 160);
   --color-researchStructure: rgb(135, 47, 207);
   --color-researchGeneral: rgb(201, 53, 122);
   --color-text-accent: rgb(200, 200, 200);
-  --card-width: 130px; /*default calc(var(--card-height) * 0.70)*/
-  --card-height: 170px; /*default 200px, rougly 20vh*/
+  --card-width: 100px; /*default calc(var(--card-height) * 0.70)*/
+  --card-height: 130px; /*default 200px, rougly 20vh*/
   --tile-width:150px;
   --tile-height:150px;
 }
@@ -329,6 +333,8 @@ MISC SELECTORS
 }
 .skyContainer {
   background-color:var(--bg-shadow-dark);
+  background-image:url("../resources/img/night-sky.png");
+  filter:saturate(1.3);
   -webkit-mask:radial-gradient(circle, black 30%, transparent 70%);
   background-size:cover;
   z-index:-2;

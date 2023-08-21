@@ -1,6 +1,10 @@
 class GUIHandler {
     static tileElements = {};
     static TileBoard;
+    static CullPersistence = new Point(5,3);
+    static CullRevealage = new Point(1,1);
+    // static CullPersistence = new Point(2,2);
+    // static CullRevealage = new Point(2,2);
     
     static initialize() {
         GUIHandler.TileBoard = document.getElementById("TileBoard");
@@ -22,12 +26,11 @@ class GUIHandler {
         //     GUIHandler.renderTile(coords);
         // });
     }
-    static logText(string,location = "center",persistence = 15000) {
-        var elem = document.createElement("p");
-
+    static logText(content,location = "center",persistence = 15000) {
         if (location == "center") {
+            var elem = document.createElement("p");
             let index = 0;
-            string.split(" ").forEach((char) => {
+            content.split(" ").forEach((char) => {
               let charElement = document.createElement("span");
               charElement.innerHTML = char + " ";
               charElement.style = `
@@ -40,20 +43,36 @@ class GUIHandler {
             elem.style = `--log-persistence:${persistence}ms;`;
             document.getElementById("PlayerTextDisplay").appendChild(elem);
         } else if (location == "cursor") {
-            elem.innerHTML = string;
+            var elem = document.createElement("p");
+            elem.innerHTML = content;
             elem.classList.add("log-cursor");
             elem.style = `--log-persistence:${persistence}ms;--x:${mousePosition.x};--y:${mousePosition.y}`;
             document.getElementById("FollowCursorTextDisplay").appendChild(elem);
         } else if (location == "player") {
-            elem.innerHTML = string;
+            var elem = document.createElement("p");
+            elem.innerHTML = content;
             elem.classList.add("log-cursor");
             elem.style = `--log-persistence:${persistence}ms;--x:${window.innerWidth / 2};--y:${window.innerHeight / 2}`;
             document.getElementById("FollowCursorTextDisplay").appendChild(elem);
+        } else if (location == "persistent-cursor") {
+            document.getElementById("PersistentCursorTextDisplay").innerHTML = "";
+            if (content instanceof HTMLElement) {
+                document.getElementById("PersistentCursorTextDisplay").appendChild(content);
+                document.getElementById("PersistentCursorTextDisplay").classList.add(mousePosition.y > window.innerHeight - 500 ? "state-up" : "state-down");
+            } else {
+                document.getElementById("PersistentCursorTextDisplay").innerHTML = content;
+            }
+            if (content == "") {
+                document.getElementById("PersistentCursorTextDisplay").classList.remove("state-down");
+                document.getElementById("PersistentCursorTextDisplay").classList.remove("state-up");
+            }
         }
-        
-        setTimeout(()=>{
-            elem.remove();
-        },persistence);
+
+        if (location != "persistent-cursor") {
+            setTimeout(()=>{
+                elem.remove();
+            },persistence);
+        }
     }
     static removeClassFromTileElem(point,className) {
         var tileId = `${point.x},${point.y}`;
@@ -110,7 +129,7 @@ class GUIHandler {
     static generateTileElem(tileData) {
         var tileHTML = `
             <div class="tile ${tileData.typeId}">
-                ${tileData.hasStructure() ? `<img class="structureSprite ${randElem(["flipped",""])}" src="resources/img/structure/${tileData.getStructure().typeId}${tileData.getStructure().type.amountOfSprites > 1 ? `/${randInt(tileData.getStructure().type.amountOfSprites)}` : ""}.png" style="--rand-x-offset:${randInt(10)}px; --rand-y-offset:${randInt(10)}px;"/>` : ""}
+                ${tileData.hasStructure() ? `<img class="structureSprite structure-${tileData.getStructure().typeId} ${randElem([" flipped",""])}${tileData.getStructure().type.hasTag("structure-large") ? " structure-large" : ""}" src="resources/img/structure/${tileData.getStructure().typeId}${tileData.getStructure().type.amountOfSprites > 1 ? `/${randInt(tileData.getStructure().type.amountOfSprites)}` : ""}.png" style="--rand-x-offset:${randInt(10)}px; --rand-y-offset:${randInt(10)}px;"/>` : ""}
                 <img class="tileSprite ${randElem(["flipped",""])}" style="--rand-x-offset:${randInt(7)}px; --rand-y-offset:${randInt(5)}px; filter:hue-rotate(${randInt(30) - 20}deg) brightness(${randFloat(0.1) + 0.9})" src="resources/img/tiles/${tileData.typeId}/${randInt(tileData.getType().amountOfSprites)}.png"/>
             </div>
         `;
@@ -168,7 +187,7 @@ class GUIHandler {
     }
     static displayStructureDetails(structure) {
         var type = structure.type;
-        document.getElementById("structureTitle").innerHTML = type.getTitle();
+        document.getElementById("structureTitle").innerHTML = type.name;
         document.getElementById("structureDescription").innerHTML = type.lore.description;
         
         var statContainer = document.getElementById("structureStatContainer");
@@ -195,7 +214,7 @@ class GUIHandler {
         //     Math.ceil(window.innerWidth / tileWidth / 2 - 1.5),
         //     Math.ceil(window.innerHeight / tileHeight / 2 - 0.5)
         // );
-        var screenWidthInTiles = new Point(3,3);
+        var screenWidthInTiles = GUIHandler.CullRevealage;
 
         this.cullTileRectangle(
             new Point(
@@ -209,8 +228,8 @@ class GUIHandler {
         )
     }
     static cullTileRectangle(cornerA,cornerB) {
-        var cullCornerA = new Point(cornerA.x - 2,cornerA.y + 2);
-        var cullCornerB = new Point(cornerB.x + 2, cornerB.y - 2);
+        var cullCornerA = new Point(cornerA.x - GUIHandler.CullPersistence.x,cornerA.y + y);
+        var cullCornerB = new Point(cornerB.x + GUIHandler.CullPersistence.x, cornerB.y - GUIHandler.CullPersistence.y);
         //hide all displayed tiles
         Array.from(document.getElementById("TileBoard").children).forEach((elem)=>{
             let x = elem.style.getPropertyValue("--x");
@@ -302,9 +321,49 @@ class GUIHandler {
         cardParent.innerHTML = "";
         GUIHandler.placeInventoryCardElements(inventory,cardParent);
     }
+    static renderLoreObject(lore) {
+        var loreElem = elem("div");
+        loreElem.classList.add("log-persistent-cursor");
+        loreElem.classList.add("log-persistent-cursor-lore");
+
+        ["description","technical_description"].forEach((key)=>{
+            if (!lore.hasOwnProperty(key)) {
+                return;
+            }
+            let textElem;
+            if (key == "description") {
+                textElem = elem("div","filter-aberration",lore[key]);
+            } else if (key == "technical_description") {
+                textElem = elem("div","",lore[key]);
+            }
+            loreElem.appendChild(textElem);
+        });
+
+        return loreElem;
+    }
     static placeInventoryCardElements(inventory,parent) {
         Object.entries(inventory.cards).forEach(([inventoryId, card]) => {
+            //check if card hasnt already been displayed
+            let hasBeenDisplayed = false;
+            Array.from(parent.children).forEach((child) => {
+                if (child.getAttribute("data-typeId") == card.type.id) {
+                    hasBeenDisplayed = true;
+                    child.querySelector(".card-count").innerHTML = inventory.countOf(card.type.id);
+                    return;
+                }
+            });
+            if (hasBeenDisplayed) return;
+            
             var cardElem = GUIHandler.generateRawCardElement(CardType.getById(card.id));
+
+            cardElem.addEventListener("mouseenter",(e)=>{
+                var elem = GUIHandler.renderLoreObject(card.type.lore);
+                GUIHandler.logText(elem,"persistent-cursor");
+            });
+            cardElem.addEventListener("mouseleave",(e)=>{
+                GUIHandler.logText("","persistent-cursor");
+            });
+
             if (inventory.isNew(card)) {
                 cardElem.classList.add("state-new");
             }
@@ -338,17 +397,16 @@ class GUIHandler {
 
         var cardHTML = `
             <div class="card draggable ${taglist}" style="--bg:var(--color-${cardType.colorName})">
-            <div class="card-bg">
-                <div class="card-bg-circle" style="--index:0"></div>
-                <div class="card-bg-circle" style="--index:1"></div>
-                <div class="card-bg-circle" style="--index:2"></div>
-            </div>
-            <div class="card-content">
-            <div class="card-title-container" id="title-container">
-            
-            </div>
-            <div class="card-img-container" style=${imgCSS}></div>
-            </div>
+                <div class="card-bg">
+                    <div class="card-bg-circle" style="--index:0"></div>
+                    <div class="card-bg-circle" style="--index:1"></div>
+                    <div class="card-bg-circle" style="--index:2"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-title-container" id="title-container"></div>
+                    <div class="card-img-container" style=${imgCSS}></div>
+                </div>
+                <p class="txt-size-header headerFont card-count"></p>
             </div>
         `;
         var fragment = parseHTMLDocumentFragment(cardHTML);
@@ -356,7 +414,7 @@ class GUIHandler {
         var titleContainer = fragment.querySelector("#title-container");
         titleContainer.appendChild(GUIHandler.generateCardTitleElement(cardType.lore));
         
-        fragment.firstElementChild.setAttribute("data-cardTypeId",cardType.id);
+        fragment.firstElementChild.setAttribute("data-typeId",cardType.id);
         return fragment.firstElementChild;
         }
     static generateCardTitleElement(lore) {
@@ -395,34 +453,119 @@ class GUIHandler {
         
         return cardTitle;
     }
+    static renderRequirementsObject(reqs,pretext = "Requires:") {
+        var reqsElem = elem("div");
+        reqsElem.classList.add("log-persistent-cursor");
+        reqsElem.classList.add("log-persistent-cursor-reqs");
+        pretext = elem("p","log-pretext",pretext);
+        reqsElem.appendChild(pretext);
+
+        Object.keys(reqs).forEach((key)=>{
+            let split = key.split("-");
+            let objClass = split[0];
+            let typeId = split[1];
+            let amt = reqs[key];
+
+            if (objClass == "stat") {
+                let stat = StatType.getById(typeId);
+                let statElem = document.createElement("elem");
+                statElem.classList.add("log-statText");
+                statElem.classList.add("headerFont");
+                statElem.style = `--fillColor:${stat.style.fillColor};--txtColor:${stat.style.fillColorAccent};`;
+                statElem.innerHTML = `${amt} ${stat.name}`;
+                reqsElem.appendChild(statElem);
+            } else if (objClass == "card") {
+                let card = CardType.getById(typeId);
+                let cardElem = document.createElement("elem");
+                cardElem.classList.add("log-cardText");
+                cardElem.classList.add("headerFont");
+                cardElem.style = `--color:var(--color-${card.colorName})`;
+                cardElem.innerHTML = `${amt} ${card.name}`;
+                reqsElem.appendChild(cardElem);
+            } else {
+                console.warn(`GUIHandler.renderRequirementsObject(): Attempted to render requirement of class "${objClass}", however no such class exists.`);
+            }
+        })
+
+        return reqsElem;
+    }
+    static toggleDarkOverlay(screen, state, closeable = false) {
+        if (state) {
+            Game.player.paralyze();
+            GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,true,"flex");
+        } else {
+            Game.player.unparalyze();
+            GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
+        }
+        if (closeable) {
+            GUIHandler.DarkOverlayBg.onclick = () => {
+                Game.player.unparalyze();
+                GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
+                GameEventHandler.onSelectionInvocationFailure(GUIHandler.selectionInvoker);
+            };
+            GUIHandler.DarkOverlayCloseListener = document.addEventListener("keydown",(e) => {
+                if (e.code == "Escape") {
+                    Game.player.unparalyze();
+                    GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
+                    GameEventHandler.onSelectionInvocationFailure(GUIHandler.selectionInvoker);
+                    removeEventListener("keydown",GUIHandler.DarkOverlayCloseListener,true);
+                }
+            });
+            GUIHandler.DarkOverlay.classList.add("state-onclickVanishable");
+        } else {
+            GUIHandler.DarkOverlayBg.onclick = null;
+            removeEventListener("keydown",GUIHandler.DarkOverlayCloseListener,true);
+            GUIHandler.DarkOverlay.classList.remove("state-onclickVanishable");
+        }
+    }
     static minimizeDOM() {
         document.getElementById("Screen-Start").remove();
         document.getElementById("Screen-Credits").remove();
     }
-    static displaySelection(cards,lore) {
+    static displaySelection(cards,lore,invoker,closeable = true) {
+        if (cards instanceof Object) {
+            console.log("bad code here");
+            cards = Object.values(cards);
+        }
+
+        GUIHandler.selectionInvoker = invoker;
         GUIHandler.SelectionCardContainer.innerHTML = "";
-        Game.player.paralyze();
-        GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,true,"flex");
-        GUIHandler.DarkOverlayBg.onclick = () => {
-            Game.player.unparalyze();
-            GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
-        };
-        GUIHandler.DarkOverlay.classList.add("state-onclickVanishable");
+        GUIHandler.toggleDarkOverlay("CardSelection",true,closeable);
 
         GUIHandler.SelectionTitle.innerHTML = lore.title;
         GUIHandler.SelectionDesc.innerHTML = lore.description;
+
         let index = 0;
         cards.forEach((card)=>{
+            //initialize card element
             let element = GUIHandler.generateRawCardElement(card.type);
             element.classList.add("undraggable");
             element.classList.add("starCard");
             element.querySelector(".card-bg").style.backgroundPosition = `${randInt(100)}% ${randInt(100)}%`;
             element.setAttribute("data-index",index++);
-            element.appendChild(elem("div","card-desc",card.type.lore.technical_description));
+            //add extra flavor text and technical description below card
+            let desc = elem("div","card-desc");
+            let flavor = elem("div","card-desc-flavor filter-aberration",card.type.lore.description);
+            let technical = elem("div","card-desc-technical",card.type.lore.technical_description);
+            desc.appendChild(flavor);
+            desc.appendChild(technical);
+            element.appendChild(desc);
+            //add onSelect event once clicked
             element.addEventListener("click",(e)=>{
                 GameEventHandler.onSelect(cards[e.target.getAttribute('data-index')]);
             });
+            if (card.type.hasOtherProperty("cost")) {
+                element.addEventListener("mouseenter",(e)=>{
+                    var elem = GUIHandler.renderRequirementsObject(card.type.other.cost,"Costs:");
+                    GUIHandler.logText(elem,"persistent-cursor");
+                });
+                element.addEventListener("mouseleave",(e)=>{
+                    GUIHandler.logText("","persistent-cursor");
+                });
+            }
+
             GUIHandler.SelectionCardContainer.appendChild(element);
+            //add the diamond spacer after the card if they're not the last one
             if (index < cards.length) {
                 let spacer = elem("div","spacer");
                 GUIHandler.SelectionCardContainer.appendChild(spacer);

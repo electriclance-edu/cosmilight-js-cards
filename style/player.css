@@ -3,15 +3,18 @@ PLAYER SELECTORS
 ##############*/
 
 .playerStatDisplay {
-    --fill-abs-max:1;
-    position:absolute;
-    left:10px;
-    bottom:10px;
-    z-index:15000;
-    width:400px;
+  --fill-abs-max:1;
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:15000;
+  width:400px;
+  scale:0.85;
+  transform-origin:0% 100%;
 }
 .playerStatDisplay .progressBar {
-    transition:0.3s;
+  transition:0.3s;
+  width:100%;
 }
 .PlayerHandContainer .inventory-bg {
   --rotation:0deg;
@@ -33,9 +36,6 @@ PLAYER SELECTORS
   display:flex;
 }
 .PlayerHandContainer .inventoryParent {
-  transform:translate(-50%,-50%);
-}
-.PlayerHandContainer .inventoryParent:hover {
   transform:translate(-50%,-100%);
 }
 .PlayerHandContainer .inventoryTitle {
@@ -43,4 +43,9 @@ PLAYER SELECTORS
 }
 .PlayerHandContainer .card.state-new {
     animation:0.5s forwards flash, 3s forwards glow;
+}
+.PlayerHandContainer .card .card-count {
+  bottom:100%;
+  top:auto;
+  transform:translate(-70%,70%);
 }

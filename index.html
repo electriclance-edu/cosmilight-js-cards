@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Cosmilight</title>
+    <title>Cosmilight (Demo)</title>
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/animations.css">
     <link rel="stylesheet" href="style/inventory.css">
@@ -43,7 +43,11 @@
     <script src="data/base_game/data-CardType-Credits.js" defer></script>
     <script src="class/handler/GUIHandler.js" defer></script>
     <script src="data/base_game/data-StatType.js" defer></script>
-    <script src="data/base_game/data-CardType.js" defer></script>
+    <script src="data/base_game/data-CardType-Other.js" defer></script>
+    <script src="data/base_game/data-CardType-Instrument.js" defer></script>
+    <script src="data/base_game/data-CardType-Item.js" defer></script>
+    <script src="data/base_game/data-CardType-Research.js" defer></script>
+    <script src="data/base_game/data-CardType-Spell.js" defer></script>
     <script src="data/base_game/data-TileType.js" defer></script>
     <script src="data/base_game/data-StructureType.js" defer></script>
   </head>
@@ -116,7 +120,7 @@
             <p class="gameHeader txt-size-massive">
               <span class="headerFont" style="--index:0">C</span><span class="headerFont" style="--index:1">o</span><span class="headerFont" style="--index:2">s</span><span class="headerFont" style="--index:3">m</span><span class="headerFont" style="--index:4">i</span><span class="headerFont" style="--index:4.5">l</span><span class="headerFont" style="--index:3.5">i</span><span class="headerFont" style="--index:2.5">g</span><span class="headerFont" style="--index:1.5">h</span><span class="headerFont" style="--index:0.5">t</span>
             </p>
-            <p class="clickable" onclick="toggleScreen('GameBoard'); GUIHandler.minimizeDOM()">PLAY</p>
+            <p class="clickable" onclick="toggleScreen('Game'); GUIHandler.minimizeDOM(); startGame()">START</p>
             <p class="clickable" onclick="toggleScreen('Credits')">CREDITS</p>
           </div>
         </div>
@@ -132,8 +136,8 @@
           <p>These people helped as well a little, thank you your a cool!!</p>
           <div class="flex-centered flex-row" id="credits-friends"></div>
         </div>
-        <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-GameBoard">
-          <div class="controls">
+        <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-Game">
+          <div class="controls hidden">
             <p>Move with <span class="input">WASD</span> or <span class="input">↑ ← ↓ →</span></p>
             <p>Dash with <span class="input">Left Shift</span></p>
             <p>Access a tile inventory with <span class="input">Click</span> or <span class="input">Space</span></p>
@@ -144,7 +148,7 @@
               <div class="starLayer starLayerTwo"></div>
               <div class="starLayer starLayerThree"></div>
             </div>
-            <div class="controls">
+            <div class="controls darkOverlay-onclickVanishable-controls" id="DarkOverlay-cancelSelectionControls">
               <p><span class="input">Click</span> on the reddened sides to cancel the selection.</p>
             </div>
             <div class="CardSelection flex-column flex-centered">
@@ -156,6 +160,7 @@
             </div>
           </div>
           <div class="Crosshair">+</div>
+          <div class="PersistentCursorTextDisplay textDisplay" id="PersistentCursorTextDisplay"></div>
           <div class="FollowCursorTextDisplay textDisplay fillWindow" id="FollowCursorTextDisplay"></div>
           <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
           <div class="StructureDetailDisplay state-vanished" id="StructureDetailDisplay">

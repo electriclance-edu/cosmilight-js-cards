@@ -16,7 +16,9 @@ function onload() {
   setTimeout(() => {initialize()},0);
 }
 function initialize() {
-  toggleScreen("Start");
+  // toggleScreen("Start");
+  toggleScreen("Game");
+  startGame();
   DataHandler.loadAllData();
   new Game();
   retrieveCSSConstants();
@@ -36,26 +38,40 @@ function initialize() {
   // GUIHandler.renderTile(new Point(0,0));
   // Game.world.openInventory(centralTileInventory);
   GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
-  Game.player.hand.addCard(new Card("old_orb"));
+  Game.player.hand.addCard(new Card("sing_melody"));
+  // Game.player.hand.addCard(new Card("starter_instrument"));
+  // Game.player.hand.addCard(new Card("spellpaper"));
+  // Game.player.hand.addCard(new Card("spellpaper"));
   GUIHandler.displayStats(Object.values(Game.player.stats),GUIHandler.PlayerStatContainer);
 
-  setTimeout(()=>{
-    GUIHandler.displaySelection([
-      new Card("research_theorycrafting"),
-      new Card("research_threadmaking"),
-      new Card("research_carvedspells"),
-      new Card("research_ignition"),
-    ],{
-      title:"Select a research.",
-      description:"Break open paths to new knowledge."
-    });
-  },3000);
+  // setTimeout(()=>{
+  //   GUIHandler.displaySelection([
+  //     new Card("research_hiraku"),
+  //   ],{
+  //     title:"Welcome to this world.",
+  //     description:"You do not exist. You will need a few things to do anything."
+  //   },undefined,false);
+  // },500);
+
+  // setTimeout(()=>{
+  //   GUIHandler.displaySelection([
+  //     new Card("research_theorycrafting"),
+  //     new Card("research_threadmaking"),
+  //     new Card("research_carvedspells"),
+  //     new Card("research_heat"),
+  //     new Card("research_heatspells"),
+  //     new Card("research_heatdash"),
+  //   ],{
+  //     title:"Select a research.",
+  //     description:"Break open paths to new knowledge."
+  //   });
+  // },500);
   
   setInterval(() => {
     FPSHandler.updateFrames();
   },16.6);
   setInterval(() => {
-    FPSHandler.updateElement();
+    // FPSHandler.updateElement();
   },1000);
   setInterval(() => {
     let mov = Game.player.movement;
@@ -69,20 +85,25 @@ function initialize() {
   },50);
 
   GUIHandler.updateScreenCull();
-  GUIHandler.logText(randElem([
-    "The ground crunches below your feet.",
-    "A cold breeze blows past.",
-    "The howling of silence echoes.",
-    "The dim starlight is all that lets you see beyond.",
-    "An ancient world awaits.",
-    "The darkness threatens to encroach.",
-    "Your toes curl in quaking anticipation.",
-  ]))
+  // GUIHandler.logText(randElem([
+  //   "The ground crunches below your feet.",
+  //   "A cold breeze blows past.",
+  //   "The howling of silence echoes.",
+  //   "The dim starlight is all that lets you see beyond.",
+  //   "An ancient world awaits.",
+  //   "The darkness threatens to encroach.",
+  //   "Your toes curl in quaking anticipation.",
+  // ]))
   // GUIHandler.logText("Feel the ground here.");
   // setTimeout(()=>{GUIHandler.logText("It is hard. Cold. Ancient.")},3000);
   // setTimeout(()=>{GUIHandler.logText("The warmth of your hand is the first heat it has touched in eons.")},7000);
   // setTimeout(()=>{GUIHandler.logText("But with time... perhaps this whole world will feel the resplendence of heat once again.")},12000);
   // setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
+}
+function startGame() {
+  setTimeout(()=>{
+    GUIHandler.logText("You see nothing. You can do nothing but sing your melody.");
+  },500);
 }
 function retrieveCSSConstants() {
   var style = getComputedStyle(document.body);
@@ -155,7 +176,7 @@ function onDragStart(e) {
 
   document.body.classList.add("dragging");
   
-  const cardData = CardType.getById(elem.getAttribute("data-cardTypeId"));
+  const cardData = CardType.getById(elem.getAttribute("data-typeId"));
   var ghost = GUIHandler.generateRawCardElement(cardData);
   ghost.classList.add("drag_ghost");
   ghost.classList.add(".state-vanished");
@@ -270,7 +291,7 @@ function openTile(coords) {
     },300);
   }
 
-  GUIHandler.displayInventories([tile.inventory]);
+  // GUIHandler.displayInventories([tile.inventory]);
 
   if (!!Game.currentTileCoords) {
     if (Point.areEqual(coords,Game.currentTileCoords)) {
@@ -382,6 +403,7 @@ function doResize() {
 }
 document.addEventListener('mousemove', (e) => {
   mousePosition = new Point(e.clientX,e.clientY);
+  document.getElementById("PersistentCursorTextDisplay").style = `--x:${e.clientX};--y:${e.clientY};`
 });
 document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {

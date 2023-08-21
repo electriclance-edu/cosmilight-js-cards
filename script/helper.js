@@ -1,3 +1,16 @@
+//Returns an array of all coordinates that are of a given distance or less from a given point.
+function disc(center,radius) {
+    var points = [];
+    for (var x = center.x - Math.floor(radius); x < center.x + radius; x++) {
+        for (var y = center.y - Math.floor(radius); y < center.y + radius; y++) {
+            if (dist(new Point(x, y), center) < radius) {
+                points.push(new Point(x,y));
+            }
+        }
+    }
+    return points;
+}
+
 //Converts a decimal coordinate into a solid tile coordinate.
 function roundCoordinate(num) {
     let val = parseFloat(num) + 0.499;

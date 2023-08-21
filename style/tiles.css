@@ -62,8 +62,15 @@ TILE SELECTORS
   user-select:none;
   pointer-events:none;
   transform:translate(calc(-50% + var(--rand-x-offset)),calc(-50% + var(--rand-y-offset)));
-  max-width:200px;
+  max-width:230px;
   filter:drop-shadow(5px 5px 10px rgba(0,0,0,0.5));
+}
+.tile .structureSprite.structure-monarchtree {
+  margin-top:-50px;
+  max-width:400px;
+}
+.tile .structureSprite.structure-large {
+  max-width:300px;
 }
 .tile .tileSprite {
   --rand-x-offset:0px;

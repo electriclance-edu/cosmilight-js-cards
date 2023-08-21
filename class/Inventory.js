@@ -12,6 +12,33 @@ class Inventory {
     get localId() {
         return this.title.replace(/\s+/g, '');
     }
+    countOf(typeId) {
+        let count = 0;
+        Object.values(this.cards).forEach((card)=>{
+            if (card.type.id == typeId) {
+                count++;
+            }
+        });
+        return count;
+    }
+    getCardOfId(typeId) {
+        Object.values(this.cards).forEach((card)=>{
+            if (card.type.id == typeId) {
+                return card;
+            }
+        });
+    }
+    removeOfId(typeId,amt) {
+        Object.values(this.cards).forEach((card)=>{
+            if (amt == 0) {
+                return;
+            }
+            if (card.type.id == typeId) {
+                card.remove();
+                amt--;  
+            }
+        });
+    }
     getCard(id) {
         return this.cards[id];
     }
@@ -68,6 +95,7 @@ class Inventory {
         return this.idTemplate;
     }
     removeCard(id) {
+        GameEventHandler.onRemove(this.cards[id]);
         this.cards[id].inventory = undefined;
         this.cards[id].inventoryId = undefined;
         delete this.cards[id];

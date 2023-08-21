@@ -14,8 +14,15 @@ class CardType {
         this.interactions = mergeObjects(properties.interactions,GameEventHandler.defaultInteractions);
         this.stats = properties.stats;
         this.lore = properties.lore;
+        this.other = properties.other;
     }
-    getTitle() {
+    hasOtherProperty(key) {
+        if (this.other) {
+            return this.other.hasOwnProperty(key);
+        }
+        return false;
+    }
+    get name() {
         return `${this.lore.superTitle ? this.lore.superTitle + " ": ""}${this.lore.mainTitle}${this.lore.subTitle ? " " + this.lore.subTitle: ""}`;
     }
     static load(data) {

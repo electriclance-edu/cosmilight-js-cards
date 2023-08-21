@@ -14,6 +14,9 @@ INVENTORY SELECTORS
 .ExternalInventoryContainer .inventoryParent.state-vanished {
   opacity:0;
 }
+.ExternalInventoryContainer .inventoryParent.state-vanished * {
+  pointer-events:none;
+}
 .inventory {
   display:flex;
   /* width:100%; */
@@ -32,14 +35,13 @@ INVENTORY SELECTORS
 .ExternalInventoryContainer .inventoryParent {
   position:relative;
   padding-top:40px;
-  translate:0 40%;
+  translate:0 100%;
   transition:translate 0.2s, opacity 0.2s;
   opacity:1;
   min-width:calc(var(--card-width) * 1.5);
   margin:0 15px;
 }
 .ExternalInventoryContainer .inventoryParent:hover {
-  translate:0 100%;
 }
 .ExternalInventoryContainer.state-hidden {
   opacity:0;
@@ -56,17 +58,14 @@ INVENTORY SELECTORS
   filter:drop-shadow(0 0 10px var(--bg-accent));
   background-color:var(--bg-inventory);
   background-image:url("../resources/img/cosmilight-bg-circles-translucent.png");
-  background-size:contain;
-  background-repeat:round;
+  background-size:cover;
+  background-repeat:none;
   background-position:center;
-  translate:0 calc(20%);
+  translate:0 0;
   transition:translate 0.2s;
   -webkit-mask:linear-gradient(var(--rotation), black 0%, transparent 100%);
   /* -webkit-mask-composite:intersect; */
   /* mask:url("../resources/img/bg-mask.png"); */
-}
-.ExternalInventoryContainer .inventoryParent:hover .inventory-bg {
-  translate:0 0;
 }
 body:not(.dragging) .ExternalInventoryContainer .inventory-bg:hover {
   background-color:var(--bg-shadow-red);
@@ -83,13 +82,10 @@ body.dragging .inventory-bg:hover {
   color:white;
   white-space:nowrap;
   pointer-events:none;
+  translate:0 0;
   user-select:none;
-  translate:0 calc(var(--card-height) + 40px);
   transition:translate 0.2s;
   filter:drop-shadow(0 0 5px black) drop-shadow(0 0 10px black);
-}
-.ExternalInventoryContainer .inventoryParent:hover > .inventoryTitle {
-  translate:0 0;
 }
 .ExternalInventoryContainer * {
   pointer-events:all;

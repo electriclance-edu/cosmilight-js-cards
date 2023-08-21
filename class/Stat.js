@@ -23,6 +23,9 @@ class Stat {
             min:this.min
         });
     }
+    isMaxed() {
+        return this.value == this.#max;
+    }
     get value() {
         return this.#value;
     }
@@ -43,6 +46,9 @@ class Stat {
     }
     get type() {
         return StatType.getById(this.typeId);
+    }
+    satisfies(amt) {
+        return this.value >= amt;
     }
     consume(amt, limited = true) {
         let newValue = this.value - amt;

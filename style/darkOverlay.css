@@ -7,6 +7,12 @@ DARK OVERLAY SELECTORS
   transition:0.3s opacity;
   pointer-events:none;
 }
+.DarkOverlay .darkOverlay-onclickVanishable-controls {
+  display:none;
+}
+.DarkOverlay.state-onclickVanishable .darkOverlay-onclickVanishable-controls {
+  display:block;
+}
 .DarkOverlay.state-visible > * {
   pointer-events:all;
 }
@@ -84,12 +90,18 @@ DARK OVERLAY SELECTORS
 }
 .cardSelection-cardContainer {
   width:fit-content;
+  max-width:100vw;
+  flex-wrap:wrap;
 }
 .cardSelection-cardContainer .card {
   margin:0 30px;
-  margin-bottom:50px;
+  margin-bottom:100px;
   transition:0.2s scale, 0.2s filter;
   filter: drop-shadow(0 0 0 transparent);
+}
+.cardSelection-cardContainer .card .card-desc {
+  width:calc(100% + 54px);
+  transform:translatex(-27px);
 }
 .cardSelection-cardContainer .card:hover {
   filter: drop-shadow(0 0 60px rgb(255,255,255,0.6)) brightness(1.2);
@@ -100,14 +112,16 @@ DARK OVERLAY SELECTORS
   background-color:rgb(200,200,200);
   width:15px;
   height:15px;
-  transform:translatey(-25px) rotate(45deg);
+  transform:translatey(-47px) rotate(45deg);
 }
 .cardSelection-cardContainer .card .card-desc b {
   color:var(--bg);
   filter:brightness(2) saturate(0.5);
 }
+.cardSelection-cardContainer .card .card-desc .card-desc-technical {
+  margin-top:5px;
+}
 .cardSelection-desc {
   margin-top:5px;
   margin-bottom:30px;
-  opacity:0.8;
 }

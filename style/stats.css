@@ -12,7 +12,8 @@ STAT SELECTORS
   position:relative;
 }
 .progressBarParent > .progressBar-text {
-  color:var(--fill-color);
+  color:var(--bg-white);
+  /* color:var(--fill-color); */
   position:absolute;
   right:5px;
   top:8.5px;

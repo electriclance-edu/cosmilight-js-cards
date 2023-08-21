@@ -18,6 +18,7 @@ CARD SELECTORS
 }
 .card * {
   pointer-events:none;
+  font-size:0.9em;
 }
 body .card:active {
   filter: brightness(1.5);
@@ -85,6 +86,15 @@ body .card:active {
 }
 .card.darkness .card-title-container {
   display:none;
+}
+.card .card-count {
+  position:absolute;
+  top:100%;
+  left:100%;
+  transform:translate(-70%,-70%);
+  font-size:2.5em;
+  z-index:10;
+  text-shadow:0 0 10px var(--bg-shadow), 0 0 10px var(--bg-shadow), 0 0 20px var(--bg-shadow);
 }
 .card-title {
   width: 100%;
