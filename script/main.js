@@ -7,6 +7,7 @@ var defaultPersistence = undefined;
 var mousePosition = new Point(0,0);
 var disableContextMenu = false;
 var keyShiftPressed = false;
+const graphicsDisplaySize = window.innerHeight;
 /*
 --------------
 ONLOAD FUNCTIONS
@@ -24,76 +25,25 @@ function initialize() {
   retrieveCSSConstants();
   GUIHandler.initialize();
   LightHandler.initialize();
+  FogHandler.initialize();
   FPSHandler.initialize();
 
   GUIHandler.renderCredits();
   GUIHandler.renderCurrentTileBoard();
 
-  // var centralTileInventory = Game.board.getTile(new Point(0,0)).inventory;
-  // centralTileInventory.addCard(new Card("harvest"));
-  // centralTileInventory.addCard(new Card("harvest"));
-  // centralTileInventory.addCard(new Card("release_heat"));
-  // centralTileInventory.addCard(new Card("release_heat"));
-  // centralTileInventory.addCard(new Card("release_heat"));
-  // GUIHandler.renderTile(new Point(0,0));
-  // Game.world.openInventory(centralTileInventory);
-  GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
-  Game.player.hand.addCard(new Card("sing_melody"));
-  // Game.player.hand.addCard(new Card("starter_instrument"));
-  // Game.player.hand.addCard(new Card("spellpaper"));
-  // Game.player.hand.addCard(new Card("spellpaper"));
-  GUIHandler.displayStats(Object.values(Game.player.stats),GUIHandler.PlayerStatContainer);
-
-  // setTimeout(()=>{
-  //   GUIHandler.displaySelection([
-  //     new Card("research_hiraku"),
-  //   ],{
-  //     title:"Welcome to this world.",
-  //     description:"You do not exist. You will need a few things to do anything."
-  //   },undefined,false);
-  // },500);
-
-  // setTimeout(()=>{
-  //   GUIHandler.displaySelection([
-  //     new Card("research_theorycrafting"),
-  //     new Card("research_threadmaking"),
-  //     new Card("research_carvedspells"),
-  //     new Card("research_heat"),
-  //     new Card("research_heatspells"),
-  //     new Card("research_heatdash"),
-  //   ],{
-  //     title:"Select a research.",
-  //     description:"Break open paths to new knowledge."
-  //   });
-  // },500);
-  
-  setInterval(() => {
-    FPSHandler.updateFrames();
-  },16.6);
-  setInterval(() => {
-    // FPSHandler.updateElement();
-  },1000);
-  setInterval(() => {
-    let mov = Game.player.movement;
-    var x = Game.player.movement.direction["+x"]*Game.player.speed - Game.player.movement.direction["-x"]*Game.player.speed;
-    var y = Game.player.movement.direction["+y"]*Game.player.speed - Game.player.movement.direction["-y"]*Game.player.speed;
-    Game.player.translate(x,y);
-
-    if (mov.excessSpeed > 0) {
-      mov.excessSpeed -= 0.04;
-    }
-  },50);
+  // GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
+  // Game.player.hand.addCard(new Card("condense_light"));
+  // Game.player.hand.addCard(new Card("debug_map"));
 
   GUIHandler.updateScreenCull();
-  // GUIHandler.logText(randElem([
-  //   "The ground crunches below your feet.",
-  //   "A cold breeze blows past.",
-  //   "The howling of silence echoes.",
-  //   "The dim starlight is all that lets you see beyond.",
-  //   "An ancient world awaits.",
-  //   "The darkness threatens to encroach.",
-  //   "Your toes curl in quaking anticipation.",
-  // ]))
+  
+  // setInterval(() => {
+  //   FPSHandler.updateFrames();
+  // },16.6);
+  // setInterval(() => {
+  //   FPSHandler.updateElement();
+  // },1000);
+
   // GUIHandler.logText("Feel the ground here.");
   // setTimeout(()=>{GUIHandler.logText("It is hard. Cold. Ancient.")},3000);
   // setTimeout(()=>{GUIHandler.logText("The warmth of your hand is the first heat it has touched in eons.")},7000);
@@ -102,8 +52,17 @@ function initialize() {
 }
 function startGame() {
   setTimeout(()=>{
-    GUIHandler.logText("You see nothing. You can do nothing but sing your melody.");
-  },500);
+    // GUIHandler.logText(randElem([
+    //   "The ground crunches below your feet.",
+    //   "A cold breeze blows past.",
+    //   "The howling of silence echoes.",
+    //   "The dim starlight is all that lets you see beyond.",
+    //   "An ancient world awaits.",
+    //   "The darkness threatens to encroach.",
+    //   "Your toes curl in quaking anticipation.",
+    // ]),undefined,7500);
+    // GUIHandler.logText("You see nothing. You can do nothing but sing your melody.");
+  },1500);
 }
 function retrieveCSSConstants() {
   var style = getComputedStyle(document.body);
@@ -111,14 +70,28 @@ function retrieveCSSConstants() {
   tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height')));
   defaultPersistence = removePx(style.getPropertyValue('--log-persistence'));
 }
-function toggleStructureDetailDisplay(visible = false,structure) {
-  if (visible) {
-    GUIHandler.displayStructureDetails(structure);
-    GUIHandler.StructureDetailDisplay.classList.remove("state-vanished");
-  } else {    
-    GUIHandler.StructureDetailDisplay.classList.add("state-vanished");
-    Array.from(document.getElementById("structureStatContainer").children).forEach((child)=>setTimeout(()=>{child.remove()},300));
+function debug_setColor() {
+  document.getElementById("TileBoard").style.setProperty('--x',`1000`);
 }
+function updateCSSTileDimensions() {
+  // tileWidth = width;
+  // tileHeight = height;
+  document.querySelector(':root').style.setProperty('--tile-width', `${tileWidth}px`);
+  document.querySelector(':root').style.setProperty('--tile-height', `${tileHeight}px`);
+}
+function debug_continuousTileShift(deltaWidth,deltaHeight,time = 1000,steps = 20) {
+  // For every (time/step)ms, shift the dimension by 1/stepth towards the desired value
+  let stepIndex = 0;
+  let shiftInterval = setInterval(()=>{
+    if (stepIndex < steps) {
+      tileWidth += deltaWidth / 20;
+      tileHeight += deltaHeight / 20;
+      updateCSSTileDimensions();
+      stepIndex++;
+    } else {
+      clearInterval(shiftInterval);
+    }
+  },time / steps);
 }
 /*
 --------------
@@ -284,15 +257,6 @@ function mouseToBoardCoordinates(e) {
 function openTile(coords) {
   let tile = Game.board.getTile(coords);
 
-  toggleStructureDetailDisplay(false);
-  if (tile.hasStructure()) {
-    setTimeout(()=>{
-      toggleStructureDetailDisplay(true,tile.getStructure());
-    },300);
-  }
-
-  // GUIHandler.displayInventories([tile.inventory]);
-
   if (!!Game.currentTileCoords) {
     if (Point.areEqual(coords,Game.currentTileCoords)) {
       return;
@@ -309,11 +273,14 @@ function openTile(coords) {
 DEBUG FUNCTIONS
 --------------
 */
-function createDot(x = 100, y = 100,borderColor = "red") {
+function createDot(x = 100, y = 100,borderColor = "red",tempo = false) {
   var dot = elem("div","debug-dot");
   dot.style.left = x + "px";
   dot.style.top = y + "px";
   dot.style.borderColor = borderColor;
+  if (tempo) {
+    setTimeout(()=>{dot.remove()},tempo);
+  }
   document.body.appendChild(dot);
 }
 /*
@@ -370,14 +337,9 @@ document.addEventListener('keydown', function(e) {
 
   if (key == "ShiftLeft") {
     keyShiftPressed = true;
-    if (Game.player.moving) {
-      Game.player.dash();
-    }
+    Game.player.movement.dashBonus = 10;
   }
 
-  if (key == "Space") {
-    openTile(Game.player.getRoundedLocation());
-  }
   if (key == "ArrowLeft" || key == "KeyA") {
     e.preventDefault();
     Game.player.movement.direction["-x"] = 1;
@@ -400,6 +362,7 @@ window.addEventListener("resize", (e) => {
 });
 function doResize() {
   LightHandler.initialize();
+  FogHandler.initialize();
 }
 document.addEventListener('mousemove', (e) => {
   mousePosition = new Point(e.clientX,e.clientY);
@@ -407,6 +370,10 @@ document.addEventListener('mousemove', (e) => {
 });
 document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {
+  let cursor = new Point(e.clientX,e.clientY);
+  let origin = new Point(window.innerWidth/2, window.innerHeight/2);
+  FogHandler.clearCone(angleBetween(cursor,origin));
+
   if (e.target.classList.contains("undraggable")) {
     return;
   }
@@ -451,13 +418,5 @@ document.addEventListener('mousedown', (e) => {
     onDragStart(e);
     document.addEventListener('mousemove', dragManager, true);
     document.addEventListener('mouseup', dragEnder, true);
-  } else if (e.target.classList.contains("tile")) {
-    let coords = mouseToBoardCoordinates(e);
-    if (Game.player.distanceTo(coords) > 0.5 + Game.player.getStat("interactionDistance").value) {
-      GUIHandler.logText("Too far!","cursor",1000);
-      return;
-    }
-
-    openTile(coords);
   }
 });

@@ -1,11 +1,60 @@
 //Returns an array of all coordinates that are of a given distance or less from a given point.
-function disc(center,radius) {
+function discIntCoords(center,radius) {
     var points = [];
     for (var x = center.x - Math.floor(radius); x < center.x + radius; x++) {
         for (var y = center.y - Math.floor(radius); y < center.y + radius; y++) {
             if (dist(new Point(x, y), center) < radius) {
                 points.push(new Point(x,y));
             }
+        }
+    }
+    return points;
+}
+function angleBetween(target,origin) {
+    let vector = new Point(target.x - origin.x, -(target.y - origin.y));
+    let angle = Math.atan2(vector.y,vector.x) * (180 / 3.1415);
+    if (angle < 0) return 360 + angle;
+    return angle;
+}
+//Returns an array of all integer coordinates that intersect with a given square.
+function squareIntersectingIntCoords(center,radius) {
+    var square = generateSquare(center,radius);
+    // console.log(FogHandler.canvasCenter);
+    let debugtime = 1000;
+    // createDot(
+    //     (square.cornerA.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
+    //     (square.cornerA.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
+    //     null,
+    //     debugtime
+    // );
+    // createDot(
+    //     (square.cornerB.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
+    //     (square.cornerB.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
+    //     null,
+    //     debugtime
+    // );
+    square.cornerA.x = roundAway(square.cornerA.x,square.center.x);
+    square.cornerA.y = roundAway(square.cornerA.y,square.center.y);
+    square.cornerB.x = roundAway(square.cornerB.x,square.center.x);
+    square.cornerB.y = roundAway(square.cornerB.y,square.center.y);
+    // createDot(
+    //     (square.cornerA.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
+    //     (square.cornerA.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
+    //     "blue",
+    //     debugtime
+    // );
+    // createDot(
+    //     (square.cornerB.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
+    //     (square.cornerB.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
+    //     "blue",
+    //     debugtime
+    // );
+
+    var points = [];
+    // CornerB is the +x+y corner. CornerA is the -x-y corner.
+    for (var x = square.cornerA.x; x <= square.cornerB.x; x++) {
+        for (var y = square.cornerB.y; y >= square.cornerA.y; y--) {
+            points.push(new Point(x,y));
         }
     }
     return points;
@@ -56,6 +105,10 @@ function verifyIfHasProperty(obj, reqProperty, errorMessage) {
 function mergeObjects(main,merger) {
     return {...merger, ...main};
 }
+// Alias of elem
+function aliasElem(tag, className, innerHTML) {
+    return elem(tag,className,innerHTML);
+}
 // Generates a DOM element given certain properties.
 function elem(tag, className = false, innerHTML = false) {
     var element = document.createElement(tag);
@@ -78,8 +131,8 @@ function generateSquare(center, halfside) {
         center:center,
         width:halfside*2,
         height:halfside*2,
-        topLeft:new Point(center.x - halfside, center.y - halfside),
-        bottomRight:new Point(center.x + halfside, center.y + halfside)
+        cornerA:new Point(center.x - halfside, center.y - halfside),
+        cornerB:new Point(center.x + halfside, center.y + halfside)
     };
 }
 
@@ -101,7 +154,12 @@ function chance(maxThreshold) {
 function dist(a, b) {
     return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
 }
-
+function roundTowards(num, center = 0) {
+    return num > center ? Math.floor(num) : Math.ceil(num);
+}
+function roundAway(num,center = 0) {
+    return num < center ? Math.floor(num) : Math.ceil(num);
+}
 function clamp(num,min,max) {
     return Math.max(min, Math.min(num, max));
 }

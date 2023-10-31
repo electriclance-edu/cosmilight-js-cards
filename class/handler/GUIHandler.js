@@ -1,8 +1,9 @@
 class GUIHandler {
     static tileElements = {};
     static TileBoard;
-    static CullPersistence = new Point(5,3);
-    static CullRevealage = new Point(1,1);
+    static CullPersistence = new Point(0,0);
+    static CullRevealage = new Point(3,3);
+    static frame = 0;
     // static CullPersistence = new Point(2,2);
     // static CullRevealage = new Point(2,2);
     
@@ -10,13 +11,27 @@ class GUIHandler {
         GUIHandler.TileBoard = document.getElementById("TileBoard");
         GUIHandler.PlayerHandContainer = document.getElementById("PlayerHandContainer");
         GUIHandler.PlayerStatContainer = document.getElementById("PlayerStatContainer");
-        GUIHandler.ExternalInventoryContainer = document.getElementById("ExternalInventoryContainer");
         GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
         GUIHandler.DarkOverlay = document.getElementById("DarkOverlay");
         GUIHandler.DarkOverlayBg = document.getElementById("darkOverlay-bg");
         GUIHandler.SelectionCardContainer = document.getElementById("cardSelection-cardContainer");
         GUIHandler.SelectionDesc = document.getElementById("cardSelection-desc");
         GUIHandler.SelectionTitle = document.getElementById("cardSelection-title");
+    }
+    static renderFrame() {
+        requestAnimationFrame(GUIHandler.renderFrame);
+        
+        GUIHandler.frame++;
+
+        let mov = Game.player.movement;
+        var x = Game.player.movement.direction["+x"]*Game.player.speed - Game.player.movement.direction["-x"]*Game.player.speed;
+        var y = Game.player.movement.direction["+y"]*Game.player.speed - Game.player.movement.direction["-y"]*Game.player.speed;
+        if (x != Game.player.location.x || y != Game.player.location.y) {
+            Game.player.translate(x,y);
+        }
+        
+        FogHandler.renderAllFog();
+        LightHandler.renderAllLight();
     }
     static renderCurrentTileBoard() {
         // var tileCoordinates = Object.keys(Game.board.tiles);
@@ -26,7 +41,7 @@ class GUIHandler {
         //     GUIHandler.renderTile(coords);
         // });
     }
-    static logText(content,location = "center",persistence = 15000) {
+    static logText(content,location = "center",persistence = 15000,title) {
         if (location == "center") {
             var elem = document.createElement("p");
             let index = 0;
@@ -56,11 +71,14 @@ class GUIHandler {
             document.getElementById("FollowCursorTextDisplay").appendChild(elem);
         } else if (location == "persistent-cursor") {
             document.getElementById("PersistentCursorTextDisplay").innerHTML = "";
+            let title = aliasElem("p","headerFont txt-size-header");
             if (content instanceof HTMLElement) {
                 document.getElementById("PersistentCursorTextDisplay").appendChild(content);
+                content.appendChild(title);
                 document.getElementById("PersistentCursorTextDisplay").classList.add(mousePosition.y > window.innerHeight - 500 ? "state-up" : "state-down");
             } else {
                 document.getElementById("PersistentCursorTextDisplay").innerHTML = content;
+                document.getElementById("PersistentCursorTextDisplay").appendChild(title);
             }
             if (content == "") {
                 document.getElementById("PersistentCursorTextDisplay").classList.remove("state-down");
@@ -129,40 +147,39 @@ class GUIHandler {
     static generateTileElem(tileData) {
         var tileHTML = `
             <div class="tile ${tileData.typeId}">
-                ${tileData.hasStructure() ? `<img class="structureSprite structure-${tileData.getStructure().typeId} ${randElem([" flipped",""])}${tileData.getStructure().type.hasTag("structure-large") ? " structure-large" : ""}" src="resources/img/structure/${tileData.getStructure().typeId}${tileData.getStructure().type.amountOfSprites > 1 ? `/${randInt(tileData.getStructure().type.amountOfSprites)}` : ""}.png" style="--rand-x-offset:${randInt(10)}px; --rand-y-offset:${randInt(10)}px;"/>` : ""}
                 <img class="tileSprite ${randElem(["flipped",""])}" style="--rand-x-offset:${randInt(7)}px; --rand-y-offset:${randInt(5)}px; filter:hue-rotate(${randInt(30) - 20}deg) brightness(${randFloat(0.1) + 0.9})" src="resources/img/tiles/${tileData.typeId}/${randInt(tileData.getType().amountOfSprites)}.png"/>
             </div>
         `;
 
         return parseHTML(tileHTML);
     }
-    static clearInventories(container = GUIHandler.ExternalInventoryContainer) {
-        container.innerHTML = "";
-    }
-    static displayInventory(inventory, parent = GUIHandler.ExternalInventoryContainer, vanishable = true) {
-        GUIHandler.displayInventories([inventory],parent,vanishable);
-    }
-    static displayInventories(inventoryArray, parent = GUIHandler.ExternalInventoryContainer, vanishable = true) {
-        parent.classList.add("state-hidden");
-        setTimeout(()=>{
-            inventoryArray.forEach((inventory) => { 
-                var possiblePreexistingElement = parent.querySelector(`#${inventory.localId}`);
-                if (!!possiblePreexistingElement) {
-                    possiblePreexistingElement.remove();
-                }
-                var elem = GUIHandler.createInventoryElem(inventory,vanishable);
-                parent.appendChild(elem);
-                inventory.setIsRendered(true);
-                // console.log(elem);
-                parent.classList.remove("state-hidden");
-            });
-        },300);
-    }
-    static closeAllInventories() {
-        Array.from(GUIHandler.ExternalInventoryContainer.children).forEach((child)=>{
-            GUIHandler.closeInventory(child);
-        });
-    }
+    // static clearInventories(container = GUIHandler.ExternalInventoryContainer) {
+    //     container.innerHTML = "";
+    // }
+    // static displayInventory(inventory, parent = GUIHandler.ExternalInventoryContainer, vanishable = true) {
+    //     GUIHandler.displayInventories([inventory],parent,vanishable);
+    // }
+    // static displayInventories(inventoryArray, parent = GUIHandler.ExternalInventoryContainer, vanishable = true) {
+    //     parent.classList.add("state-hidden");
+    //     setTimeout(()=>{
+    //         inventoryArray.forEach((inventory) => { 
+    //             var possiblePreexistingElement = parent.querySelector(`#${inventory.localId}`);
+    //             if (!!possiblePreexistingElement) {
+    //                 possiblePreexistingElement.remove();
+    //             }
+    //             var elem = GUIHandler.createInventoryElem(inventory,vanishable);
+    //             parent.appendChild(elem);
+    //             inventory.setIsRendered(true);
+    //             // console.log(elem);
+    //             parent.classList.remove("state-hidden");
+    //         });
+    //     },300);
+    // }
+    // static closeAllInventories() {
+    //     Array.from(GUIHandler.ExternalInventoryContainer.children).forEach((child)=>{
+    //         GUIHandler.closeInventory(child);
+    //     });
+    // }
     static closeInventory(elem) {
         elem.classList.add("state-vanished");
         setTimeout(()=>{
@@ -185,19 +202,6 @@ class GUIHandler {
 
         return fragment.firstElementChild;
     }
-    static displayStructureDetails(structure) {
-        var type = structure.type;
-        document.getElementById("structureTitle").innerHTML = type.name;
-        document.getElementById("structureDescription").innerHTML = type.lore.description;
-        
-        var statContainer = document.getElementById("structureStatContainer");
-        statContainer.setAttribute("data-fillAbsMax",0);
-        statContainer.innerHTML = "";
-
-        if (structure.hasStats()) {
-            GUIHandler.displayStats(structure.stats,statContainer);
-        }
-    }
     static displayStats(stats,container) {
         Object.values(stats).forEach((stat) => {
             if (stat.type.style.visibility == "visible") {
@@ -207,7 +211,8 @@ class GUIHandler {
             }
         });
     }
-    static updateScreenCull(newPosition = Game.player.location) {
+    static updateScreenCull() {
+        var newPosition = Game.player.location;
         newPosition = newPosition.asInt();
         //get all tiles visible on screen
         // var screenWidthInTiles = new Point(
@@ -285,7 +290,11 @@ class GUIHandler {
         var parentStyle = elem.style;
         parentStyle.setProperty("--fill",value);
         parentStyle.setProperty("--fill-max",max);
-        elem.querySelector(".progressBar-text").innerHTML = `${Math.round(value)}/${Math.round(max)}`;
+    
+        let txt = elem.querySelector(".progressBar-text");
+        if (txt) {
+            txt.innerHTML = `${Math.round(value)}/${Math.round(max)}`;
+        }
     }
     static generateStatElem(stat,container) {
         if (stat.max > container.getAttribute("data-fillAbsMax")) {
@@ -321,26 +330,26 @@ class GUIHandler {
         cardParent.innerHTML = "";
         GUIHandler.placeInventoryCardElements(inventory,cardParent);
     }
-    static renderLoreObject(lore) {
-        var loreElem = elem("div");
-        loreElem.classList.add("log-persistent-cursor");
-        loreElem.classList.add("log-persistent-cursor-lore");
+    // static renderLoreObject(lore) {
+    //     var loreElem = elem("div");
+    //     loreElem.classList.add("log-persistent-cursor");
+    //     loreElem.classList.add("log-persistent-cursor-lore");
 
-        ["description","technical_description"].forEach((key)=>{
-            if (!lore.hasOwnProperty(key)) {
-                return;
-            }
-            let textElem;
-            if (key == "description") {
-                textElem = elem("div","filter-aberration",lore[key]);
-            } else if (key == "technical_description") {
-                textElem = elem("div","",lore[key]);
-            }
-            loreElem.appendChild(textElem);
-        });
+    //     ["description","technical_description"].forEach((key)=>{
+    //         if (!lore.hasOwnProperty(key)) {
+    //             return;
+    //         }
+    //         let textElem;
+    //         if (key == "description") {
+    //             textElem = elem("div","filter-aberration",lore[key]);
+    //         } else if (key == "technical_description") {
+    //             textElem = elem("div","",lore[key]);
+    //         }
+    //         loreElem.appendChild(textElem);
+    //     });
 
-        return loreElem;
-    }
+    //     return loreElem;
+    // }
     static placeInventoryCardElements(inventory,parent) {
         Object.entries(inventory.cards).forEach(([inventoryId, card]) => {
             //check if card hasnt already been displayed
@@ -357,12 +366,12 @@ class GUIHandler {
             var cardElem = GUIHandler.generateRawCardElement(CardType.getById(card.id));
 
             cardElem.addEventListener("mouseenter",(e)=>{
-                var elem = GUIHandler.renderLoreObject(card.type.lore);
-                GUIHandler.logText(elem,"persistent-cursor");
+                // var elem = GUIHandler.renderLoreObject(card.type.lore);
+                // GUIHandler.logText(elem,"persistent-cursor",null,card.type.title);
             });
-            cardElem.addEventListener("mouseleave",(e)=>{
-                GUIHandler.logText("","persistent-cursor");
-            });
+            // cardElem.addEventListener("mouseleave",(e)=>{
+            //     GUIHandler.logText("","persistent-cursor");
+            // });
 
             if (inventory.isNew(card)) {
                 cardElem.classList.add("state-new");
@@ -371,10 +380,11 @@ class GUIHandler {
             parent.appendChild(cardElem);
         });
     }
-    static moveTileBoard(x,y) {
+    static moveTileBoard() {
+        let position = Game.player.location;
         GUIHandler.TileBoard.style = `
-            --x:${-x * tileWidth};
-            --y:${y * tileHeight};
+            --x:${-position.x * tileWidth};
+            --y:${position.y * tileHeight};
         `;
     }
     static generateRawCardElement(cardType) {
@@ -416,7 +426,14 @@ class GUIHandler {
         
         fragment.firstElementChild.setAttribute("data-typeId",cardType.id);
         return fragment.firstElementChild;
-        }
+    }
+    static displayBag(bag) {
+        GUIHandler.toggleDarkOverlay("BagDisplay",true,true);
+    }
+    // Opens the DarkOverlay's AreaFragmentDisplay
+    static displayArea(area) {
+        GUIHandler.toggleDarkOverlay("AreaFragmentDisplay",true,true);
+    }
     static generateCardTitleElement(lore) {
         var cardTitle = elem("div");
         cardTitle.classList.add("card-title");
@@ -490,6 +507,16 @@ class GUIHandler {
         return reqsElem;
     }
     static toggleDarkOverlay(screen, state, closeable = false) {
+        var screens = [
+            "CardSelection",
+            "AreaFragmentDisplay"
+        ]
+        
+        screens.forEach((screenId)=> {
+            document.getElementById(screenId).style.display = "none";
+        })
+        document.getElementById(screen).style.display = "block";
+        
         if (state) {
             Game.player.paralyze();
             GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,true,"flex");
@@ -501,13 +528,17 @@ class GUIHandler {
             GUIHandler.DarkOverlayBg.onclick = () => {
                 Game.player.unparalyze();
                 GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
-                GameEventHandler.onSelectionInvocationFailure(GUIHandler.selectionInvoker);
+                if (GUIHandler.selectionInvoker) {
+                    GameEventHandler.onSelectionInvocationFailure(GUIHandler.selectionInvoker);
+                }
             };
             GUIHandler.DarkOverlayCloseListener = document.addEventListener("keydown",(e) => {
                 if (e.code == "Escape") {
                     Game.player.unparalyze();
                     GUIHandler.toggleElemVisibility(GUIHandler.DarkOverlay,false);
-                    GameEventHandler.onSelectionInvocationFailure(GUIHandler.selectionInvoker);
+                    if (GUIHandler.selectionInvoker) {
+                        GameEventHandler.onSelectionInvocationFailure(GUIHandler.selectionInvoker);
+                    }
                     removeEventListener("keydown",GUIHandler.DarkOverlayCloseListener,true);
                 }
             });
@@ -581,9 +612,9 @@ class GUIHandler {
         me.appendChild(elem("div","card-desc",meCard.type.lore.description));
         document.getElementById("credits-me").appendChild(me);
         [
-            new Card("credits_bea"),
             new Card("credits_migs"),
             new Card("credits_paolo"),
+            new Card("credits_bea"),
             new Card("credits_lanceChiu"),
             new Card("credits_leandro"),
         ].forEach((card)=>{

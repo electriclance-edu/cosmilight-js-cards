@@ -2,11 +2,25 @@ class Player {
     constructor() {
         this.hand = new Inventory(4,"PLAYER HAND");
         this.location = new Point(0,0);
+        this.bodyParts = {
+            "eye":{
+                lastState:1000,
+                toggle:(state)=>{
+                    if (state != this.lastState) {
+                        let elem = document.getElementById("bodyPart-eye");
+                        elem.classList.remove("state-disabled");
+                        elem.classList.remove("state-enabled");
+                        elem.classList.add(state ? "state-disabled" : "state-enabled");
+                        this.lastState = state;
+                    }
+                }
+            }
+        }
         this.movement = {
             paralyzed:false,
-            excessSpeed:0,
-            speed:0.1,
-            dashSpeed:1.00,
+            baseSpeed:0.03,
+            lastAttackFrame:0,
+            dashBonus:0,
             direction:{
                 "+y":0,
                 "-y":0,
@@ -98,11 +112,20 @@ class Player {
         return Object.values(this.movement.direction).some((elem) => elem);
     }
     get speed() {
+        let speed = this.movement.baseSpeed;
+        if (this.movement.dashBonus > 0) {
+            speed += this.movement.baseSpeed * 3 * (this.movement.dashBonus / 10);
+            this.movement.dashBonus -= 0.1;
+        }
+        // if (GUIHandler.frame - this.movement.lastAttackFrame <= 15) {
+        //     speed *= 0.5;
+        // }
+        
         let directions = Object.values(this.movement.direction).reduce((acc,elem) => { return acc + elem }, 0);
         if (directions == 2) {
-            return (this.movement.speed + Math.max(this.movement.excessSpeed,0)) / 1.414;
+            return (speed) / 1.414;
         } else {
-            return this.movement.speed + Math.max(this.movement.excessSpeed,0);
+            return speed;
         }
     }
     // Checks if player satisfies a specific Requirements object.
@@ -181,23 +204,6 @@ class Player {
             return this.stats[id];
         }
     } 
-    dash() {
-        if (this.movement.paralyzed) {
-            return;
-        }
-        if (this.movement.excessSpeed > 0.01) {
-            return;
-        }
-
-        // GUIHandler.logText("Dashing","player",1000);
-        this.movement.excessSpeed = 0.08 * this.movement.dashSpeed;
-        setTimeout(()=>{
-            this.movement.excessSpeed += 0.16 * this.movement.dashSpeed;
-            setTimeout(()=>{
-                this.movement.excessSpeed += 0.16 * this.movement.dashSpeed;
-            },50);
-        },50);
-    }
     translate(x,y) {
         if (this.movement.paralyzed) {
             return;
@@ -207,19 +213,12 @@ class Player {
             (parseFloat(Game.player.location.x) + x).toFixed(2), 
             (parseFloat(Game.player.location.y) + y).toFixed(2)
         );
-        GUIHandler.updateScreenCull(newPosition);
         Game.player.moveLocation(newPosition.x,newPosition.y);
-        GUIHandler.moveTileBoard(newPosition.x,newPosition.y); 
-        // LightHandler.moveLight("player",newPosition.x,newPosition.y);
+        GUIHandler.updateScreenCull();  
+        window.requestAnimationFrame(GUIHandler.moveTileBoard); 
+        LightHandler.moveLight("player",newPosition.x,newPosition.y);
 
-        if (!!Game.currentTileCoords) {
-            if (dist(Game.currentTileCoords,newPosition) > Game.player.getStat("interactionDistance").value + 1) {
-                GUIHandler.closeAllInventories();
-                toggleStructureDetailDisplay(false);
-                GUIHandler.removeClassFromTileElem(Game.currentTileCoords,"selectedTile");
-                Game.world.currentlyOpenedTileCoords = undefined;
-            }
-        }
+        this.bodyParts.eye.toggle(FogHandler.intersects(this.location));
     }
 }
 

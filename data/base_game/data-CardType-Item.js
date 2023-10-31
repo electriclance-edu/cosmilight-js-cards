@@ -13,6 +13,29 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             new Stat("liquidStorage",{value:10})
         ]
     },
+    // Stores 6 items.
+    {
+        id:"basic_bag",
+        lore:{
+            superTitle:"Basic",
+            mainTitle:"Bag",
+            description:"",
+            technical_description:"<span class='input'>Click</span> to open this bag.",
+        },
+        colorName:"storage",
+        tags:["storage"],
+        stats:[
+            new Stat("itemStorage",{value:10})
+        ],
+        other:{
+            inventory:new Inventory()
+        },
+        interactions:{
+            "onClick":(e)=>{
+                GUIHandler.displayBag(this.other.inventory);
+            }
+        }
+    },
     //milo everyday
     {
         id:"breakfast",

@@ -1,8 +1,10 @@
 class LightHandler {
-    // static dark = new RGBA(15,0,30,0.7);
-    static dark = new RGBA(7,0,15,1);
+    static dark = new RGBA(15,0,30,0.75);
+    // static dark = new RGBA(9,0,22,0.1);
+    // static dark = new RGBA(9,0,22,0.9);
+    // static dark = new RGBA(7,0,15,1);
     static lightPoints = {
-        // "player":new LightPoint(0,0,{strength:2.5,waver:0.05,color:new RGBA(0,0,0,0),faintness:1}),
+        "player":new LightPoint(0,0,{strength:3,waver:0.01,color:new RGBA(0,0,0,0),faintness:1}),
         // "fire":new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}),
         // "#2,2":new LightPoint(2,2,{strength:1.5,waver:0.1,color:new RGBA(255,0,200,0.1)}),
         // "#-1,1":new LightPoint(-1,1,{strength:1,waver:0.05,color:new RGBA(0,0,0,0)}),
@@ -10,24 +12,15 @@ class LightHandler {
         // "#-2,-2":new LightPoint(-2,-2,{strength:3,waver:0.2,color:new RGBA(0,0,0,0)}),
     };
     static canvas;
-    static ctx;
-    static updateLoop;
     static canvasCenter;
-    static yScaleFactor;
     static initialize() {
-        // return;
-        clearInterval(LightHandler.updateLoop);
-
         var canvas = document.getElementById("LightCanvas");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = graphicsDisplaySize;
+        canvas.height = graphicsDisplaySize;
         LightHandler.canvas = canvas;
         LightHandler.canvasCenter = new Point(LightHandler.canvas.width/2,LightHandler.canvas.height/2);
 
         LightHandler.renderAllLight();
-        LightHandler.updateLoop = setInterval(() => {
-            LightHandler.renderAllLight();
-        },50);
     }
     static moveLight(id,x,y) {
         let point = this.getLight(id);
@@ -95,8 +88,8 @@ class LightHandler {
         const square = generateSquare(new Point(translatedLight.x * tileWidth, -translatedLight.y * tileHeight),strength);
         const trueSquareCenter = new Point(light.x * tileWidth, light.y * tileHeight);
         square.center = decentralizePoint(LightHandler.canvasCenter, square.center);
-        square.topLeft = decentralizePoint(LightHandler.canvasCenter, square.topLeft);
-        square.bottomRight = decentralizePoint(LightHandler.canvasCenter, square.bottomRight);
+        square.cornerA = decentralizePoint(LightHandler.canvasCenter, square.cornerA);
+        square.cornerB = decentralizePoint(LightHandler.canvasCenter, square.cornerB);
         return square;
     }
     //create color gradient
@@ -111,7 +104,7 @@ class LightHandler {
         gradient_color.addColorStop(1,`rgba(${colorString},${light.color.a * 0}`);
         ctx.fillStyle = gradient_color;
         ctx.globalCompositeOperation = "source-over";
-        ctx.rect(square.topLeft.x,square.topLeft.y,square.width,square.width);
+        ctx.rect(square.cornerA.x,square.cornerA.y,square.width,square.width);
         ctx.fill();
         // ctx.transform(1, 0, 0, 1, 0, 0);
     }
@@ -126,7 +119,7 @@ class LightHandler {
         gradient_mask.addColorStop(1,`rgba(0,0,0,0)`);
         ctx.fillStyle = gradient_mask;
         ctx.globalCompositeOperation = "destination-out";
-        ctx.rect(square.topLeft.x,square.topLeft.y,square.width,square.width);
+        ctx.rect(square.cornerA.x,square.cornerA.y,square.width,square.width);
         ctx.fill();
         // ctx.transform(1, 0, 0, 1, 0, 0);
     }

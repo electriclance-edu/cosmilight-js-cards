@@ -12,13 +12,15 @@ class Game {
         this.#player = new Player();
         this.time = 0;
 
-
+        setTimeout(()=>{
+            GUIHandler.renderFrame();
+        },16);
         setInterval(()=>{
             Game.#current.time++;
             Game.onTickObjects.forEach((obj)=>{
                 GameEventHandler.onTick(obj,Game.#current.time);
             });
-        },50);
+        },16);
     }
     static addOnTickObject(obj) {
         if (obj.interactions.hasOwnProperty("onTick")) {
@@ -54,5 +56,8 @@ class Game {
     }
     static get player() {
         return Game.#current.#player;
+    }
+    static get time() {
+        return Game.#current.time;
     }
 }

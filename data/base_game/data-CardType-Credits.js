@@ -25,7 +25,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight-credits",[
             mainTitle:"bea",
             subTitle:"",
             role:"Bea",
-            description:"For being an omnipresent force of nature. 11 ♡",
+            description:"For all the support along the way.",
         },
         colorName:"credits-person",
         tags:[]
@@ -58,7 +58,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight-credits",[
             mainTitle:"Lance",
             subTitle:"Chiu",
             role:"?",
-            description:"For not helping ever and still getting a perfect peer review anyways.",
+            description:"For not helping ever and still getting a perfect peer evaluation anyways.",
         },
         colorName:"credits-person",
         tags:[]

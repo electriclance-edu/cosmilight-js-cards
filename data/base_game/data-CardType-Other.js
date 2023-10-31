@@ -22,6 +22,23 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         tags:["item","spellpaper"]
     },
     {
+        id:"debug_map",
+        lore:{
+            superTitle:"Debug",
+            mainTitle:"Map",
+            description:"",
+            technical_description:"<span class='input'>Click</span> to open a default Plains area expedition.",
+        },
+        colorName:"item",
+        tags:["item","spellpaper"],
+        interactions:{
+            "onClick":(e)=>{
+                var area;
+                GUIHandler.displayArea(area);
+            }
+        }
+    },
+    {
         id:"expend_knowledge",
         lore:{
             superTitle:"Unlock",
@@ -32,7 +49,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         colorName:"item",
         tags:["item","spellpaper"],
         interactions:{
-            "onDrop":(e)=>{
+            "onClick":(e)=>{
                 let info = Game.player.getCurrentKnowledgeUnlockInfo();
                 GUIHandler.displaySelection(info.cards,info.lore,undefined,true);
             }

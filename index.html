@@ -4,19 +4,6 @@
     <meta charset="utf-8">
     <title>Cosmilight (Demo)</title>
     <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="style/animations.css">
-    <link rel="stylesheet" href="style/inventory.css">
-    <link rel="stylesheet" href="style/card.css">
-    <link rel="stylesheet" href="style/debug.css">
-    <link rel="stylesheet" href="style/drag.css">
-    <link rel="stylesheet" href="style/fonts.css">
-    <link rel="stylesheet" href="style/light.css">
-    <link rel="stylesheet" href="style/stats.css">
-    <link rel="stylesheet" href="style/player.css">
-    <link rel="stylesheet" href="style/darkOverlay.css">
-    <link rel="stylesheet" href="style/structures.css">
-    <link rel="stylesheet" href="style/textlogging.css">
-    <link rel="stylesheet" href="style/tiles.css">
     <link rel="icon" href="resources/img/favicon.ico">
     <script src="script/helper.js"></script>
     <script src="class/handler/GameEventHandler.js"></script>
@@ -35,10 +22,13 @@
     <script src="class/Structure.js"></script>
     <script src="class/TileType.js"></script>
     <script src="class/Tile.js"></script>
+    <script src="class/FogCircle.js"></script>
     <script src="class/LightPoint.js"></script>
     <script src="script/main.js" defer></script>
     <script src="class/handler/FPSHandler.js" defer></script>
     <script src="class/handler/LightHandler.js" defer></script>
+    <script src="class/handler/FogHandler.js" defer></script>
+    <script src="class/handler/EffectHandler.js" defer></script>
     <script src="class/handler/DataHandler.js" defer></script>
     <script src="data/base_game/data-CardType-Credits.js" defer></script>
     <script src="class/handler/GUIHandler.js" defer></script>
@@ -136,12 +126,7 @@
           <p>These people helped as well a little, thank you your a cool!!</p>
           <div class="flex-centered flex-row" id="credits-friends"></div>
         </div>
-        <div class="Screen-GameBoard screen fillWindow flex-column flex-centered" id="Screen-Game">
-          <div class="controls hidden">
-            <p>Move with <span class="input">WASD</span> or <span class="input">↑ ← ↓ →</span></p>
-            <p>Dash with <span class="input">Left Shift</span></p>
-            <p>Access a tile inventory with <span class="input">Click</span> or <span class="input">Space</span></p>
-          </div>
+        <div class="Screen-GameBoard screen fillWindow" id="Screen-Game">
           <div class="DarkOverlay fillWindow state-invisible flex-centered" id="DarkOverlay">
             <div class="darkOverlay-bg fillWindow" id="darkOverlay-bg">
               <div class="starLayer starLayerOne"></div>
@@ -151,7 +136,14 @@
             <div class="controls darkOverlay-onclickVanishable-controls" id="DarkOverlay-cancelSelectionControls">
               <p><span class="input">Click</span> on the reddened sides to cancel the selection.</p>
             </div>
-            <div class="CardSelection flex-column flex-centered">
+            <div class="AreaFragmentDisplay flex-column flex-centered" id="AreaFragmentDisplay">
+              <p class="headerFont txt-size-header txt-lined cardSelection-title" id="cardSelection-title">Area</p>
+              <div class="areaFragment">
+                <div class="areaFragment-bg"></div>
+                <div class="areaFragment-icon"></div>
+              </div>
+            </div>
+            <div class="CardSelection flex-column flex-centered" id="CardSelection">
               <p class="headerFont txt-size-header txt-lined cardSelection-title" id="cardSelection-title">Title</p>
               <p class="cardSelection-desc txt-italic filter-aberration" id="cardSelection-desc">Desc</p>
               <div class="cardSelection-cardContainer flex-row flex-centered" id="cardSelection-cardContainer">
@@ -159,22 +151,32 @@
               </div>
             </div>
           </div>
-          <div class="Crosshair">+</div>
           <div class="PersistentCursorTextDisplay textDisplay" id="PersistentCursorTextDisplay"></div>
           <div class="FollowCursorTextDisplay textDisplay fillWindow" id="FollowCursorTextDisplay"></div>
           <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
-          <div class="StructureDetailDisplay state-vanished" id="StructureDetailDisplay">
-            <div class="titleContainer" onclick="toggleStructureDetailDisplay(false)">
-              <p class="structureTitle txt-size-header txt-lined txt-lined-after headerFont" id="structureTitle">Sapfire</p>
-              <p class="structureDescription txt-italic" id="structureDescription">Consumes plant fuel to produce heat and light.</p>
+          <div class="BodyPartsContainer flex-row flex-centered">
+            <div id="bodyPart-eye" class="BodyPart BodyPart-Eye">
+              <div class="bodyPart-header">
+                <div class="bodyPart-card">
+  
+                </div>
+                <div class="bodyPart-toggle">
+                  
+                </div>
+              </div>
+              <div class="bodyPart-contents">
+                <div class="GraphicsLayer">
+                  <div class="TileBoard" id="TileBoard"></div>
+                  <canvas id="StructureBoard" class="StructureBoard"></canvas>
+                  <canvas id="FogCanvas" class="FogCanvas"></canvas>
+                  <canvas id="LightCanvas" class="LightCanvas"></canvas>
+                  <div id="EffectLayer" class="EffectLayer"></div>
+                </div>
+              </div>
             </div>
-            <div class="statContainer" style="--fill-abs-max:0" id="structureStatContainer"></div>
-          </div>
-          <div class="fillWindow LightCanvasContainer">
-            <canvas id="LightCanvas"></canvas>
+            <div class="bodyPart-inv"></div>
           </div>
           <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer"></div>
-          <div class="TileBoard" id="TileBoard"></div>
           <div class="PlayerHandContainer playerInventory" id="PlayerHandContainer"></div>
           <div class="playerStatDisplay statContainer" id="PlayerStatContainer"></div>
       </div>

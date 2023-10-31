@@ -9,6 +9,9 @@ class Point {
         translated.y -= translator.y;
         return translated;
     }
+    asFloat() {
+        return new Point(parseFloat(this.x),parseFloat(this.y));
+    }
     asInt() {
         return new Point(parseInt(this.x),parseInt(this.y));
     }
