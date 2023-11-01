@@ -34,6 +34,7 @@
     <script src="class/handler/GUIHandler.js" defer></script>
     <script src="data/base_game/data-StatType.js" defer></script>
     <script src="data/base_game/data-CardType-Other.js" defer></script>
+    <script src="data/base_game/data-CardType-Part.js" defer></script>
     <script src="data/base_game/data-CardType-Instrument.js" defer></script>
     <script src="data/base_game/data-CardType-Item.js" defer></script>
     <script src="data/base_game/data-CardType-Research.js" defer></script>
@@ -165,7 +166,7 @@
                 </div>
               </div>
               <div class="bodyPart-contents">
-                <div class="GraphicsLayer">
+                <div class="GraphicsLayer" id="GraphicsLayer">
                   <div class="TileBoard" id="TileBoard"></div>
                   <canvas id="StructureBoard" class="StructureBoard"></canvas>
                   <canvas id="FogCanvas" class="FogCanvas"></canvas>
@@ -174,7 +175,23 @@
                 </div>
               </div>
             </div>
-            <div class="bodyPart-inv"></div>
+            <div class="flex-column flex-expand bodyPartColumn">
+              <div id="bodyPart-heart" class="BodyPart BodyPart-Heart">
+                <div class="bodyPart-header">
+                  <div class="bodyPart-card" id="BodyPart-Heart-card">
+    
+                  </div>
+                  <div class="bodyPart-toggle">
+                    
+                  </div>
+                </div>
+                <div class="bodyPart-contents">
+                  <div id="debug-BodyPart-SpellQueue" class="cardRow">
+
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer"></div>
           <div class="PlayerHandContainer playerInventory" id="PlayerHandContainer"></div>

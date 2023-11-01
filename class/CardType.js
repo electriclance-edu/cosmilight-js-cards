@@ -22,6 +22,13 @@ class CardType {
         }
         return false;
     }
+    static debug_allNamesAndIds() {
+        let names = [];
+        Object.values(CardType.cardTypes).forEach((cardType)=>{
+            names.push(`${cardType.name} [${cardType.id}]`);
+        });
+        console.log(names);
+    }
     get name() {
         return `${this.lore.superTitle ? this.lore.superTitle + " ": ""}${this.lore.mainTitle}${this.lore.subTitle ? " " + this.lore.subTitle: ""}`;
     }

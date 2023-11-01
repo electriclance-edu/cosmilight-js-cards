@@ -180,28 +180,28 @@ class GUIHandler {
     //         GUIHandler.closeInventory(child);
     //     });
     // }
-    static closeInventory(elem) {
-        elem.classList.add("state-vanished");
-        setTimeout(()=>{
-            getInventory(elem.querySelector(".inventory").getAttribute("data-inventoryType")).setIsRendered(false);
-            elem.remove();
-        },300);
-    }
-    static createInventoryElem(inventory,vanishable) {
-        var inventoryHTML = `
-            <div class="inventoryParent" id="${inventory.localId}">
-                <div class="inventory-bg validInventoryDrop externalInventory" ${vanishable ? 'onclick="GUIHandler.closeInventory(this.parentNode)' : ''}"></div>
-                <p class="inventoryTitle txt-size-header headerFont txt-lined">${inventory.title}</p>
-                <div class="inventory" data-inventoryType="${inventory.localId}" id="inventoryCards"></div>
-            </div>
-        `;
-        var fragment = parseHTMLDocumentFragment(inventoryHTML);
-        var cardParent = fragment.querySelector("#inventoryCards");
-        cardParent.id = "";
-        GUIHandler.placeInventoryCardElements(inventory,cardParent);
+    // static closeInventory(elem) {
+    //     elem.classList.add("state-vanished");
+    //     setTimeout(()=>{
+    //         getInventory(elem.querySelector(".inventory").getAttribute("data-inventoryType")).setIsRendered(false);
+    //         elem.remove();
+    //     },300);
+    // }
+    // static createInventoryElem(inventory,vanishable) {
+    //     var inventoryHTML = `
+    //         <div class="inventoryParent" id="${inventory.localId}">
+    //             <div class="inventory-bg validInventoryDrop externalInventory" ${vanishable ? 'onclick="GUIHandler.closeInventory(this.parentNode)' : ''}"></div>
+    //             <p class="inventoryTitle txt-size-header headerFont txt-lined">${inventory.title}</p>
+    //             <div class="inventory" data-inventoryType="${inventory.localId}" id="inventoryCards"></div>
+    //         </div>
+    //     `;
+    //     var fragment = parseHTMLDocumentFragment(inventoryHTML);
+    //     var cardParent = fragment.querySelector("#inventoryCards");
+    //     cardParent.id = "";
+    //     GUIHandler.placeInventoryCardElements(inventory,cardParent);
 
-        return fragment.firstElementChild;
-    }
+    //     return fragment.firstElementChild;
+    // }
     static displayStats(stats,container) {
         Object.values(stats).forEach((stat) => {
             if (stat.type.style.visibility == "visible") {
@@ -395,6 +395,8 @@ class GUIHandler {
             type = "instrument";
         } else if (cardType.hasTag("item")) {
             type = "item";
+        } else if (cardType.hasTag("part")) {
+            type = "part";
         }
         var imgCSS = `--image:url('../resources/img/cards/${type}/${cardType.id}.png')`;
 

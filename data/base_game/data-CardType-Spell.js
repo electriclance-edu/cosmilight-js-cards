@@ -89,7 +89,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             technical_description:"<span class='input'>Drop</span> onto a light source to absorb Glow."
         },
         colorName:"spell-gather",
-        tags:["spell","spellpaper","spell_gather","spell_primary"],
+        tags:["spell","spellpaper","spell_gather","spell_primary","starCard"],
         interactions:{
             "onDrop":(e)=>{
                 if (e.target.type.id == "condense_light" || e.target.type.id == "draw_water") { 

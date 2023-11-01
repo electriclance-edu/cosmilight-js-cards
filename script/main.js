@@ -5,7 +5,7 @@ var tileWidth = undefined;
 var tileHeight = undefined;
 var defaultPersistence = undefined;
 var mousePosition = new Point(0,0);
-var disableContextMenu = false;
+var disableContextMenu = true;
 var keyShiftPressed = false;
 const graphicsDisplaySize = window.innerHeight;
 /*
@@ -17,9 +17,6 @@ function onload() {
   setTimeout(() => {initialize()},0);
 }
 function initialize() {
-  // toggleScreen("Start");
-  toggleScreen("Game");
-  startGame();
   DataHandler.loadAllData();
   new Game();
   retrieveCSSConstants();
@@ -30,13 +27,20 @@ function initialize() {
 
   GUIHandler.renderCredits();
   GUIHandler.renderCurrentTileBoard();
+  GUIHandler.updateScreenCull();
+
+  // toggleScreen("Start");
+  toggleScreen("Game");
+  startGame();
+
+  document.getElementById("debug-BodyPart-SpellQueue").appendChild(GUIHandler.generateRawCardElement(new Card("condense_light").type));
+  document.getElementById("debug-BodyPart-SpellQueue").appendChild(GUIHandler.generateRawCardElement(new Card("torchberry").type));
+  document.getElementById("debug-BodyPart-SpellQueue").appendChild(GUIHandler.generateRawCardElement(new Card("research_heat").type));
+  document.getElementById("BodyPart-Heart-card").appendChild(GUIHandler.generateRawCardElement(new Card("heart").type));
 
   // GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
   // Game.player.hand.addCard(new Card("condense_light"));
   // Game.player.hand.addCard(new Card("debug_map"));
-
-  GUIHandler.updateScreenCull();
-  
   // setInterval(() => {
   //   FPSHandler.updateFrames();
   // },16.6);
@@ -51,6 +55,8 @@ function initialize() {
   // setTimeout(()=>{GUIHandler.logText("That is, if you play your cards right.")},18000);
 }
 function startGame() {
+  document.getElementById("Screen-Start").remove();
+  document.getElementById("Screen-Credits").remove();
   setTimeout(()=>{
     // GUIHandler.logText(randElem([
     //   "The ground crunches below your feet.",
@@ -366,13 +372,25 @@ function doResize() {
 }
 document.addEventListener('mousemove', (e) => {
   mousePosition = new Point(e.clientX,e.clientY);
-  document.getElementById("PersistentCursorTextDisplay").style = `--x:${e.clientX};--y:${e.clientY};`
+  // document.getElementById("PersistentCursorTextDisplay").style = `--x:${e.clientX};--y:${e.clientY};`
 });
-document.addEventListener('contextmenu', event => {if (disableContextMenu) event.preventDefault()});
+document.addEventListener('contextmenu', event => {if (disableContextMenu && !keyShiftPressed) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {
   let cursor = new Point(e.clientX,e.clientY);
-  let origin = new Point(window.innerWidth/2, window.innerHeight/2);
-  FogHandler.clearCone(angleBetween(cursor,origin));
+  
+  // Perform BodyPart-Hand stuff
+  let boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
+  let origin = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
+
+  if (e.target.id == "bodyPart-eye") {
+    if (e.button == 2) {
+      FogHandler.clearRay(angleBetween(cursor,origin));
+    } else if (e.button == 1) {
+      FogHandler.clearExplosion();
+    } else {
+      FogHandler.clearCone(angleBetween(cursor,origin));
+    }
+  }
 
   if (e.target.classList.contains("undraggable")) {
     return;

@@ -22,4 +22,13 @@ class FogCircle {
     get tileId() {
         return `${Math.floor(this.center.x)},${Math.floor(this.center.y)}`;
     }
+    angleFromPlayer() {
+        let falseCenter = new Point(this.center.x,-this.center.y);
+        return angleBetween(falseCenter,Game.player.location);
+    }
+    destroy(delay = 0) {
+        if (this.other.destructionState == -Infinity) {
+            this.other.destructionState = delay;
+        }
+    }
 }

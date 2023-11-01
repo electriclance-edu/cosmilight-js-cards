@@ -12,9 +12,106 @@ function discIntCoords(center,radius) {
 }
 function angleBetween(target,origin) {
     let vector = new Point(target.x - origin.x, -(target.y - origin.y));
-    let angle = Math.atan2(vector.y,vector.x) * (180 / 3.1415);
+    let angle = Math.atan2(vector.y,vector.x) * (180 / Math.PI);
     if (angle < 0) return 360 + angle;
     return angle;
+}
+//Performs a function over all integer coordinates that intersect with a line.
+function integerRaytrace(endA,endB) {
+    // The other end point of the line.
+    // let endB = Point.angleTranslate(endA,angle,length);
+
+    // The change between the x,y values of endA and endB, encoded in a 2d vector.
+    let delta = new Point(
+        Math.abs(endB.x - endA.x),
+        Math.abs(endB.y - endA.y)
+    );
+    // The current integer coordinates the algorithm is currently on.
+    let currentCoords = new Point(
+        Math.floor(endA.x),
+        Math.floor(endA.y)
+    );
+
+    // The amount of squares that the given line will intersect.
+    let amtOfSquares = 1; // Will always at least be 1, the starting square.
+    // inc.x and inc.y determine the direction in which the ray is incrementing along the x or y axes.
+    // They will be +1,+1 when in the first quadrant.
+    let inc = new Point();
+    // Encodes the difference of the change between x and y as the algorithm traverses down the line.
+    let error;
+
+    // ----------------------
+    // Calculating the amt of squares, inc, and error based on the positions of the endpoints relative to each other.
+
+    // ---- Calculate for x
+    // If there is no change in x, the line is vertical.
+    if (delta.x == 0) {
+        inc.x = 0;
+        error = Infinity; // The line will always move vertically.
+    } 
+    // If the second endpoint is further right than the first endpoint.
+    else if (endB.x > endA.x) {
+        inc.x = 1; 
+        amtOfSquares += Math.floor(endB.x) - currentCoords.x; // The width of the line x-wise.
+        error = (Math.floor(endA.x) + 1 - endA.x) * delta.y; // Obtain the fractional portion of endA.x. Multiplied by the change in y, that encodes the length of the line required to reach a horizontal endpoint.
+    }
+    // If the second endpoint is further left, ie. moving backwards 
+    else {
+        inc.x = -1;
+        amtOfSquares += currentCoords.x - Math.floor(endB.x); // The width of the line x-wise.
+        error = (endA.x - Math.floor(endA.x)) * delta.y;
+    }
+
+    // ---- Repeat the same, but for y.
+    if (delta.y == 0) {
+        inc.y = 0;
+        error -= Infinity;
+    } else if (endB.y > endA.y) {
+        inc.y = 1; 
+        amtOfSquares += Math.floor(endB.y) - currentCoords.y;
+        error -= (Math.floor(endA.y) + 1 - endA.y) * delta.x;
+    } else {
+        inc.y = -1;
+        amtOfSquares += currentCoords.y - Math.floor(endB.y);
+        error -= (endA.y - Math.floor(endA.y)) * delta.x;
+    }
+
+    // Perform the raytrace. Store every coordinate in an array.
+    let coordinates = []; 
+    for (; amtOfSquares > 0; --amtOfSquares) {
+        coordinates.push(new Point(currentCoords.x,currentCoords.y));
+
+        if (error > 0) {
+            currentCoords.y += inc.y;
+            error -= delta.x;
+        } else {
+            currentCoords.x += inc.x;
+            error += delta.y;
+        }
+    }
+
+    return coordinates;
+}
+// Given an array of coordinates, returns a set including all the neighbors of those coordinates. Includes diagonals.
+function inflateCoordinateArray(coords) {
+    let inflated = new Set();
+
+    coords.forEach((point)=>{
+        inflated.add(point.str);
+        inflated.add(Point.translate(point,new Point(-1,-1)).str);
+        inflated.add(Point.translate(point,new Point(1,1)).str);
+        inflated.add(Point.translate(point,new Point(-1,1)).str);
+        inflated.add(Point.translate(point,new Point(1,-1)).str);
+        inflated.add(Point.translate(point,new Point(-1,0)).str);
+        inflated.add(Point.translate(point,new Point(1,0)).str);
+        inflated.add(Point.translate(point,new Point(0,-1)).str);
+        inflated.add(Point.translate(point,new Point(0,1)).str);
+    });
+
+    return Array.from(inflated).map((str)=>Point.stringToPoint(str));
+}
+function degToRad(deg) {
+  return deg * (Math.PI/180);
 }
 //Returns an array of all integer coordinates that intersect with a given square.
 function squareIntersectingIntCoords(center,radius) {
