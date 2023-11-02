@@ -1228,7 +1228,8 @@ CARD SELECTORS
     margin-bottom:4px;
     transform:scale(1) rotate3d(-1,0,0,0) translatey(0);
     transition:0.1s transform;
-    transition-timing-function:cubic-bezier(0.50,0, 1, 2);
+    transition-timing-function:cubic-bezier(0.5, 0.85, 1, 1);
+    /* transition-timing-function:cubic-bezier(0.50,0, 1, 2); */
     /* transform:translate(
       calc(-50% + var(--x) * (var(--card-width) + 10px)),
       calc(-50% + var(--y) * (var(--card-height) + 10px))); */
