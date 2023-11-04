@@ -1,12 +1,30 @@
 class EffectHandler {
-    static spawnSwish(rotation,size) {
+    static swishDirection = false;
+    static spawnSwish(rotation,size,clockwise = EffectHandler.swishDirection) {
+        EffectHandler.swishDirection = !EffectHandler.swishDirection;
+        
         let layer = document.getElementById("EffectLayer");
         let swish = document.createElement("div");
         swish.classList.add("effect-swish");
-        swish.style = `
-            --rotation:-${rotation}deg;
-            --unit-width:${size * 2};
-        `;
+
+        if (clockwise) {
+            console.log('alternate', rotation, rotation + 60);
+            swish.style = `
+                --starting-rotation:${-rotation - 30}deg;
+                --final-rotation:${-rotation + 30}deg;
+                --unit-width:${size * 2};
+                --x:${randInt(20) * randSign()}px;
+                --y:${randInt(20) * randSign()}px;
+            `;
+        } else {
+            swish.style = `
+                --starting-rotation:${-rotation + 30}deg;
+                --final-rotation:${-rotation - 30}deg;
+                --unit-width:${size * 1.5};
+                --x:${randInt(20) * randSign()}px;
+                --y:${randInt(20) * randSign()}px;
+            `;
+        }
         layer.appendChild(swish);
         setTimeout(()=>{
             swish.remove();

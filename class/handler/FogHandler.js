@@ -56,6 +56,20 @@ class FogHandler {
             },randInt(100));
         }
     }
+    static clearFocusedExplosion(angle,size = 4,location = Game.player.location.asFloat()) {
+        const rays = 15;
+
+        for (var i = 0; i < rays; i++) {
+            setTimeout(()=>{
+                FogHandler.clearRay(
+                    angle + (randInt(60) * randSign()),
+                    undefined,
+                    0.02 * size,
+                    randFloat(0.01),
+                    randFloat(0.4 * size) + 0.5 * size);
+            },randInt(100));
+        }
+    }
     static marchExplosion(angle) {
         Game.player.movement.lastAttackFrame = GUIHandler.frame;
         const marchMaximum = 5;
@@ -223,6 +237,21 @@ class FogHandler {
         let ctx = FogHandler.canvas.getContext("2d");
 
         let loc = Game.player.getRoundedLocation();
+
+        // Shift location displayed towards mouse slightly
+        // let distanceShift;
+        // try {
+        //     distanceShift = dist(mousePosition,graphicsLayerLoc);
+        //     distanceShift = distanceShift / (visionRadius * tileWidth);
+        //     distanceShift = Math.min(distanceShift,1);
+        //     distanceShift *= 2;
+        //     distanceShift *= distanceShift;
+        //     distanceShift *= 5;
+        // } catch (Error) {
+        //     distanceShift = 0;
+        // }
+        // let shiftedCanvasCenter = Point.angleTranslate(FogHandler.canvasCenter,-mouseAngle - 180,10);
+
         let cull = new Point(6,6);
         for (var x = loc.x - cull.x; x < loc.x + cull.x; x++) {
             for (var y = loc.y - cull.y; y < loc.y + cull.y; y++) {
@@ -253,6 +282,7 @@ class FogHandler {
                     
                     fogCenter.x *= tileWidth;
                     fogCenter.y *= -tileHeight;
+
                     let centerInPixels = decentralizePoint(FogHandler.canvasCenter, fogCenter);
     
                     ctx.beginPath();

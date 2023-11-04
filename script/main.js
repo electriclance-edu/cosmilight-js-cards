@@ -3,8 +3,11 @@ GLOBALS
 --------------*/
 var tileWidth = undefined;
 var tileHeight = undefined;
+var visionRadius = undefined;
 var defaultPersistence = undefined;
 var mousePosition = new Point(0,0);
+var graphicsLayerLoc; // Stores the center of the Eye body part's display element.
+var mouseAngle; // Stores the current angle of the mouse relative to the center of the Eye body part.
 var disableContextMenu = true;
 var keyShiftPressed = false;
 const graphicsDisplaySize = window.innerHeight;
@@ -16,14 +19,29 @@ ONLOAD FUNCTIONS
 function onload() {
   setTimeout(() => {initialize()},0);
 }
-function initialize() {
-  DataHandler.loadAllData();
-  new Game();
+function onresize() {
   retrieveCSSConstants();
   GUIHandler.initialize();
   LightHandler.initialize();
   FogHandler.initialize();
-  FPSHandler.initialize();
+
+  windowHeight = window.innerHeight;
+  windowWidth = window.innerWidth;
+  GUIHandler.updateScreenCull;
+}
+function initialize() {
+  DataHandler.loadAllData();
+  new Game();
+  retrieveCSSConstants();
+
+  setTimeout(()=>{
+    const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
+    graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
+  },16);
+
+  GUIHandler.initialize();
+  LightHandler.initialize();
+  FogHandler.initialize();
 
   GUIHandler.renderCredits();
   GUIHandler.renderCurrentTileBoard();
@@ -70,11 +88,29 @@ function startGame() {
     // GUIHandler.logText("You see nothing. You can do nothing but sing your melody.");
   },1500);
 }
+function getUnit(str) {
+  return str.substring(str.length - 2,str.length);
+}
+function removeLastTwoChar(str) {
+  return str.substring(0,str.length - 2);
+}
 function retrieveCSSConstants() {
   var style = getComputedStyle(document.body);
-  tileWidth = parseInt(removePx(style.getPropertyValue('--tile-width')));
-  tileHeight = parseInt(removePx(style.getPropertyValue('--tile-height')));
-  defaultPersistence = removePx(style.getPropertyValue('--log-persistence'));
+  defaultPersistence = removeLastTwoChar(style.getPropertyValue('--log-persistence'));
+  
+  if (getUnit(style.getPropertyValue('--tile-width')) == "px") {
+    tileWidth = parseInt(removeLastTwoChar(style.getPropertyValue('--tile-width')));
+  } else {
+    tileWidth = window.innerWidth * (parseFloat(removeLastTwoChar(style.getPropertyValue('--tile-width'))) / 100);
+  }
+  
+  if (getUnit(style.getPropertyValue('--tile-height')) == "px") {
+    tileHeight = parseInt(removeLastTwoChar(style.getPropertyValue('--tile-height')));
+  } else {
+    tileHeight = window.innerWidth * (parseFloat(removeLastTwoChar(style.getPropertyValue('--tile-height'))) / 100);
+  }
+
+  visionRadius = parseInt(style.getPropertyValue('--visionRadius'));
 }
 function debug_setColor() {
   document.getElementById("TileBoard").style.setProperty('--x',`1000`);
@@ -294,9 +330,6 @@ function createDot(x = 100, y = 100,borderColor = "red",tempo = false) {
 UTILITY FUNCTIONS
 -----------------
 */
-function removePx(str) {
-  return str.substring(0,str.length - 2);
-}
 function getElem(id) {
   return document.getElementById(id);
 }
@@ -306,11 +339,6 @@ function getElem(id) {
 LISTENERS
 --------------
 */
-function onresize() {
-  windowHeight = window.innerHeight;
-  windowWidth = window.innerWidth;
-  GUIHandler.updateScreenCull;
-}
 document.addEventListener('keyup', (e)=>{
   var key = e.code;
 
@@ -372,23 +400,27 @@ function doResize() {
 }
 document.addEventListener('mousemove', (e) => {
   mousePosition = new Point(e.clientX,e.clientY);
+  // Perform BodyPart-Hand stuff
+  let cursor = new Point(e.clientX,e.clientY);
+  mouseAngle = angleBetween(cursor,graphicsLayerLoc);
+
   // document.getElementById("PersistentCursorTextDisplay").style = `--x:${e.clientX};--y:${e.clientY};`
 });
 document.addEventListener('contextmenu', event => {if (disableContextMenu && !keyShiftPressed) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {
   let cursor = new Point(e.clientX,e.clientY);
-  
-  // Perform BodyPart-Hand stuff
-  let boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
-  let origin = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
 
   if (e.target.id == "bodyPart-eye") {
     if (e.button == 2) {
-      FogHandler.clearRay(angleBetween(cursor,origin));
+      FogHandler.clearRay(mouseAngle);
     } else if (e.button == 1) {
-      FogHandler.clearExplosion();
+      if (!keyShiftPressed) {
+        FogHandler.clearExplosion();
+      } else {
+        FogHandler.clearFocusedExplosion(mouseAngle);
+      }
     } else {
-      FogHandler.clearCone(angleBetween(cursor,origin));
+      FogHandler.clearCone(mouseAngle);
     }
   }
 

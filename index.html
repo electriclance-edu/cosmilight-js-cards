@@ -43,11 +43,11 @@
     <script src="data/base_game/data-StructureType.js" defer></script>
   </head>
   <body class="bg-darkblue" onload="onload()" onresize="onresize()">
-    <div class="Content fillWindow">
+    <div class="Content">
       <!-- <h1 class="debug-fps txt-white" id="debug-fps">FPS: </h1> -->
       <div class="fillWindow Vignette"></div>
       <div class="ScreenContainer fillWindow" id="ScreenContainer">
-        <div class="Screen-Start flex-centered fillWindow" id="Screen-Start">
+        <div class="Screen-Start state-disabled screen flex-centered fillWindow" id="Screen-Start">
           <div class="flex-centered flex-column pos-absolute">
             <div class="skyContainer">
               <div class="starLayer starLayerOne"></div>
@@ -115,7 +115,7 @@
             <p class="clickable" onclick="toggleScreen('Credits')">CREDITS</p>
           </div>
         </div>
-        <div class="Screen-Credits screen fillWindow flex-column flex-centered" id="Screen-Credits">
+        <div class="Screen-Credits state-disabled screen fillWindow flex-column flex-centered" id="Screen-Credits">
           <div onclick="toggleScreen('Start')" class="darkOverlay-bg fillWindow">
             <div class="starLayer starLayerOne"></div>
             <div class="starLayer starLayerTwo"></div>
@@ -152,9 +152,6 @@
               </div>
             </div>
           </div>
-          <div class="PersistentCursorTextDisplay textDisplay" id="PersistentCursorTextDisplay"></div>
-          <div class="FollowCursorTextDisplay textDisplay fillWindow" id="FollowCursorTextDisplay"></div>
-          <div class="PlayerTextDisplay textDisplay" id="PlayerTextDisplay"></div>
           <div class="BodyPartsContainer flex-row flex-centered">
             <div id="bodyPart-eye" class="BodyPart BodyPart-Eye">
               <div class="bodyPart-header">
@@ -176,26 +173,70 @@
               </div>
             </div>
             <div class="flex-column flex-expand bodyPartColumn">
-              <div id="bodyPart-heart" class="BodyPart BodyPart-Heart">
-                <div class="bodyPart-header">
+              <div id="bodyPart-heart" class="BodyPart BodyPart-generic BodyPart-Heart">
+                <div class="flex-row">
                   <div class="bodyPart-card" id="BodyPart-Heart-card">
     
                   </div>
-                  <div class="bodyPart-toggle">
-                    
-                  </div>
-                </div>
-                <div class="bodyPart-contents">
-                  <div id="debug-BodyPart-SpellQueue" class="cardRow">
-
+                  <div class="bodyPart-contents">
+                    <div id="debug-BodyPart-SpellQueue" class="cardRow">
+  
+                    </div>
                   </div>
                 </div>
               </div>
+              <div id="bodyPart-mind" class="BodyPart BodyPart-generic BodyPart-Hands">
+                <div class="bodyPart-contents"></div>
+              </div>
+              <div id="bodyPart-hands" class="BodyPart BodyPart-generic BodyPart-Hands">
+                <div class="bodyPart-contents"></div>
+  
+              </div>
+              <div id="bodyPart-back" class="BodyPart BodyPart-generic BodyPart-Back">
+                <div class="bodyPart-contents"></div>
+  
+              </div>
+              <div id="bodyPart-ears" class="BodyPart BodyPart-generic BodyPart-Hands">
+                <div class="bodyPart-contents"></div>
+  
+              </div>
+              <div id="bodyPart-legs" class="BodyPart BodyPart-generic BodyPart-Legs">
+                <div class="bodyPart-contents"></div>
+  
+              </div>
             </div>
           </div>
-          <div class="ExternalInventoryContainer state-StructureDetailDisplay-vanished state-hidden cards-titleDown" id="ExternalInventoryContainer"></div>
-          <div class="PlayerHandContainer playerInventory" id="PlayerHandContainer"></div>
-          <div class="playerStatDisplay statContainer" id="PlayerStatContainer"></div>
+          <div class="HoverTooltip state-hidden">
+            <div class="HoverTooltip-header">
+              <p class="txt-size-small headerFont-thin supertitle">
+                THE BEATING
+              </p>
+              <p class="txt-size-header headerFont title">
+                HEART
+              </p>
+            </div>
+            <div class="HoverTooltip-body">
+              <p class="txt-size-small">Card, Body Part</p>
+              <div class="description">
+                <p>Stores:</p>
+                <div class="cardEffect type-storage">
+                  <p>Health</p>
+                  <p>20</p>
+                </div>
+                <div class="cardEffect type-storage">
+                  <p>Water</p>
+                  <p>20</p>
+                </div>
+                <div class="cardEffect type-storage">
+                  <p>Blood</p>
+                  <p>20</p>
+                </div>
+                <p>When caught in the fog, involuntarily fills with <span class="tooltipEffect">Fear</span>.</p>
+                <p>When <span class="txt-cardName">Eyes</span> are disabled, slowly fills with <span class="tooltipEffect">Fear</span>.</p>
+              </div>
+              <p class="txt-lore">And let your veins pulse with madness for life.</p>
+            </div>
+          </div>
       </div>
     </div>
   </body>
