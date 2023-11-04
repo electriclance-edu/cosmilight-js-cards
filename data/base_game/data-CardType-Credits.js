@@ -47,7 +47,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight-credits",[
             mainTitle:"Paolo",
             subTitle:"Cosmisexual",
             role:"Labyu",
-            description:"Always calls this game hot.",
+            description:"Always calls this game hot. Also part of the midnight idea spam newsletter.",
         },
         colorName:"credits-person",
         tags:[]
@@ -70,6 +70,26 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight-credits",[
             subTitle:"",
             role:"Help, Restie",
             description:"For helping on that niche z-index problem.",
+        },
+        colorName:"credits-person",
+        tags:[]
+    },
+    {
+        id:"credits_jom",
+        lore:{
+            mainTitle:"Jom",
+            role:"Help",
+            description:"For the trig calculation help!!!",
+        },
+        colorName:"credits-person",
+        tags:[]
+    },
+    {
+        id:"credits_mariya",
+        lore:{
+            mainTitle:"Mariya",
+            role:"Help",
+            description:"For the exact same trig calculation help!!!.",
         },
         colorName:"credits-person",
         tags:[]

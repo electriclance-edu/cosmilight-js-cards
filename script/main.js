@@ -21,6 +21,8 @@ function onload() {
 }
 function onresize() {
   retrieveCSSConstants();
+  const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
+  graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
   GUIHandler.initialize();
   LightHandler.initialize();
   FogHandler.initialize();
@@ -43,18 +45,16 @@ function initialize() {
   LightHandler.initialize();
   FogHandler.initialize();
 
-  GUIHandler.renderCredits();
-  GUIHandler.renderCurrentTileBoard();
-  GUIHandler.updateScreenCull();
+  CardHandler.renderCreditsCards();
 
   // toggleScreen("Start");
   toggleScreen("Game");
   startGame();
 
-  document.getElementById("debug-BodyPart-SpellQueue").appendChild(GUIHandler.generateRawCardElement(new Card("condense_light").type));
-  document.getElementById("debug-BodyPart-SpellQueue").appendChild(GUIHandler.generateRawCardElement(new Card("torchberry").type));
-  document.getElementById("debug-BodyPart-SpellQueue").appendChild(GUIHandler.generateRawCardElement(new Card("research_heat").type));
-  document.getElementById("BodyPart-Heart-card").appendChild(GUIHandler.generateRawCardElement(new Card("heart").type));
+  document.getElementById("debug-BodyPart-SpellQueue").appendChild(CardHandler.generateRawCardElement(new Card("condense_light").type));
+  document.getElementById("debug-BodyPart-SpellQueue").appendChild(CardHandler.generateRawCardElement(new Card("torchberry").type));
+  document.getElementById("debug-BodyPart-SpellQueue").appendChild(CardHandler.generateRawCardElement(new Card("research_heat").type));
+  document.getElementById("BodyPart-Heart-card").appendChild(CardHandler.generateRawCardElement(new Card("heart").type));
 
   // GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
   // Game.player.hand.addCard(new Card("condense_light"));
@@ -140,23 +140,6 @@ function debug_continuousTileShift(deltaWidth,deltaHeight,time = 1000,steps = 20
 GENERAL GUI FUNCTIONS
 --------------
 */
-// Converts a string formatted like an HTML file into an element. Returns only the first element in the string if the string has multiple elements.
-function parseHTML(rawHTML) {
-  return document.createRange().createContextualFragment(rawHTML).firstElementChild;
-}
-// Converts a string formatted like an HTML file into an element. Returns the document fragment generated.
-function parseHTMLDocumentFragment(rawHTML) {
-  return document.createRange().createContextualFragment(rawHTML);
-}
-function setUniqueState(element, state = "none") {
-  var classNames = element.className.split(' ');
-  classNames.forEach((name) => {
-    if (name.slice(0,5) == "state") {
-      element.classList.remove(name);
-    }
-  });
-  element.classList.add(`state-${state}`);
-}
 function toggleScreen(id) {
   Array.from(document.getElementById("ScreenContainer").children).forEach((child)=>{
     if (child.id == "Screen-" + id) {
@@ -192,7 +175,7 @@ function onDragStart(e) {
   document.body.classList.add("dragging");
   
   const cardData = CardType.getById(elem.getAttribute("data-typeId"));
-  var ghost = GUIHandler.generateRawCardElement(cardData);
+  var ghost = CardHandler.generateRawCardElement(cardData);
   ghost.classList.add("drag_ghost");
   ghost.classList.add(".state-vanished");
   setTimeout(() => {
@@ -402,7 +385,12 @@ document.addEventListener('mousemove', (e) => {
   mousePosition = new Point(e.clientX,e.clientY);
   // Perform BodyPart-Hand stuff
   let cursor = new Point(e.clientX,e.clientY);
-  mouseAngle = angleBetween(cursor,graphicsLayerLoc);
+
+  try {
+    mouseAngle = angleBetween(cursor,graphicsLayerLoc);
+  } catch (Error) {
+    console.warn("eventListener mousemove: Attempted to get mouseAngle, failed, most likely due to page still loading");
+  }
 
   // document.getElementById("PersistentCursorTextDisplay").style = `--x:${e.clientX};--y:${e.clientY};`
 });

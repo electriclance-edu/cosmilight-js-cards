@@ -8,7 +8,6 @@ class EffectHandler {
         swish.classList.add("effect-swish");
 
         if (clockwise) {
-            console.log('alternate', rotation, rotation + 60);
             swish.style = `
                 --starting-rotation:${-rotation - 30}deg;
                 --final-rotation:${-rotation + 30}deg;

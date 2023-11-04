@@ -233,6 +233,15 @@ function generateSquare(center, halfside) {
     };
 }
 
+// Converts a string formatted like an HTML file into an element. Returns only the first element in the string if the string has multiple elements.
+function parseHTML(rawHTML) {
+    return document.createRange().createContextualFragment(rawHTML).firstElementChild;
+}
+// Converts a string formatted like an HTML file into an element. Returns the document fragment generated.
+function parseHTMLDocumentFragment(rawHTML) {
+    return document.createRange().createContextualFragment(rawHTML);
+}
+
 // Returns an array containing every element of the second array the first array does not.
 function filterArrayWith(toFilter, filter) {
     return toFilter.filter((elem) => !filter.includes(elem));

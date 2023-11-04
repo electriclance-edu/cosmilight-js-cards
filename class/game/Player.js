@@ -214,10 +214,7 @@ class Player {
             (parseFloat(Game.player.location.y) + y).toFixed(2)
         );
         Game.player.moveLocation(newPosition.x,newPosition.y);
-        GUIHandler.updateScreenCull();  
-        window.requestAnimationFrame(GUIHandler.moveTileBoard); 
         LightHandler.moveLight("player",newPosition.x,newPosition.y);
-
         this.bodyParts.eye.toggle(FogHandler.intersects(this.location));
     }
 }
