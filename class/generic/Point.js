@@ -40,4 +40,17 @@ class Point {
     static areEqual(a,b) {
         return a.x == b.x && a.y == b.y;
     }
+    toVector() {
+        return new Vector(
+            (Math.sqrt(this.x * this.x + this.y * this.y)).toFixed(4) * 1.00,
+            ((radToDeg(Math.atan2(this.y, this.x)))).toFixed(4) * 1.00
+        );
+    }
+    angleTowards(target) {
+        let rad = Math.atan2(target.x - this.x,-(target.y - this.y));
+        let deg = radToDeg(rad);
+        deg -= 90;
+        if (deg < 0) deg = 360 + deg;
+        return deg;
+    }
 }

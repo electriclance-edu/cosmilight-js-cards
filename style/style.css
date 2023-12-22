@@ -14,7 +14,7 @@ Tooltips = 90,000
   .EffectLayer = 4
   .LightCanvas = 3
   .DarkCanvas = 1
-.TileBoard = 5,000
+.TileGrid = 5,000
 
 .controls are 20000 relative to their current position.
 */
@@ -43,7 +43,7 @@ Tooltips = 90,000
   --color-fire: #ff4664;
   --color-fire-complement: #ffce46;
   --color-item: #bc9cc8;
-  --color-part: #131425;
+  --color-part: #7664da;
   --color-light: #ffd864;
   --color-light-complement: rgb(255, 252, 236);
   --color-cycle: #48286d;
@@ -370,97 +370,6 @@ MISC SELECTORS
   top:50%;
   transform:translate(-50%,-50%);
 }
-/*####################
-CREDITS SELECTORS
-####################*/
-.Screen-Credits {
-  pointer-events:none;
-  z-index:20000;
-}
-.Screen-Credits > * {
-  pointer-events:all;
-}
-.Screen-Credits .credits-me {
-  margin-bottom:100px;
-}
-.Screen-Credits > p {
-  margin-top:20px;
-}
-.Screen-Credits .flex-row {
-  margin-top:10px;
-}
-.Screen-Credits .flex-row .card {
-  margin:0 10px;
-}
-
-
-/*############
-TILE SELECTORS
-############*/
-body .TileBoard {
-  position:absolute;
-  width:100%;
-  height:100%;
-  top:50%;
-  left:50%;
-  z-index:0;
-  transform:translate(calc(var(--x) * 1px),calc(var(--y) * 1px));
-  /* transition:transform 0.1s; */
-  will-change:transform;
-}
-.tile {
-  /* --tile-thickness:20px; */
-  --x:0;
-  --y:0;
-  /* width:150px;
-  height: ; */
-  width:var(--tile-width);
-  height:var(--tile-height);
-  position:absolute;
-  transform:translate(calc(-50% + var(--x) * var(--tile-width)),calc(-50% - var(--y) * var(--tile-height)));
-  /* border-radius:10px; */
-  /* box-sizing:border-box; */
-  /* background-color:transparent; */
-  /* box-shadow:0 calc(var(--tile-thickness)) 0 var(--shadow); */
-  z-index:calc(var(--y) * -2);
-  user-select:none;
-}
-.tile.state-visible {
-  opacity:1;
-}
-.tile.state-invisible {
-  opacity:0;
-}
-.tile.hasItems:before {
-  display:block;
-  position:absolute;
-  content:"";
-  width:calc(var(--tile-width) * 0.8);
-  height:calc(var(--tile-height) * 0.8);
-  box-sizing:border-box;
-  border:9px solid var(--bg-main);
-  border-radius:1000px;
-  z-index:1;
-  left:50%;
-  opacity:0.5;
-  top:50%;
-  transform:translate(-50%,-60%);
-}
-.tile .tileSprite {
-  --rand-x-offset:0px;
-  --rand-y-offset:0px;
-  position:absolute;
-  z-index:0;
-  left:50%;
-  top:50%;
-  user-select:none;
-  pointer-events:none;
-  transform:translate(calc(-50% + var(--rand-x-offset)),calc(-50% + var(--rand-y-offset)));
-}
-/* .tile.deep_water {
-  animation:0.5s forwards flash, 0.3s forwards ease-in-out tile-fadeIn, 10s alternate-reverse infinite bob;
-} */
-
 /*####################
 LOG SELECTORS
 ####################*/
@@ -825,7 +734,6 @@ TOOLTIP SELECTORS
   left:70%;
   transform:translate(-50%,-50%);
   width:400px;
-  border:2px solid var(--color);
   border-width:2px;
   z-index:90000;
   background-color:var(--bg-shadow-dark);
@@ -840,7 +748,7 @@ TOOLTIP SELECTORS
 .HoverTooltip-header {
   width:100%;
   box-sizing:border-box;
-  padding:10px;
+  padding:12px;
   background-color:var(--color);
 }
 .HoverTooltip-header * {
@@ -852,6 +760,7 @@ TOOLTIP SELECTORS
   background:url("../resources/img/night-sky.png");
   background-size:cover;
   background-position:center;
+  border:2px solid var(--color);
 }
 .HoverTooltip-body .description {
   margin:5px 0;
@@ -859,32 +768,28 @@ TOOLTIP SELECTORS
 .HoverTooltip-body .description > * {
   margin:5px 0;
 }
-.HoverTooltip-body .tooltipEffect {
-  font-weight:bold;
+.tooltipEffect.type-negative {
+  color:var(--color-spell-damaging);
 }
 .txt-cardName {
-  padding:1px 10px;
-  border:1px solid white;
-  border-radius:5px;
-  background-color:rgb(255,255,255,0.3);
+  color:var(--color-part);
+  font-weight:bold;
 }
-.cardEffect {
-  width:100%;
-  padding:5px 10px;
-  background-color:rgb(255,255,255,0.3);
+.HoverTooltip-body .description .cardEffect {
+  width:calc(100% + 40px);
+  padding:5px 30px;
+  background-color:var(--color);
   box-sizing:border-box;
-  border:1px solid white;
-  border-width:1px 0;
-  margin:2px 0;
+  margin:3px -20px;
   position:relative;
+}
+.cardEffect * {
+  color:black;
 }
 .cardEffect.type-storage {
   display:flex;
   justify-content:space-between;
 }
-/*#############
-GRAPHICSLAYER SELECTORS
-#############*/
 .Vignette {
   background-image:url("../resources/img/light-gradient.png");
   background-size:100%;
@@ -893,6 +798,19 @@ GRAPHICSLAYER SELECTORS
   pointer-events:none;
   user-select:none;
   z-index:9999;
+}
+/*#############
+TAB SELECTORS
+#############*/
+.Tabs {
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:100%;
+}
+.EyeTab {
+  display:inline-block;
 }
 .GraphicsLayer {
   z-index:6000;
@@ -913,74 +831,16 @@ GRAPHICSLAYER SELECTORS
   transform:translate(-50%,-50%);
   height:100%;
 }
-.BodyPart {
-  display:inline-block;
-  transition:1s filter, 1s opacity;
-  opacity:1;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  --bodyPart-color:#263252;
-}
-.BodyPart.state-disabled {
-  filter:contrast(0.5) brightness(0.5) saturate(3);
-  opacity:0.2;
-}
-.BodyPart .bodyPart-contents {
-  position:relative;
-}
-.bodyPartColumn {
+.GameBoard {
+  width:100%;
   height:100%;
-  display:grid;
-  padding:20px;
 }
-.BodyPart-generic {
-  margin:5px;
+.PhysicsBodyCanvas {
   width:100%;
-  min-height:50px;
-  border:2px solid var(--bg-white); 
-  border-right-width:10px;
-  border-radius:20px 0 0 20px;
-  background-position:50% 10%;
-  background-size:cover;
-  box-shadow:-1px -1px 5px rgba(255, 0, 51, 0.5),
-             1px 1px 5px rgba(0, 38, 255, 0.5);
-  box-sizing:border-box;
+  height:100%;
 }
-.BodyPart-generic .bodyPart-header::before {
-  content:"";
-  display:block;
-  width:100%;
-  height:calc(100% + 20px);
-  position:absolute;
-  left:0;
-  background-color:var(--bodyPart-color); 
-}
-.BodyPart-generic .bodyPart-card {
-  padding:10px 30px 10px 10px;
-  background-color:var(--bg-white);
-  border-radius:20px 0 0 20px;
-}
-.BodyPart-generic .bodyPart-contents {
-  width:100%;
-  margin-right:-20px;
-  padding:10px;
-  position:relative;
-  left:-20px;
-  border-radius:20px 0 0 20px;
-  background:linear-gradient(270deg,rgba(0,0,0,0) 20%,var(--bg-shadow-dark-opaque) 100%), url("../resources/img/night-sky-vibrant.png");
-}
-.BodyPart-Eye .bodyPart-contents {
-  box-shadow:-2px -2px #6f333f75,
-             2px 2px #333d7575;
-  border-radius:1000px;
-  pointer-events:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.EffectBoard {
-  transform:translate(calc(var(--x) * 1px),calc(var(--y) * 1px));
+.FogCanvas {
+  image-rendering:pixelated;
 }
 .effect-swish {
   --unit-width:2;
@@ -1305,218 +1165,6 @@ DARK OVERLAY SELECTORS
   width:calc(var(--size) * 0.71);
   height:calc(var(--size) * 0.71);
   
-}
-/*####################
-CARD SELECTORS
-####################*/
-.cardRow {
-  display:flex;
-  flex-direction:row;
-}
-.cardRow .card {
-  margin-right:10px;
-}
-.card {
-    /* --x:0;
-    --y:0; */
-    width:var(--card-width);
-    min-width:var(--card-width);
-    height: var(--card-height);
-    position: relative;
-    user-select: none;
-    /* transition: 0.2s; //doesnt work??? */
-    border-radius: 10px;
-    z-index:1;
-    margin-bottom:4px;
-    transform:scale(1) rotate3d(-1,0,0,0) translatey(0);
-    transition:0.1s transform;
-    transition-timing-function:cubic-bezier(0.5, 0.85, 1, 1);
-    /* transition-timing-function:cubic-bezier(0.50,0, 1, 2); */
-    /* transform:translate(
-      calc(-50% + var(--x) * (var(--card-width) + 10px)),
-      calc(-50% + var(--y) * (var(--card-height) + 10px))); */
-}
-.card * {
-  pointer-events:none;
-  font-size:0.9em;
-}
-body .card:active {
-  filter: brightness(1.5);
-}
-.card:hover {
-  filter: brightness(1.2);
-  transform:scale(1.3) rotate3d(0,0,1,2deg) translatey(-10%);
-  z-index:100;
-  box-shadow:-1px -1px 5px rgba(255, 0, 51, 0.5),
-             1px 1px 5px rgba(0, 38, 255, 0.5);
-}
-.card:hover .card-bg {
-  filter: drop-shadow(0 0 10px black);
-}
-.card.onCooldown {
-  opacity:0.6;
-}
-.card.onCooldown::before {
-  --border-width-internal: calc(var(--border-width) * 0.5);
-  border-radius: calc(var(--border-radius) * 0.8);
-}
-.card-content {
-  z-index: 10;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  box-sizing: border-box;
-  border-radius: 10px;
-}
-.cards-titleDown .card .card-content {
-  flex-direction:column-reverse;
-}
-.cards-titleDown .card-title-container {
-  position:relative;
-  top:-10px;
-}
-.card-img-container {
-  flex-grow:1;
-  height:100%;
-  width:100%;
-  border:10px solid transparent;
-  box-sizing:border-box;
-  background: var(--image);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  pointer-events:none;
-}
-.card.castable .card-img-container {
-  background-position: bottom;
-  transform:scale(1.5) translatey(-15%);
-  filter:drop-shadow(0 0 10px var(--bg-accent))
-  drop-shadow(0 10px 10px var(--bg-accent));
-  margin-top:-15px;
-  margin-bottom:-15px;
-}
-.card-title-container {
-  z-index:1;
-  margin-bottom:-5px;
-  padding: 0 7px;
-  border-bottom-left-radius:10px;
-  border-bottom-right-radius:10px;
-}
-.card.darkness {
-  z-index:0;
-}
-.card.darkness .card-title-container {
-  display:none;
-}
-.card .card-count {
-  position:absolute;
-  top:100%;
-  left:100%;
-  transform:translate(-70%,-70%);
-  font-size:2.5em;
-  z-index:10;
-  text-shadow:0 0 10px var(--bg-shadow), 0 0 10px var(--bg-shadow), 0 0 20px var(--bg-shadow);
-}
-.card-title {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  transition:0.3s;
-  margin-top:8px;
-  filter:brightness(4) saturate(0.5);
-}
-.card-title * {
-  flex-grow: 1;
-  text-align: center;
-  line-height:1em;
-}
-.card-title {
-  color: var(--color-text);
-}
-.card-title .card-title-char {
-  font-size:1.6em;
-  margin-top:0px;
-  /* color:var(--bg); */
-}
-.card-title .card-subtitle-char, .card-title .card-supertitle-char {
-  font-size: 1em;
-  max-width:1.3em;
-}
-.card-desc {
-  position:absolute;
-  /* opacity:0;
-  bottom:calc(100% - 10px); */
-  opacity:1;
-  top:calc(100% + 10px);
-  width:100%;
-  color:var(--color-text);
-  word-wrap: break-word;
-  word-break: break-word;
-  text-align: center;
-  font-style:italic;
-  transition:0.3s;
-  filter:drop-shadow(0 0 15px var(--bg-shadow));
-  user-select:none;
-  pointer-events:none;
-}
-/* .card:hover .card-desc {
-  opacity:1;
-  bottom:calc(100% + 10px);
-} */
-.card-bg {
-  width:100%;
-  height:100%;
-  position:absolute;
-  left:0;
-  bottom:0;
-  overflow: hidden;
-  border-radius: 10px;
-  background-color:var(--bg-accent-translucent);
-  box-shadow:0 4px 0 var(--bg-accent-translucent),
-             0 4px 0 var(--bg);
-}
-.card.drag_ghost .card-bg {
-  background-color:transparent;
-}
-.card-bg::before {
-  content:"";
-  display:block;
-  width:100%;
-  height:100%;
-  position:absolute;
-  left:0;
-  top:0;
-  background-color:var(--bg);
-  opacity:0.3;
-}
-.card-bg .card-bg-circle {
-  --finalDiameter:calc(100% - 20% * var(--index));
-  width:var(--finalDiameter);
-  aspect-ratio:1 / 1;
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  margin-top:20px;
-  background-color:var(--bg);
-  border-radius:10000px;
-  opacity:0.1;
-}
-.cards-titleDown .card-bg .card-bg-circle {
-  margin-top:-10px;
-}
-.card.starCard .card-bg {
-  background:url("../resources/img/stars.png"), url("../resources/img/night-sky.png");
-  background-size:300%;
-  background-position:center;
-}
-.card.part .card-bg::before {
-  opacity:0.7;
-}
-.card.part {
 }
 /*############
 ANIMATIONS

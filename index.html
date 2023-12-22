@@ -8,11 +8,16 @@
     <script src="script/helper.js"></script>
     <script src="class/handler/GameEventHandler.js"></script>
     <script src="class/generic/RGBA.js"></script>
+    <script src="class/generic/Vector.js"></script>
+    <script src="class/generic/Shape.js"></script>
+    <script src="class/generic/Rectangle.js"></script>
     <script src="class/generic/Point.js"></script>
+    <script src="class/generic/PhysicsBody.js"></script>
+    <script src="class/generic/LightPoint.js"></script>
     <script src="class/game/Game.js"></script>
     <script src="class/game/Player.js"></script>
     <script src="class/game/World.js"></script>
-    <script src="class/game/Board.js"></script>
+    <script src="class/game/Grid.js"></script>
     <script src="class/Inventory.js"></script>
     <script src="class/CardType.js"></script>
     <script src="class/Card.js"></script>
@@ -23,10 +28,10 @@
     <script src="class/TileType.js"></script>
     <script src="class/Tile.js"></script>
     <script src="class/FogCircle.js"></script>
-    <script src="class/LightPoint.js"></script>
     <script src="script/main.js" defer></script>
     <script src="class/handler/FPSHandler.js" defer></script>
-    <script src="class/handler/CardHandler.js" defer></script>
+    <!-- <script src="class/handler/CardHandler.js" defer></script> Deals with generating HTML elements. Unneeded. -->
+    <script src="class/handler/PhysicsBodyHandler.js" defer></script>
     <script src="class/handler/LightHandler.js" defer></script>
     <script src="class/handler/FogHandler.js" defer></script>
     <script src="class/handler/EffectHandler.js" defer></script>
@@ -113,22 +118,13 @@
               <span class="headerFont" style="--index:0">C</span><span class="headerFont" style="--index:1">o</span><span class="headerFont" style="--index:2">s</span><span class="headerFont" style="--index:3">m</span><span class="headerFont" style="--index:4">i</span><span class="headerFont" style="--index:4.5">l</span><span class="headerFont" style="--index:3.5">i</span><span class="headerFont" style="--index:2.5">g</span><span class="headerFont" style="--index:1.5">h</span><span class="headerFont" style="--index:0.5">t</span>
             </p>
             <p class="clickable" onclick="toggleScreen('Game'); GUIHandler.minimizeDOM(); startGame()">START</p>
-            <p class="clickable" onclick="toggleScreen('Credits')">CREDITS</p>
+            <!-- <p class="clickable" onclick="toggleScreen('Credits')">CREDITS</p> -->
           </div>
-        </div>
-        <div class="Screen-Credits state-disabled screen fillWindow flex-column flex-centered" id="Screen-Credits">
-          <div onclick="toggleScreen('Start')" class="darkOverlay-bg fillWindow">
-            <div class="starLayer starLayerOne"></div>
-            <div class="starLayer starLayerTwo"></div>
-            <div class="starLayer starLayerThree"></div>
-          </div>
-          <p class="clickable" onclick="toggleScreen('Start')">Return to Menu</p>
-          <p>Without this person, this game wouldn't be possible. From the bottom of my heart, thank you for working so hard.</p>
-          <div class="flex-centered flex-row credits-me" id="credits-me"></div>
-          <p>These people helped as well a little, thank you your a cool!!</p>
-          <div class="flex-centered flex-row" id="credits-friends"></div>
         </div>
         <div class="Screen-GameBoard screen fillWindow" id="Screen-Game">
+          <div class="GameBoard">
+            <canvas id="PhysicsBodyCanvas" class="PhysicsBodyCanvas"></canvas>
+          </div>
           <div class="DarkOverlay fillWindow state-invisible flex-centered" id="DarkOverlay">
             <div class="darkOverlay-bg fillWindow" id="darkOverlay-bg">
               <div class="starLayer starLayerOne"></div>
@@ -153,90 +149,46 @@
               </div>
             </div>
           </div>
-          <div class="BodyPartsContainer flex-row flex-centered">
-            <div id="bodyPart-eye" class="BodyPart BodyPart-Eye">
-              <div class="bodyPart-header">
-                <div class="bodyPart-card">
-  
-                </div>
-                <div class="bodyPart-toggle">
-                  
-                </div>
-              </div>
-              <div class="bodyPart-contents">
-                <div class="GraphicsLayer" id="GraphicsLayer">
-                  <div class="TileBoard" id="TileBoard"></div>
-                  <canvas id="StructureBoard" class="StructureBoard"></canvas>
-                  <canvas id="FogCanvas" class="FogCanvas"></canvas>
-                  <canvas id="LightCanvas" class="LightCanvas"></canvas>
-                  <div id="EffectLayer" class="EffectLayer"></div>
-                </div>
+          <div class="Tabs">
+            <div id="EyeTab" class="EyeTab">
+              <div class="GraphicsLayer hidden" id="GraphicsLayer">
+                <div class="TileGrid" id="TileGrid"></div>
+                <canvas id="StructureCanvas" class="StructureCanvas"></canvas>
+                <canvas id="FogCanvas" class="FogCanvas"></canvas>
+                <canvas id="LightCanvas" class="LightCanvas"></canvas>
+                <div id="EffectLayer" class="EffectLayer"></div>
               </div>
             </div>
-            <div class="flex-column flex-expand bodyPartColumn">
-              <div id="bodyPart-heart" class="BodyPart BodyPart-generic BodyPart-Heart">
-                <div class="flex-row">
-                  <div class="bodyPart-card" id="BodyPart-Heart-card">
-    
+            <div class="HoverTooltip hidden">
+              <div class="HoverTooltip-header">
+                <p class="txt-size-small headerFont-thin supertitle">
+                  THE BEATING
+                </p>
+                <p class="txt-size-header headerFont title">
+                  HEART
+                </p>
+              </div>
+              <div class="HoverTooltip-body">
+                <p class="txt-size-small">Card, Body Part</p>
+                <div class="description">
+                  <p>Stores:</p>
+                  <div class="cardEffect type-storage">
+                    <p>Health</p>
+                    <p>20</p>
                   </div>
-                  <div class="bodyPart-contents">
+                  <div class="cardEffect type-storage">
+                    <p>Water</p>
+                    <p>20</p>
                   </div>
-                </div>
-              </div>
-              <div id="bodyPart-mind" class="BodyPart BodyPart-generic BodyPart-Hands">
-                <div class="bodyPart-contents">
-                  <div id="debug-BodyPart-SpellQueue" class="cardRow">
-
+                  <div class="cardEffect type-storage">
+                    <p>Blood</p>
+                    <p>20</p>
                   </div>
+                  <p>When caught in the fog, involuntarily fills with <span class="tooltipEffect type-negative">Fear</span>.</p>
+                  <p>When <span class="txt-cardName">Eyes</span> are disabled, slowly fills with <span class="tooltipEffect type-negative">Fear</span>.</p>
                 </div>
+                <p class="txt-lore">And let your veins pulse with madness for life.</p>
               </div>
-              <div id="bodyPart-hands" class="BodyPart BodyPart-generic BodyPart-Hands">
-                <div class="bodyPart-contents"></div>
-  
-              </div>
-              <div id="bodyPart-back" class="BodyPart BodyPart-generic BodyPart-Back">
-                <div class="bodyPart-contents"></div>
-  
-              </div>
-              <div id="bodyPart-ears" class="BodyPart BodyPart-generic BodyPart-Hands">
-                <div class="bodyPart-contents"></div>
-  
-              </div>
-              <div id="bodyPart-legs" class="BodyPart BodyPart-generic BodyPart-Legs">
-                <div class="bodyPart-contents"></div>
-  
-              </div>
-            </div>
-          </div>
-          <div class="HoverTooltip state-hidden">
-            <div class="HoverTooltip-header">
-              <p class="txt-size-small headerFont-thin supertitle">
-                THE BEATING
-              </p>
-              <p class="txt-size-header headerFont title">
-                HEART
-              </p>
-            </div>
-            <div class="HoverTooltip-body">
-              <p class="txt-size-small">Card, Body Part</p>
-              <div class="description">
-                <p>Stores:</p>
-                <div class="cardEffect type-storage">
-                  <p>Health</p>
-                  <p>20</p>
-                </div>
-                <div class="cardEffect type-storage">
-                  <p>Water</p>
-                  <p>20</p>
-                </div>
-                <div class="cardEffect type-storage">
-                  <p>Blood</p>
-                  <p>20</p>
-                </div>
-                <p>When caught in the fog, involuntarily fills with <span class="tooltipEffect">Fear</span>.</p>
-                <p>When <span class="txt-cardName">Eyes</span> are disabled, slowly fills with <span class="tooltipEffect">Fear</span>.</p>
-              </div>
-              <p class="txt-lore">And let your veins pulse with madness for life.</p>
             </div>
           </div>
       </div>

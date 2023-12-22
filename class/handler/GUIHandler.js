@@ -2,7 +2,7 @@ class GUIHandler {
     static frame = 0;
     
     static initialize() {
-        GUIHandler.TileBoard = document.getElementById("TileBoard");
+        GUIHandler.TileGrid = document.getElementById("TileGrid");
         GUIHandler.PlayerHandContainer = document.getElementById("PlayerHandContainer");
         GUIHandler.PlayerStatContainer = document.getElementById("PlayerStatContainer");
         GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
@@ -26,6 +26,8 @@ class GUIHandler {
         
         FogHandler.renderAllFog();
         LightHandler.renderAllLight();
+        PhysicsBodyHandler.physicsTimestep();
+        PhysicsBodyHandler.renderAllBodies();
     }
     static displayStats(stats,container) {
         Object.values(stats).forEach((stat) => {
@@ -171,6 +173,5 @@ class GUIHandler {
     }
     static minimizeDOM() {
         document.getElementById("Screen-Start").remove();
-        document.getElementById("Screen-Credits").remove();
     }
 }

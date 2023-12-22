@@ -19,13 +19,17 @@ ONLOAD FUNCTIONS
 function onload() {
   setTimeout(() => {initialize()},0);
 }
+function globalInitialize() {
+  GUIHandler.initialize();
+  LightHandler.initialize();
+  FogHandler.initialize();
+  PhysicsBodyHandler.initialize();
+}
 function onresize() {
   retrieveCSSConstants();
   const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
   graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
-  GUIHandler.initialize();
-  LightHandler.initialize();
-  FogHandler.initialize();
+  globalInitialize();
 
   windowHeight = window.innerHeight;
   windowWidth = window.innerWidth;
@@ -33,28 +37,26 @@ function onresize() {
 }
 function initialize() {
   DataHandler.loadAllData();
-  new Game();
+  new Game().start();
   retrieveCSSConstants();
 
   setTimeout(()=>{
     const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
     graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
+  
+    document.addEventListener('mousemove', (e) => {
+      mousePosition = new Point(e.clientX,e.clientY);
+      // Perform BodyPart-Hand stuff
+      let cursor = new Point(e.clientX,e.clientY);
+      mouseAngle = angleBetween(cursor,graphicsLayerLoc);
+    });
   },16);
 
-  GUIHandler.initialize();
-  LightHandler.initialize();
-  FogHandler.initialize();
-
-  CardHandler.renderCreditsCards();
+  globalInitialize();
 
   // toggleScreen("Start");
   toggleScreen("Game");
   startGame();
-
-  document.getElementById("debug-BodyPart-SpellQueue").appendChild(CardHandler.generateRawCardElement(new Card("condense_light").type));
-  document.getElementById("debug-BodyPart-SpellQueue").appendChild(CardHandler.generateRawCardElement(new Card("torchberry").type));
-  document.getElementById("debug-BodyPart-SpellQueue").appendChild(CardHandler.generateRawCardElement(new Card("research_heat").type));
-  document.getElementById("BodyPart-Heart-card").appendChild(CardHandler.generateRawCardElement(new Card("heart").type));
 
   // GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
   // Game.player.hand.addCard(new Card("condense_light"));
@@ -74,7 +76,6 @@ function initialize() {
 }
 function startGame() {
   document.getElementById("Screen-Start").remove();
-  document.getElementById("Screen-Credits").remove();
   setTimeout(()=>{
     // GUIHandler.logText(randElem([
     //   "The ground crunches below your feet.",
@@ -113,7 +114,7 @@ function retrieveCSSConstants() {
   visionRadius = parseInt(style.getPropertyValue('--visionRadius'));
 }
 function debug_setColor() {
-  document.getElementById("TileBoard").style.setProperty('--x',`1000`);
+  document.getElementById("TileGrid").style.setProperty('--x',`1000`);
 }
 function updateCSSTileDimensions() {
   // tileWidth = width;
@@ -169,7 +170,7 @@ function endDrag(e) {
   onDragEnd(e);
 }
 function onDragStart(e) {
-  var coords = mouseToBoardCoordinates(e);
+  var coords = mouseToGridCoordinates(e);
   var elem = e.target;
 
   document.body.classList.add("dragging");
@@ -195,7 +196,7 @@ function onDragMove(e) {
   dragGhost.style.setProperty("--drag-left", e.clientX + "px");
 }
 function onDragEnd(e) {
-  var coords = mouseToBoardCoordinates(e);
+  var coords = mouseToGridCoordinates(e);
   var target = e.target;
 
   document.body.classList.remove("dragging");
@@ -209,7 +210,7 @@ function onDragEnd(e) {
     // Target : tile
     var originInventory = getInventory(dragInvokerElement.parentNode.getAttribute("data-inventoryType"));
     var invoker = originInventory.getCard(dragInvokerElement.getAttribute("data-inventoryId"));
-    var tile = Game.board.getTile(coords);
+    var tile = Game.grid.getTile(coords);
     GameEventHandler.onDrop(invoker,tile);
   } else if (target.classList.contains("card")) {
     // If targeting card:
@@ -263,14 +264,14 @@ function dropIntoInventory(target) {
 function makeDraggable(elem) {
   elem.classList.add("draggable");
 }
-function boardToMouseCoordinates(x,y) {
+function gridToMouseCoordinates(x,y) {
   var converted = new Point(x,y);
   Point.translate(converted,Game.player.location);
   converted.x = Math.round(x * tileWidth + window.innerWidth/2);
   converted.y = Math.round(-(y * tileHeight) + window.innerHeight/2);
   return converted;
 }
-function mouseToBoardCoordinates(e) {
+function mouseToGridCoordinates(e) {
   var x = e.clientX - window.innerWidth/2;
   var y = e.clientY - window.innerHeight/2;
 
@@ -280,7 +281,7 @@ function mouseToBoardCoordinates(e) {
   return decentralizePoint(Game.player.getRoundedLocation(),new Point(x,y));
 }
 function openTile(coords) {
-  let tile = Game.board.getTile(coords);
+  let tile = Game.grid.getTile(coords);
 
   if (!!Game.currentTileCoords) {
     if (Point.areEqual(coords,Game.currentTileCoords)) {
@@ -381,24 +382,12 @@ function doResize() {
   LightHandler.initialize();
   FogHandler.initialize();
 }
-document.addEventListener('mousemove', (e) => {
-  mousePosition = new Point(e.clientX,e.clientY);
-  // Perform BodyPart-Hand stuff
-  let cursor = new Point(e.clientX,e.clientY);
-
-  try {
-    mouseAngle = angleBetween(cursor,graphicsLayerLoc);
-  } catch (Error) {
-    console.warn("eventListener mousemove: Attempted to get mouseAngle, failed, most likely due to page still loading");
-  }
-
-  // document.getElementById("PersistentCursorTextDisplay").style = `--x:${e.clientX};--y:${e.clientY};`
-});
 document.addEventListener('contextmenu', event => {if (disableContextMenu && !keyShiftPressed) event.preventDefault()});
 document.addEventListener('mousedown', (e) => {
   let cursor = new Point(e.clientX,e.clientY);
 
-  if (e.target.id == "bodyPart-eye") {
+  if (e.target.id == "EyeTab") {
+    console.log(e.target.id);
     if (e.button == 2) {
       FogHandler.clearRay(mouseAngle);
     } else if (e.button == 1) {
@@ -408,7 +397,11 @@ document.addEventListener('mousedown', (e) => {
         FogHandler.clearFocusedExplosion(mouseAngle);
       }
     } else {
-      FogHandler.clearCone(mouseAngle);
+      if (keyShiftPressed) {
+        FogHandler.clearFocusedExplosion(mouseAngle);
+      } else {
+        FogHandler.clearCone(mouseAngle);
+      }
     }
   }
 

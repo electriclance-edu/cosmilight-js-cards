@@ -26,7 +26,7 @@ class Structure {
     }
     get tile() {
         if (!!this.position) {
-            return Game.currentBoard.getTile(this.position);
+            return Game.currentGrid.getTile(this.position);
         }
 
         if (this.type.hasOwnProperty("interactions")) {

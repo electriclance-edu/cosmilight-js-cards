@@ -2,20 +2,20 @@ class Player {
     constructor() {
         this.hand = new Inventory(4,"PLAYER HAND");
         this.location = new Point(0,0);
-        this.bodyParts = {
-            "eye":{
-                lastState:1000,
-                toggle:(state)=>{
-                    if (state != this.lastState) {
-                        let elem = document.getElementById("bodyPart-eye");
-                        elem.classList.remove("state-disabled");
-                        elem.classList.remove("state-enabled");
-                        elem.classList.add(state ? "state-disabled" : "state-enabled");
-                        this.lastState = state;
-                    }
-                }
-            }
-        }
+        // this.bodyParts = {
+        //     "eye":{
+        //         lastState:1000,
+        //         toggle:(state)=>{
+        //             if (state != this.lastState) {
+        //                 let elem = document.getElementById("bodyPart-eye");
+        //                 elem.classList.remove("state-disabled");
+        //                 elem.classList.remove("state-enabled");
+        //                 elem.classList.add(state ? "state-disabled" : "state-enabled");
+        //                 this.lastState = state;
+        //             }
+        //         }
+        //     }
+        // }
         this.movement = {
             paralyzed:false,
             baseSpeed:0.03,
@@ -215,7 +215,7 @@ class Player {
         );
         Game.player.moveLocation(newPosition.x,newPosition.y);
         LightHandler.moveLight("player",newPosition.x,newPosition.y);
-        this.bodyParts.eye.toggle(FogHandler.intersects(this.location));
+        // this.bodyParts.eye.toggle(FogHandler.intersects(this.location));
     }
 }
 

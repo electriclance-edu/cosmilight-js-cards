@@ -1,15 +1,18 @@
 class FogHandler {
-    // static dark = new RGBA(7,0,15,1);
     static fogCircles = "unpopulated";
+    static canvas;
+    static canvasCenter;
+    static unit = {
+        scaleDownFactor:0.15,
+        x:1,
+        y:1
+    }
     // static fogCircles = {
     //     "0,0":[
     //         // new FogCircle(new Point(0,0),0.3,{other:{tagged:true}}),
     //         // new FogCircle(new Point(0,0.9),0.3),
     //     ]
     // }
-    static canvas;
-    static updateLoop;
-    static canvasCenter;
     
     static getFirst() {
 
@@ -199,13 +202,14 @@ class FogHandler {
         }
     }
     static initialize() {
-        clearInterval(LightHandler.updateLoop);
-
         var canvas = document.getElementById("FogCanvas");
-        canvas.width = graphicsDisplaySize;
-        canvas.height = graphicsDisplaySize;
+        canvas.width = graphicsDisplaySize * FogHandler.unit.scaleDownFactor;
+        canvas.height = graphicsDisplaySize  * FogHandler.unit.scaleDownFactor;
         FogHandler.canvas = canvas;
         FogHandler.canvasCenter = new Point(FogHandler.canvas.width/2,FogHandler.canvas.height/2);
+
+        FogHandler.unit.x = tileWidth * FogHandler.unit.scaleDownFactor,
+        FogHandler.unit.y = tileHeight * FogHandler.unit.scaleDownFactor,
 
         FogHandler.populate();
         // for (var i = 0; i < pointCount; i++) {
@@ -242,7 +246,7 @@ class FogHandler {
         // let distanceShift;
         // try {
         //     distanceShift = dist(mousePosition,graphicsLayerLoc);
-        //     distanceShift = distanceShift / (visionRadius * tileWidth);
+        //     distanceShift = distanceShift / (visionRadius * FogHandler.unit.x);
         //     distanceShift = Math.min(distanceShift,1);
         //     distanceShift *= 2;
         //     distanceShift *= distanceShift;
@@ -280,13 +284,13 @@ class FogHandler {
     
                     let fogCenter = Point.translate(fogCircle.center,Game.player.location);
                     
-                    fogCenter.x *= tileWidth;
-                    fogCenter.y *= -tileHeight;
+                    fogCenter.x *= FogHandler.unit.x;
+                    fogCenter.y *= -FogHandler.unit.y;
 
                     let centerInPixels = decentralizePoint(FogHandler.canvasCenter, fogCenter);
     
                     ctx.beginPath();
-                    ctx.arc(centerInPixels.x,centerInPixels.y,fogCircle.radius * tileWidth,0,2*Math.PI);
+                    ctx.arc(centerInPixels.x,centerInPixels.y,fogCircle.radius * FogHandler.unit.x,0,2*Math.PI);
                     // fogCircle.color.a = 1 - (dist(fogCircle.center,Game.player.location) / 2.1 - 0.3);
                     ctx.fillStyle = fogCircle.color.name;
                     ctx.fill();

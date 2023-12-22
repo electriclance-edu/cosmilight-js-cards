@@ -8,33 +8,34 @@ WORLD SETTINGS
 
 
 /*
-World represents the two-dimensional grid of all boards. Players can travel between boards, but can only access one board at a time.
+World represents the two-dimensional grid of all grids. 
+Players can travel between grids, but can only access one grids at a time.
 */
 class World {
     constructor() {
-        this.currentBoardCoords = new Point(0,0);
-        this.worldBoard = {};
+        this.currentGridCoords = new Point(0,0);
+        this.worldGrid = {}; // A grid of all grids.
         this.currentlyOpenedTileCoords = undefined;
 
-        this.populateWorldBoard();
+        this.populateWorldGrid();
     }
-    populateWorldBoard() {
-        var debug_startingBoard = new Board();
-        debug_startingBoard.populateBoard();
-        this.setBoard(new Point(0,0),debug_startingBoard);
+    populateWorldGrid() {
+        var debug_startingGrid = new Grid();
+        debug_startingGrid.populateGrid();
+        this.setGrid(new Point(0,0),debug_startingGrid);
         //steal world creation from cosmi-js
     }
     getCurrentlyOpenedTile() {
-        return this.currentBoard.getTile(this.currentlyOpenedTileCoords);
+        return this.currentGrid.getTile(this.currentlyOpenedTileCoords);
     }
-    setBoard(point,board) {
-        this.worldBoard[`${point.x},${point.y}`] = board;
+    setGrid(point,grid) {
+        this.worldGrid[`${point.x},${point.y}`] = grid;
     }
-    getBoard(point) {
-        return this.worldBoard[`${point.x},${point.y}`];
+    getGrid(point) {
+        return this.worldGrid[`${point.x},${point.y}`];
     }
-    get currentBoard() {
-        return this.getBoard(this.currentBoardCoords);
+    get currentGrid() {
+        return this.getGrid(this.currentGridCoords);
     }
     addCardToOpenedInventory(card) {
         this.currentlyOpenedInventory.addCard(card);

@@ -11,10 +11,14 @@ class Game {
         this.#world = new World();
         this.#player = new Player();
         this.time = 0;
-
+    }
+    start() {
         setTimeout(()=>{
+            // Start rendering frames
             GUIHandler.renderFrame();
         },16);
+
+        // Game time loop
         setInterval(()=>{
             Game.#current.time++;
             Game.onTickObjects.forEach((obj)=>{
@@ -39,8 +43,8 @@ class Game {
     static set world(world) {
         Game.#current.#world = world;
     }
-    static get board() {
-        return Game.#current.#world.currentBoard;
+    static get grid() {
+        return Game.#current.#world.currentGrid;
     }
     static get world() {
         return Game.#current.#world;
