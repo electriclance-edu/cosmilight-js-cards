@@ -18,7 +18,10 @@ ONLOAD FUNCTIONS
 --------------
 */
 function onload() {
-  setTimeout(() => {initialize()},0);
+  setTimeout(() => {
+    initialize();
+    PhysicsBodyHandler.addManyBodies();
+  },0);
 }
 function globalInitialize() {
   GUIHandler.initialize();

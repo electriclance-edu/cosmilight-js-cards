@@ -10,6 +10,14 @@ class Point {
         translated.y -= translator.y;
         return translated;
     }
+    shiftX(dx) {
+        this.x += dx;
+        return this;
+    }
+    shiftY(dy) {
+        this.y += dy;
+        return this;
+    }
     // Translates a point along a given angle by a given length.
     static angleTranslate(point,angle,length) {
         return new Point(

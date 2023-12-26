@@ -16,11 +16,30 @@ class PhysicsBodyHandler {
         PhysicsBodyHandler.canvasCenter = new Point(PhysicsBodyHandler.canvas.width/2,PhysicsBodyHandler.canvas.height/2);
 
         // DEBUG
-        PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:100,height:100})
-        }));
+        // PhysicsBodyHandler.addBody(new PhysicsBody({
+        //     bounds:new Rectangle({width:150,height:200}),
+        //     interactionBounds:new Circle({rad:50})
+        // }));
+        // PhysicsBodyHandler.addBody(new PhysicsBody({
+        //     bounds:new Rectangle({width:150,height:200}),
+        //     pos:new Point(100,0),
+        //     interactionBounds:new Circle({rad:50})
+        // }));
+        // PhysicsBodyHandler.addBody(new PhysicsBody({
+        //     bounds:new Rectangle({width:150,height:200}),
+        //     pos:new Point(-100,0),
+        //     interactionBounds:new Circle({rad:50})
+        // }));
 
         PhysicsBodyHandler.renderAllBodies();
+    }
+    static addManyBodies() {
+        for (var i = 0; i < 10; i++) {
+            PhysicsBodyHandler.addBody(new PhysicsBody({
+                bounds:new Rectangle({width:150,height:200}),
+                interactionBounds:new Circle({rad:100})
+            }));
+        }
     }
     static addBody(body) {
         PhysicsBodyHandler.bodies.push(body);
@@ -65,12 +84,42 @@ class PhysicsBodyHandler {
             let clientPos = Point.translate(PhysicsBodyHandler.canvasCenter,PhysicsBodyHandler.selectedBody.phys.pos);
             clientPos = decentralizePoint(clientPos,PhysicsBodyHandler.selectionOffset);
             PhysicsBodyHandler.selectedBody.phys.vel = new Vector(Point.translate(mousePosition,clientPos).toVector().mag,angleBetween(mousePosition,clientPos));
+            
         }
         PhysicsBodyHandler.bodies.forEach((body)=>{
+            // Check if out of bounds
+            if (Math.abs(body.phys.pos.x) > PhysicsBodyHandler.canvas.width / 2 || 
+            Math.abs(body.phys.pos.y) > PhysicsBodyHandler.canvas.height / 2) {
+                let clientPos = Point.translate(PhysicsBodyHandler.canvasCenter,body.phys.pos);
+                body.applyForce(new Vector(10,angleBetween(PhysicsBodyHandler.canvasCenter,clientPos)));
+            }
+            // Check if intersecting with selectedBody
+            if (PhysicsBodyHandler.selectedBody) {
+                if (body.id != PhysicsBodyHandler.selectedBody.id) {
+                    if (body.interactionBounds.rad + PhysicsBodyHandler.selectedBody.interactionBounds.rad > dist(body.phys.pos,PhysicsBodyHandler.selectedBody.phys.pos)) {
+                        body.tags["intersecting"] = true;
+                    } else {
+                        body.tags["intersecting"] = false;
+                    }
+                }
+            } else {
+                body.tags["intersecting"] = false;
+            }
+
             if (body.phys.vel.mag > 0.01) {
+                // Check for pushies
+                PhysicsBodyHandler.bodies.forEach((nearby)=>{
+                    if (nearby.id == body.id) return false;
+                    if (nearby.tags["intersecting"]) return false;
+                    if (PhysicsBodyHandler.selectedBody) if (nearby.id == PhysicsBodyHandler.selectedBody.id) return false;
+                    let isIntersecting = nearby.intersects(body);
+                    if (isIntersecting) {
+                        nearby.applyForce(new Vector(-0.5,angleBetween(nearby.phys.pos,body.phys.pos)));
+                    }
+                });
                 body.phys.pos.x -= body.phys.vel.toPoint().x;
                 body.phys.pos.y += body.phys.vel.toPoint().y;
-                body.phys.vel.mag *= 0.9;
+                body.phys.vel.mag *= 0.8;
             }
         });
     }
@@ -92,8 +141,18 @@ class PhysicsBodyHandler {
             topLeftPos.y -= transformedBound.height / 2;
             
             // Render object
-            body.lastRenderLocation = topLeftPos;
-            PhysicsBodyHandler.ctx.drawImage(PhysicsBodyHandler.images[body.sprite],topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height);
+            PhysicsBodyHandler.ctx.beginPath();
+            PhysicsBodyHandler.ctx.fillStyle = body.tags["intersecting"] ? "rgb(201, 53, 122)" : 
+                                               body.tags["selected"] ? "#ffce46" : 
+                                               "#12d48a";
+            PhysicsBodyHandler.ctx.strokeStyle = body.tags["intersecting"] ? "rgb(135, 47, 207)" : 
+                                               body.tags["selected"] ? "#ff4664" : 
+                                               "#1bada1";
+            PhysicsBodyHandler.ctx.lineWidth = 10;
+            PhysicsBodyHandler.ctx.roundRect(topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height,10);
+            PhysicsBodyHandler.ctx.fill();
+            PhysicsBodyHandler.ctx.stroke();
+            // PhysicsBodyHandler.ctx.drawImage(PhysicsBodyHandler.images[body.sprite],topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height);
         });
     }
 }

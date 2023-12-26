@@ -1,4 +1,5 @@
 class PhysicsBody {
+    static id = 0;
     events = {
         "onclick":()=>{},
         "onhover":()=>{},
@@ -7,7 +8,10 @@ class PhysicsBody {
     bounds = new Rectangle({
         width:undefined,
         height:undefined
-    }); // the bounds of the object by which onclick and onintersect events fire
+    }); // the bounds of the object by which onclick events fire
+    interactionBounds = new Circle({
+        rad:undefined
+    })
     sprite = ""; // string with url to the object's sprite
     graphics = { // graphical information
         scale:undefined, // scale transformation
@@ -23,10 +27,12 @@ class PhysicsBody {
         mass:undefined
     }; 
     tags = {
-        selected:false
+        selected:false,
+        intersecting:false
     }
 
     constructor(options) {
+        this.id = PhysicsBody.id++;
         this.phys.pos = options.pos || new Point(0,0);
         this.phys.vel = options.vel || new Vector(3,270);
         this.physConsts.friction = options.friction || 0.1;
@@ -35,13 +41,31 @@ class PhysicsBody {
         this.graphics.translate = new Point(0,0);
         this.graphics.lastRenderLocation = new Point(0,0);
         this.bounds = options.bounds || new Rectangle({width:50,height:50});
+        this.interactionBounds = options.interactionBounds || new Circle({rad:25});
         this.sprite = options.sprite || `resources/img/sprites/noSprite${this.bounds.type}.png`;
     }
 
-    intersects(shape){
-        if (shape.type == "rectangle" && this.bounds.type == "rectangle") {
-
+    intersects(body) {
+        if (body.bounds.type == "Rectangle" && this.bounds.type == "Rectangle") {
+            let a1 = new Point(
+                this.phys.pos.x - this.bounds.width/2, 
+                this.phys.pos.y - this.bounds.height/2
+            );
+            let a2 = new Point(
+                this.phys.pos.x + this.bounds.width/2, 
+                this.phys.pos.y + this.bounds.height/2
+            );
+            let b1 = new Point(
+                body.phys.pos.x - body.bounds.width/2, 
+                body.phys.pos.y - body.bounds.height/2
+            );
+            let b2 = new Point(
+                body.phys.pos.x + body.bounds.width/2, 
+                body.phys.pos.y + body.bounds.height/2
+            );
+            return (a1.x < b2.x) && (a2.x > b1.x) && (a1.y < b2.y) && (a2.y > b1.y);
         }
+        return false;
     }
     pointWithinBound(point) {
         let clientPos = Point.translate(PhysicsBodyHandler.canvasCenter,this.phys.pos);
