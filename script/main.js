@@ -8,6 +8,7 @@ var defaultPersistence = undefined;
 var mousePosition = new Point(0,0);
 var graphicsLayerLoc; // Stores the center of the Eye body part's display element.
 var mouseAngle; // Stores the current angle of the mouse relative to the center of the Eye body part.
+var mouseState; // String, either left, middle, right, none, depending on state of mouse event
 var disableContextMenu = true;
 var keyShiftPressed = false;
 const graphicsDisplaySize = window.innerHeight;
@@ -45,7 +46,12 @@ function initialize() {
     graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
   
     document.addEventListener('mousemove', (e) => {
-      mousePosition = new Point(e.clientX,e.clientY);
+      // Update mousePosition
+      // MousePosition encodes the cursor's position on the gameboard.
+      // This may differ from the cursor's actual position on the screen (when the screen isnt of a 16:9 aspect ratio), so it has to be corrected.
+      let contentPosition = document.getElementById("Content").getBoundingClientRect();
+      if (document.body.clientWidth / document.body.clientHeight < 16.0/9.0) mousePosition = new Point(e.clientX,e.clientY - contentPosition.top); // When there is excess vertical space, translate clientY by that excess space
+      else mousePosition = new Point(e.clientX - contentPosition.left,e.clientY); // When there is excess horizontal space, translate clientX by that excess space
       // Perform BodyPart-Hand stuff
       let cursor = new Point(e.clientX,e.clientY);
       mouseAngle = angleBetween(cursor,graphicsLayerLoc);
@@ -383,8 +389,14 @@ function doResize() {
   FogHandler.initialize();
 }
 document.addEventListener('contextmenu', event => {if (disableContextMenu && !keyShiftPressed) event.preventDefault()});
+document.addEventListener('mouseup',(e)=>{
+  mouseState = "none";
+  PhysicsBodyHandler.onmouseup();
+})
 document.addEventListener('mousedown', (e) => {
-  let cursor = new Point(e.clientX,e.clientY);
+  mouseState = ["left","middle","right"][e.button];
+
+  PhysicsBodyHandler.onmousedown();
 
   if (e.target.id == "EyeTab") {
     console.log(e.target.id);

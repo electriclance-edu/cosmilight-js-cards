@@ -91,7 +91,7 @@ body {
   background-image: url("../resources/img/void-bg-darkened.png");
   background-size: cover;
   background-position: center;
-  width:100vw; 
+  width:100vw; /*Maintain aspect ratio*/
   height:56.25vw;
   max-height:100vh;
   max-width:177.78vh;

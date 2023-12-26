@@ -1,3 +1,17 @@
 {
-    "liveServer.settings.port": 5501
+    "liveServer.settings.port": 5501,
+    "workbench.colorCustomizations": {
+    },
+    "editor.tokenColorCustomizations": {
+        "[Atom Material Theme]": {
+            "textMateRules": [
+                {
+                    "scope": "new.expr.js entity.name.function.js",
+                    "settings": {
+                        "foreground": "#FFCB6B",
+                    }
+                }
+            ]
+        }
+    }
 }

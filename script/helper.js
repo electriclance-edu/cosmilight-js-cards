@@ -92,7 +92,7 @@ function integerRaytrace(endA,endB) {
 
     return coordinates;
 }
-// Given an array of coordinates, returns a set including all the neighbors of those coordinates. Includes diagonals.
+// Given an array TODO of coordinates, returns a set including all the neighbors of those coordinates. Includes diagonals.
 function inflateCoordinateArray(coords) {
     let inflated = new Set();
 
@@ -112,6 +112,9 @@ function inflateCoordinateArray(coords) {
 }
 function degToRad(deg) {
   return deg * (Math.PI/180);
+}
+function radToDeg(rad) {
+    return rad * 180 / 3.1415;
 }
 //Returns an array of all integer coordinates that intersect with a given square.
 function squareIntersectingIntCoords(center,radius) {
@@ -250,7 +253,7 @@ function filterArrayWith(toFilter, filter) {
 function findMissingKeys(obj, requiredKeys) {
     return filterArrayWith(requiredKeys, Object.keys(obj));
 }
-
+// Retursn 
 // Returns true if a randomly generated float from 0-1 is lower than the given.
 function chance(maxThreshold) {
     return Math.random() < maxThreshold;
