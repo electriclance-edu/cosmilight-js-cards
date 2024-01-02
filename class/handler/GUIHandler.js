@@ -174,4 +174,7 @@ class GUIHandler {
     static minimizeDOM() {
         document.getElementById("Screen-Start").remove();
     }
+    static openTooltipTab(card) {
+        alert("wow!!",card);
+    }
 }

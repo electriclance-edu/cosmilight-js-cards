@@ -356,6 +356,11 @@ document.addEventListener('keyup', (e)=>{
     Game.player.movement.direction["-y"] = 0;
   }
 });
+document.addEventListener('wheel',(e)=>{
+  let delta = e.deltaY < 0 ? -1 : 1;
+  
+  PhysicsBodyHandler.setZoom(delta);
+});
 document.addEventListener('keydown', function(e) {
   if (e.repeat) {
     return;
@@ -399,7 +404,7 @@ document.addEventListener('mouseup',(e)=>{
 document.addEventListener('mousedown', (e) => {
   mouseState = ["left","middle","right"][e.button];
 
-  PhysicsBodyHandler.onmousedown();
+  PhysicsBodyHandler.onmousedown(e.button);
 
   if (e.target.id == "EyeTab") {
     console.log(e.target.id);
