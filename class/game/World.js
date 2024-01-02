@@ -37,12 +37,4 @@ class World {
     get currentGrid() {
         return this.getGrid(this.currentGridCoords);
     }
-    addCardToOpenedInventory(card) {
-        this.currentlyOpenedInventory.addCard(card);
-    }
-    closeInventory() {
-        GUIHandler.removeClassFromTileElem(this.currentlyOpenedTileCoords.x,this.currentlyOpenedTileCoords.y,"selectedTile");
-        this.currentlyOpenedTileCoords = "none";
-        GUIHandler.closeInventory();
-    }
 }

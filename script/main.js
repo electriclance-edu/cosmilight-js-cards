@@ -11,7 +11,7 @@ var mouseAngle; // Stores the current angle of the mouse relative to the center 
 var mouseState; // String, either left, middle, right, none, depending on state of mouse event
 var disableContextMenu = true;
 var keyShiftPressed = false;
-const graphicsDisplaySize = window.innerHeight;
+var graphicsDisplaySize;
 /*
 --------------
 ONLOAD FUNCTIONS
@@ -28,25 +28,28 @@ function globalInitialize() {
   LightHandler.initialize();
   FogHandler.initialize();
   PhysicsBodyHandler.initialize();
+  TileHandler.initialize();
+}
+function recalcGraphicsLayer() {
+  const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
+  graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
+  graphicsDisplaySize = document.getElementById("GraphicsLayer").offsetWidth;
 }
 function onresize() {
   retrieveCSSConstants();
-  const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
-  graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
+  recalcGraphicsLayer();
   globalInitialize();
 
   windowHeight = window.innerHeight;
   windowWidth = window.innerWidth;
-  GUIHandler.updateScreenCull;
 }
 function initialize() {
   DataHandler.loadAllData();
   new Game().start();
   retrieveCSSConstants();
 
+  recalcGraphicsLayer();
   setTimeout(()=>{
-    const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
-    graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
   
     document.addEventListener('mousemove', (e) => {
       // Update mousePosition
@@ -62,12 +65,10 @@ function initialize() {
   },16);
 
   globalInitialize();
-
   // toggleScreen("Start");
   toggleScreen("Game");
   startGame();
 
-  // GUIHandler.displayInventory(Game.player.hand,GUIHandler.PlayerHandContainer,false);
   // Game.player.hand.addCard(new Card("condense_light"));
   // Game.player.hand.addCard(new Card("debug_map"));
   // setInterval(() => {

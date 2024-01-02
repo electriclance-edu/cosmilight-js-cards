@@ -31,7 +31,7 @@
     <script src="class/FogCircle.js"></script>
     <script src="script/main.js" defer></script>
     <script src="class/handler/FPSHandler.js" defer></script>
-    <!-- <script src="class/handler/CardHandler.js" defer></script> Deals with generating HTML elements. Unneeded. -->
+    <script src="class/handler/TileHandler.js" defer></script>
     <script src="class/handler/PhysicsBodyHandler.js" defer></script>
     <script src="class/handler/LightHandler.js" defer></script>
     <script src="class/handler/FogHandler.js" defer></script>
@@ -152,11 +152,11 @@
           </div>
           <div class="Tabs">
             <div id="EyeTab" class="EyeTab">
-              <div class="GraphicsLayer hidden" id="GraphicsLayer">
-                <div class="TileGrid" id="TileGrid"></div>
+              <div class="GraphicsLayer" id="GraphicsLayer">
+                <canvas id="TileCanvas"      class="TileCanvas"     ></canvas>
                 <canvas id="StructureCanvas" class="StructureCanvas"></canvas>
-                <canvas id="FogCanvas" class="FogCanvas"></canvas>
-                <canvas id="LightCanvas" class="LightCanvas"></canvas>
+                <canvas id="FogCanvas"       class="FogCanvas"      ></canvas>
+                <canvas id="LightCanvas"     class="LightCanvas"    ></canvas>
                 <div id="EffectLayer" class="EffectLayer"></div>
               </div>
             </div>

@@ -1,3 +1,5 @@
+// CURRENTLY UNUSED/UNIMPORTED
+
 class CardHandler {
     static generateRawCardElement(cardType) {
         let type;

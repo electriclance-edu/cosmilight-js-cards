@@ -2,10 +2,6 @@ class GUIHandler {
     static frame = 0;
     
     static initialize() {
-        GUIHandler.TileGrid = document.getElementById("TileGrid");
-        GUIHandler.PlayerHandContainer = document.getElementById("PlayerHandContainer");
-        GUIHandler.PlayerStatContainer = document.getElementById("PlayerStatContainer");
-        GUIHandler.StructureDetailDisplay = document.getElementById("StructureDetailDisplay");
         GUIHandler.DarkOverlay = document.getElementById("DarkOverlay");
         GUIHandler.DarkOverlayBg = document.getElementById("darkOverlay-bg");
         GUIHandler.SelectionCardContainer = document.getElementById("cardSelection-cardContainer");
@@ -28,6 +24,7 @@ class GUIHandler {
         LightHandler.renderAllLight();
         PhysicsBodyHandler.physicsTimestep();
         PhysicsBodyHandler.renderAllBodies();
+        TileHandler.renderTiles();
     }
     static displayStats(stats,container) {
         Object.values(stats).forEach((stat) => {

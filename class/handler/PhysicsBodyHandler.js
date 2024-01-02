@@ -13,7 +13,7 @@ class PhysicsBodyHandler {
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         PhysicsBodyHandler.canvas = canvas;
-        PhysicsBodyHandler.ctx = canvas.getContext("2d");;
+        PhysicsBodyHandler.ctx = canvas.getContext("2d");
         PhysicsBodyHandler.canvasCenter = new Point(PhysicsBodyHandler.canvas.width/2,PhysicsBodyHandler.canvas.height/2);
 
         // DEBUG
@@ -186,7 +186,13 @@ class PhysicsBodyHandler {
                                                body.tags["selected"] ? "#ff4664" : 
                                                "#1bada1";
             PhysicsBodyHandler.ctx.lineWidth = 2;
-            PhysicsBodyHandler.ctx.roundRect(topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height,10);
+            PhysicsBodyHandler.ctx.roundRect(
+                topLeftPos.x,
+                topLeftPos.y,
+                transformedBound.width,
+                transformedBound.height,
+                10 // radius
+            );
             PhysicsBodyHandler.ctx.fill();
             PhysicsBodyHandler.ctx.stroke();
             // PhysicsBodyHandler.ctx.drawImage(PhysicsBodyHandler.images[body.sprite],topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height);

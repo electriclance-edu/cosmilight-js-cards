@@ -10,6 +10,17 @@ class Point {
         translated.y -= translator.y;
         return translated;
     }
+    multiply(mult_x,mult_y = mult_x) {
+        this.x *= mult_x;
+        this.y *= mult_y;
+        return this;
+    }
+    getMultiplied(mult_x,mult_y = mult_x) {
+        return new Point(
+            this.x * mult_x,
+            this.y * mult_y
+        )
+    }
     shiftX(dx) {
         this.x += dx;
         return this;
@@ -43,7 +54,7 @@ class Point {
     // receives a string formatted "x,y" and returns a proper point 
     static stringToPoint(string) {
         var xyArray = string.split(",");
-        return new Point(xyArray[0],xyArray[1]);
+        return new Point(parseFloat(xyArray[0]),parseFloat(xyArray[1]));
     }
     static areEqual(a,b) {
         return a.x == b.x && a.y == b.y;
