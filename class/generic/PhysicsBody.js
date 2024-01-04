@@ -28,10 +28,13 @@ class PhysicsBody {
     }; 
     tags = {
         selected:false,
-        intersecting:false
-    }
+        intersecting:false,
+        type:["draggable","tabbable"]
+    };
+    obj = undefined;
 
     constructor(options) {
+        this.obj = options.obj || null;
         this.id = PhysicsBody.id++;
         this.phys.pos = options.pos || new Point(0,0);
         this.phys.vel = options.vel || new Vector(3,270);

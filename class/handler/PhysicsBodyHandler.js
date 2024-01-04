@@ -7,6 +7,9 @@ class PhysicsBodyHandler {
     static zoom = 1;
     static selectedBody; // Body that is currently being held by the player.
     static selectionOffset; // When a body is held, it is moved to the position of the mouse + selectionOffset to correct for where exactly the cursor was clicking relative to the center.
+    static selectionStartPoint; // Position where the selection was started. Used to calculate onclick.
+    static selectionStartFrame; // Frame where the selection was started. Used to calculate onclick.
+    static onclickFrameLength = 10;
 
     static initialize() {
         var canvas = document.getElementById("PhysicsBodyCanvas");
@@ -27,9 +30,9 @@ class PhysicsBodyHandler {
         //     interactionBounds:new Circle({rad:50})
         // }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:150,height:150}),
-            pos:new Point(-100,0),
-            interactionBounds:new Circle({rad:50})
+            bounds:new Rectangle({width:150,height:150,radius:1000}),
+            pos:new Point(-300,0),
+            interactionBounds:new Circle({rad:10})
         }));
 
         PhysicsBodyHandler.renderAllBodies();
@@ -37,7 +40,8 @@ class PhysicsBodyHandler {
     static addManyBodies() {
         for (var i = 0; i < 10; i++) {
             PhysicsBodyHandler.addBody(new PhysicsBody({
-                bounds:new Rectangle({width:150*0.7,height:200*0.7}),
+                bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
+                pos:new Point(-300,0),
                 interactionBounds:new Circle({rad:30})
             }));
         }
@@ -55,13 +59,23 @@ class PhysicsBodyHandler {
         body.tags["selected"] = true;
         let clientPos = Point.translate(PhysicsBodyHandler.canvasCenter,body.phys.pos);
         PhysicsBodyHandler.selectionOffset = Point.translate(mousePosition,clientPos);
+        PhysicsBodyHandler.selectionStartFrame = GUIHandler.frame;
+        PhysicsBodyHandler.selectionStartPoint = body.phys.pos;
         
         PhysicsBodyHandler.selectedBody = body;
     }
     static unselectBody() {
         if (PhysicsBodyHandler.selectedBody) {
+            // Detect onclick
+            if (dist(PhysicsBodyHandler.selectionStartPoint,PhysicsBodyHandler.selectedBody.phys.pos) < 0.01) {
+                if (GUIHandler.frame - PhysicsBodyHandler.selectionStartFrame < PhysicsBodyHandler.onclickFrameLength) {
+                    PhysicsBodyHandler.onclick(PhysicsBodyHandler.selectedBody);
+                }
+            } 
+
             PhysicsBodyHandler.selectedBody.phys.vel = new Vector(0.5,270);
             PhysicsBodyHandler.selectedBody.tags["selected"] = false;
+
         }
         PhysicsBodyHandler.selectedBody = null;
     }
@@ -75,6 +89,13 @@ class PhysicsBodyHandler {
     }
     static canvasClear() {
         PhysicsBodyHandler.ctx.clearRect(0,0,PhysicsBodyHandler.canvas.width,PhysicsBodyHandler.canvas.height);
+    }
+    static onclick(body) {
+        if (body.obj) {
+            console.log("yay");
+        } else {
+            console.log("aww");
+        }
     }
     static onmouseup() {
         PhysicsBodyHandler.unselectBody();
@@ -191,7 +212,7 @@ class PhysicsBodyHandler {
                 topLeftPos.y,
                 transformedBound.width,
                 transformedBound.height,
-                10 // radius
+                body.bounds.radius // radius
             );
             PhysicsBodyHandler.ctx.fill();
             PhysicsBodyHandler.ctx.stroke();

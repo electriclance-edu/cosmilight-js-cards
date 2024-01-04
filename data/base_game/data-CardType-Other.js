@@ -33,8 +33,9 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         tags:["item","spellpaper"],
         interactions:{
             "onClick":(e)=>{
-                var area;
-                GUIHandler.displayArea(area);
+                console.log("bruh");
+                // var area;
+                // GUIHandler.displayArea(area);
             }
         }
     },

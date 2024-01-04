@@ -3,7 +3,7 @@ class FogHandler {
     static canvas;
     static canvasCenter;
     static unit = {
-        scaleDownFactor:0.3,
+        scaleDownFactor:0.1,
         x:1,
         y:1
     }

@@ -253,12 +253,32 @@ function filterArrayWith(toFilter, filter) {
 function findMissingKeys(obj, requiredKeys) {
     return filterArrayWith(requiredKeys, Object.keys(obj));
 }
-// Retursn 
 // Returns true if a randomly generated float from 0-1 is lower than the given.
 function chance(maxThreshold) {
     return Math.random() < maxThreshold;
 }
-
+// Returns the minimum distance of a point between a line given the line's endpoints.
+function distPointLine(a, l1, l2) {
+    let x = dist(l1,l2);
+    return ((a.x - l1.x) * (l2.y - l1.y) - (a.y - l1.y) * (l2.x - l1.x)) / x;
+}
+// Returns if a given line intersects a circle. l1 and l2 are the endpoints of the line.
+function lineIntersectsCircle(l1,l2,center,radius) {
+    return distPointLine(center,l1,l2) < radius;
+}
+// Returns if a point is within a given rectangle, given the corners of that rectangle.
+// REQUIREMENT: The corners of the rectangle must be given in a counter-clockwise order.
+function pointIntersectsRectangle(point,r1,r2,r3,r4) {
+}
+// Returns if a point is to the left of a given line.
+function pointToLeftOfLine(a,l2,l1) {
+    return (l2.x - l1.x) * (a.y - l1.y) - (a.x - l1.x) * (l2.y - l1.y) > 0;
+}
+// Returns if a circle intersects a given rectangle, given the corners of that rectangle.
+// REQUIREMENT: The corners of the rectangle must be given in a counter-clockwise order.
+function rectangleIntersectsCircle(r1,r2,r3,r4,center,radius) {
+    
+}
 // Returns the euclidian distance between two points.
 function dist(a, b) {
     return Math.sqrt(Math.pow(a.x - b.x,2) + Math.pow(a.y - b.y,2));
