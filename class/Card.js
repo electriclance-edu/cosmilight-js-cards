@@ -14,6 +14,7 @@ class Card {
             Game.addOnTickObject(this);
         }
         this.initializeStats(this.type.stats);
+        GameEventHandler.onCreation(this);
     }
     initializeStats(statArray = []) {
         this.stats = {};

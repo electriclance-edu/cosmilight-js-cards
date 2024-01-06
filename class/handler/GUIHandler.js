@@ -26,6 +26,23 @@ class GUIHandler {
         PhysicsBodyHandler.renderAllBodies();
         TileHandler.renderTiles();
     }
+    static toggleTab(id,loc = new Point(window.offsetWidth/2,window.offsetHeight/2),setState = "none") {
+        let tab = document.getElementById(id);
+        
+        // set state
+        let state;
+        if (setState != "none") state = setState; // setState overrides the toggle.
+        else state = !tab.classList.contains("state-opened"); // If it contains the class "state-opened", then that tab is currently opened. If not, then closed. Set it to the opposite of that.
+        tab.classList.remove("state-closed"); // Reset class
+        tab.classList.remove("state-opened"); // Reset class
+        tab.classList.add(["state-closed","state-opened"][state ? 1 : 0]); // If state is 0, add state-closed. If 1, add state-opened.
+
+        if (state) {
+            // set location
+            tab.style.setProperty("--x",loc.x);
+            tab.style.setProperty("--y",loc.y);
+        }
+    }
     static displayStats(stats,container) {
         Object.values(stats).forEach((stat) => {
             if (stat.type.style.visibility == "visible") {
@@ -172,6 +189,6 @@ class GUIHandler {
         document.getElementById("Screen-Start").remove();
     }
     static openTooltipTab(card) {
-        alert("wow!!",card);
+        
     }
 }

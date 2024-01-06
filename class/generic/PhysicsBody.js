@@ -1,10 +1,5 @@
 class PhysicsBody {
     static id = 0;
-    events = {
-        "onclick":()=>{},
-        "onhover":()=>{},
-        "onintersect":()=>{}
-    }; // functions that are fired onEvent
     bounds = new Rectangle({
         width:undefined,
         height:undefined
@@ -29,6 +24,8 @@ class PhysicsBody {
     tags = {
         selected:false,
         intersecting:false,
+        immovable:false,
+        visible:true,
         type:["draggable","tabbable"]
     };
     obj = undefined;

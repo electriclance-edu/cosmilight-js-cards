@@ -368,6 +368,8 @@ document.addEventListener('keydown', function(e) {
   }
   var key = e.code;
 
+  PhysicsBodyHandler.onPhysicsKeyHover(key);
+
   if (key == "ShiftLeft") {
     keyShiftPressed = true;
     Game.player.movement.dashBonus = 10;

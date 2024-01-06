@@ -731,6 +731,24 @@ TAB SELECTORS
   width:100%;
   height:100%;
 }
+.Tabs .tab {
+  --x:0;
+  --y:0;
+  top:calc(1px * var(--y));
+  left:calc(1px * var(--x));
+  position:absolute;
+  transform:translate(-50%,-50%);
+  transition:0.5s opacity, 0.5s transform;
+  transition-timing-function:cubic-bezier(0,-0.13, 0, 0.95);
+}
+.Tabs .tab.state-opened {
+  transform:translate(-50%,-50%) scale(1);
+  opacity:1;
+}
+.Tabs .tab.state-closed {
+  transform:translate(-50%,-50%) scale(0.5);
+  opacity:0;
+}
 .EyeTab {
   display:inline-block;
 }

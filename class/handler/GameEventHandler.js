@@ -10,10 +10,10 @@ class GameEventHandler {
         }
 
         if (interactions.hasOwnProperty(eventObject.type)) {
-            if (eventObject.type == "onSelection") {
-                console.log(interactions[eventObject.type]);
-            }
             interactions[eventObject.type](eventObject);
+            // if (eventObject.type == "onSelection") {
+            //     console.log(interactions[eventObject.type]);
+            // }
         } else {
             // console.warn(`GameEventHandler.callInteractions(): Attempted to call interaction of type ${eventObject.type}, however interactions object given has no such type.`,eventObject,interactions);
         }
@@ -21,9 +21,9 @@ class GameEventHandler {
     static validEventArguments(...args) {
         return args.every((elem)=>!!elem);
     }
-    static verifyArgs(args,type) {
-        if (!GameEventHandler.validEventArguments(...args)) {
-            console.warn(`Event ${type} attempted to trigger, however arguments are invalid.`,args)
+    static verifyArgs(requiredArgs,type) {
+        if (!GameEventHandler.validEventArguments(...requiredArgs)) {
+            console.warn(`Event ${type} attempted to trigger, however arguments are invalid.`,requiredArgs);
         }
     }
     static onTick(invoker,time) {
@@ -46,6 +46,16 @@ class GameEventHandler {
         GameEventHandler.verifyArgs([target],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,target.interactions);
+    }
+    static onCreation(invoker) {
+        var gameEvent = {
+            type:"onCreation",
+            invoker:invoker
+        };
+        
+        GameEventHandler.verifyArgs([invoker],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
     static onSpawn(invoker) {
         var gameEvent = {
@@ -102,13 +112,26 @@ class GameEventHandler {
 
         GameEventHandler.callInteractions(gameEvent,target.interactions);
     }
-    static onClick(invoker) {
+    static onPhysicsKeyHover(invoker,body,key) {
         var gameEvent = {
-            type:"onClick",
-            invoker:invoker
+            type:"onPhysicsKeyHover",
+            invoker:invoker,
+            body:body,
+            key:key
         };
 
-        GameEventHandler.verifyArgs([invoker],gameEvent.type);
+        GameEventHandler.verifyArgs([invoker,body,key],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    static onClick(invoker,button) {
+        var gameEvent = {
+            type:"onClick",
+            invoker:invoker,
+            button:button
+        };
+
+        GameEventHandler.verifyArgs([invoker,button],gameEvent.type);
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
