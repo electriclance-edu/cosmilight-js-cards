@@ -51,14 +51,12 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
                     GUIHandler.toggleTab("EyeTab",PhysicsBodyHandler.getClientPos(e.body),state);
 
                     if (state) {
-                        e.body.bounds.width = 500;
-                        e.body.bounds.height = 500;
+                        e.body.bounds.radius = 250;
                         e.body.tags["immovable"] = true;
                         e.body.tags["visible"] = false;
                         PhysicsBodyHandler.retryCollisionForce(e.body);
                     } else {
-                        e.body.bounds.width = 150;
-                        e.body.bounds.height = 150;
+                        e.body.bounds.radius = 75;
                         e.body.tags["immovable"] = false;
                         e.body.tags["visible"] = true;
                     }

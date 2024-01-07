@@ -258,26 +258,55 @@ function chance(maxThreshold) {
     return Math.random() < maxThreshold;
 }
 // Returns the minimum distance of a point between a line given the line's endpoints.
-function distPointLine(a, l1, l2) {
-    let x = dist(l1,l2);
-    return ((a.x - l1.x) * (l2.y - l1.y) - (a.y - l1.y) * (l2.x - l1.x)) / x;
+// https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+function sqr(x) { return x * x }
+function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+function distToSegmentSquared(p, v, w) {
+  var l2 = dist2(v, w);
+  if (l2 == 0) return dist2(p, v);
+  var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return dist2(p, { x: v.x + t * (w.x - v.x),
+                    y: v.y + t * (w.y - v.y) });
 }
+function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
 // Returns if a given line intersects a circle. l1 and l2 are the endpoints of the line.
 function lineIntersectsCircle(l1,l2,center,radius) {
-    return distPointLine(center,l1,l2) < radius;
+    return radius > Math.abs(distToSegment(center,l1,l2));
 }
 // Returns if a point is within a given rectangle, given the corners of that rectangle.
 // REQUIREMENT: The corners of the rectangle must be given in a counter-clockwise order.
-function pointIntersectsRectangle(point,r1,r2,r3,r4) {
+function pointIntersectsRectangle(point,corners) {
+    for (var i = 0; i < 4; i++) {
+        let c1 = corners[i];
+        let c2 = corners[i + 1] || corners[0];
+        if (!pointToLeftOfLine(point,c1,c2)) return false;
+    }
+    return true;
 }
 // Returns if a point is to the left of a given line.
 function pointToLeftOfLine(a,l2,l1) {
     return (l2.x - l1.x) * (a.y - l1.y) - (a.x - l1.x) * (l2.y - l1.y) > 0;
 }
-// Returns if a circle intersects a given rectangle, given the corners of that rectangle.
+// Returns if a circle intersects a given rectangle, given the corners of that rectangle and the center and radius of that circle.
 // REQUIREMENT: The corners of the rectangle must be given in a counter-clockwise order.
-function rectangleIntersectsCircle(r1,r2,r3,r4,center,radius) {
-    
+function rectangleIntersectsCircle(corners,center,radius) {
+    // Check if the center of the circle is in the rectangle. If so, it is intersecting.
+    if (pointIntersectsRectangle(center,corners)) {
+        return true;
+    }
+    // Check if the circle intersects any side of the rectangle. If so, it is intersecting.
+    var intersects = false;
+    for (var i = 0; i < 4; i++) {
+        let c1 = corners[i];
+        let c2 = corners[i + 1] || corners[0];
+        if (lineIntersectsCircle(c1,c2,center,radius)) {
+            intersects = true;
+            break;
+        }
+    }
+    // If none of these conditions are met, then the circle is not intersecting the rectangle.
+    return intersects;
 }
 // Returns the euclidian distance between two points.
 function dist(a, b) {

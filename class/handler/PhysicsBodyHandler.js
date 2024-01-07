@@ -4,12 +4,13 @@ class PhysicsBodyHandler {
     static canvasCenter;
     static bodies = [];
     static images = {};
-    static zoom = 1;
+    static intersectedBody; // Body that is currently intersecting with the selectedBody.
     static selectedBody; // Body that is currently being held by the player.
     static selectionOffset; // When a body is held, it is moved to the position of the mouse + selectionOffset to correct for where exactly the cursor was clicking relative to the center.
     static selectionStartPoint; // Position where the selection was started. Used to calculate onclick.
     static clickStartTime; // MS where a click attempt was started. Used to calculate onclick.
     static clickMillisecondLength = 500;
+    static intersectionCorrectionForceMagnitude = -1;
 
     static initialize() {
         var canvas = document.getElementById("PhysicsBodyCanvas");
@@ -34,14 +35,29 @@ class PhysicsBodyHandler {
     }
     static addManyBodies() {
         PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:150,height:150,radius:1000}),
+            bounds:new Circle({rad:75}),
             pos:new Point(-300,0),
             interactionBounds:new Circle({rad:10}),
             obj:new Card("debug_map")
         }));
-        for (var i = 0; i < 10; i++) {
+        // PhysicsBodyHandler.addBody(new PhysicsBody({
+        //     bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
+        //     pos:new Point(-300,0),
+        //     interactionBounds:new Circle({rad:10}),
+        //     obj:new Card("debug_map"),
+        //     sprite:"resources/img/sprites/noSpriteRectangle.png"
+        // }));
+        for (var i = 0; i < 20; i++) {
             PhysicsBodyHandler.addBody(new PhysicsBody({
-                bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
+                bounds:new Circle({rad:20}),
+                // bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
+                pos:new Point(-300,0),
+                interactionBounds:new Circle({rad:30}),
+                sprite:"resources/img/sprites/noSpriteCircle.png"
+            }));
+            PhysicsBodyHandler.addBody(new PhysicsBody({
+                // bounds:new Circle({rad:20}),
+                bounds:new Rectangle({width:40,height:40,radius:10}),
                 pos:new Point(-300,0),
                 interactionBounds:new Circle({rad:30})
             }));
@@ -137,7 +153,7 @@ class PhysicsBodyHandler {
     }
     static onmousedown(button) {
         PhysicsBodyHandler.bodies.toReversed().every((body)=>{
-            if (body.pointWithinBound(PhysicsBodyHandler.dezoomify(mousePosition))) {
+            if (body.pointWithinBound(mousePosition)) {
                 if (button == 0) PhysicsBodyHandler.selectBody(body);
                 else if (button == 2) PhysicsBodyHandler.startOnclickAttempt(body,2);
                 return false;
@@ -170,7 +186,7 @@ class PhysicsBodyHandler {
             // Check if intersecting with selectedBody
             if (PhysicsBodyHandler.selectedBody) {
                 if (body.id != PhysicsBodyHandler.selectedBody.id) {
-                    if (body.interactionBounds.rad + PhysicsBodyHandler.selectedBody.interactionBounds.rad > dist(body.phys.pos,PhysicsBodyHandler.selectedBody.phys.pos)) {
+                    if (!PhysicsBodyHandler.intersectedBody && body.interactionBounds.rad + PhysicsBodyHandler.selectedBody.interactionBounds.rad > dist(body.phys.pos,PhysicsBodyHandler.selectedBody.phys.pos)) {
                         PhysicsBodyHandler.intersectBody(body);
                     } else {
                         PhysicsBodyHandler.unintersectBody(body);
@@ -185,11 +201,18 @@ class PhysicsBodyHandler {
                 PhysicsBodyHandler.bodies.forEach((nearby)=>{
                     if (nearby.id == body.id) return false;
                     if (nearby.tags["intersecting"]) return false;
-                    if (PhysicsBodyHandler.selectedBody) return false;
+                    if (PhysicsBodyHandler.selectedBody) if (PhysicsBodyHandler.selectedBody.id == body.id) return false;
                     if (PhysicsBodyHandler.selectedBody) if (nearby.id == PhysicsBodyHandler.selectedBody.id) return false;
                     let isIntersecting = nearby.intersects(body);
+                    // Gravitational force
+                    // nearby.applyForce(new Vector(0.00001 * Math.pow(body.bounds.size,3),angleBetween(nearby.phys.pos,body.phys.pos)));
+                    // Standard gravity force
+                    // nearby.applyForce(new Vector(0.1,270));
                     if (isIntersecting) {
-                        nearby.applyForce(new Vector(-1,angleBetween(nearby.phys.pos,body.phys.pos)));
+                        // Force based on radius
+                        // nearby.applyForce(new Vector(body.bounds.rad / -20,angleBetween(nearby.phys.pos,body.phys.pos)));
+                        // Correct force based on default
+                        nearby.applyForce(new Vector(PhysicsBodyHandler.intersectionCorrectionForceMagnitude,angleBetween(nearby.phys.pos,body.phys.pos)));
                     }
                 });
 
@@ -209,21 +232,12 @@ class PhysicsBodyHandler {
             if (PhysicsBodyHandler.selectedBody) if (nearby.id == PhysicsBodyHandler.selectedBody.id) return false;
             let isIntersecting = nearby.intersects(body);
             if (isIntersecting) {
-                nearby.applyForce(new Vector(-1,angleBetween(nearby.phys.pos,body.phys.pos)));
+                // Force based on radius
+                // nearby.applyForce(new Vector(body.bounds.rad / -20,angleBetween(nearby.phys.pos,body.phys.pos)));
+                // Correct force based on default
+                nearby.applyForce(new Vector(PhysicsBodyHandler.intersectionCorrectionForceMagnitude,angleBetween(nearby.phys.pos,body.phys.pos)));
             }
         });
-    }
-    static dezoomify(point) {
-        return new Point(
-            point.x / PhysicsBodyHandler.zoom,
-            point.y / PhysicsBodyHandler.zoom
-        );
-    }
-    static zoomify(point) {
-        return new Point(
-            point.x * PhysicsBodyHandler.zoom,
-            point.y * PhysicsBodyHandler.zoom
-        );
     }
     static renderAllBodies() {
         PhysicsBodyHandler.canvasClear();
@@ -231,17 +245,10 @@ class PhysicsBodyHandler {
         PhysicsBodyHandler.bodies.forEach((body)=>{ 
             if (!body.tags["visible"]) return false;
             // Get top-left position of image for positioning
-            var topLeftPos = Point.translate(PhysicsBodyHandler.canvasCenter,PhysicsBodyHandler.zoomify(body.phys.pos));
+            var topLeftPos = Point.translate(PhysicsBodyHandler.canvasCenter,body.phys.pos);
             
             if (body.tags["selected"]) body.graphics.scale = Math.min(body.graphics.scale * 1.05,1.2);
             else body.graphics.scale = Math.max(body.graphics.scale / 1.05,1);
-            let transformedBound = new Rectangle({
-                width:body.bounds.width * body.graphics.scale * PhysicsBodyHandler.zoom,
-                height:body.bounds.height * body.graphics.scale * PhysicsBodyHandler.zoom
-            })
-
-            topLeftPos.x -= transformedBound.width / 2;
-            topLeftPos.y -= transformedBound.height / 2;
             
             // Render object
             if (PhysicsBodyHandler.selectedBody) {
@@ -261,15 +268,57 @@ class PhysicsBodyHandler {
                                                body.tags["selected"] ? "#ff4664" : 
                                                "#1bada1";
             PhysicsBodyHandler.ctx.lineWidth = 2;
-            PhysicsBodyHandler.ctx.roundRect(
-                topLeftPos.x,
-                topLeftPos.y,
-                transformedBound.width,
-                transformedBound.height,
-                body.bounds.radius // radius
-            );
-            PhysicsBodyHandler.ctx.fill();
-            PhysicsBodyHandler.ctx.stroke();
+            if (body.bounds.type == "Rectangle") {
+                let transformedBound = new Rectangle({
+                    width:body.bounds.width * body.graphics.scale,
+                    height:body.bounds.height * body.graphics.scale
+                })
+                
+                topLeftPos.x -= transformedBound.width / 2;
+                topLeftPos.y -= transformedBound.height / 2;
+                
+                if (body.sprite) {
+                    PhysicsBodyHandler.ctx.drawImage(
+                        PhysicsBodyHandler.images[body.sprite],
+                        topLeftPos.x,
+                        topLeftPos.y,
+                        transformedBound.width,
+                        transformedBound.height
+                    );
+                } else {
+                    PhysicsBodyHandler.ctx.roundRect(
+                        topLeftPos.x,
+                        topLeftPos.y,
+                        transformedBound.width,
+                        transformedBound.height,
+                        body.bounds.radius // radius
+                    );
+                    PhysicsBodyHandler.ctx.fill();
+                    PhysicsBodyHandler.ctx.stroke();
+                }
+            } else if (body.bounds.type == "Circle") {
+                if (body.sprite) {
+                    PhysicsBodyHandler.ctx.drawImage(
+                        PhysicsBodyHandler.images[body.sprite],
+                        topLeftPos.x - body.bounds.rad,
+                        topLeftPos.y - body.bounds.rad,
+                        body.bounds.rad * 2,
+                        body.bounds.rad * 2
+                    );
+                } else {
+                    PhysicsBodyHandler.ctx.arc(
+                        topLeftPos.x,
+                        topLeftPos.y,
+                        body.bounds.rad,
+                        0,
+                        2 * Math.PI
+                    );
+                    PhysicsBodyHandler.ctx.fill();
+                    PhysicsBodyHandler.ctx.stroke();
+                }
+            } else {
+                console.warn(`PhysicsBodyHandler.renderAllBodies(): Attempted to render body of unknown bounds type '${body.bounds.type}'.`);
+            }
             // PhysicsBodyHandler.ctx.drawImage(PhysicsBodyHandler.images[body.sprite],topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height);
         });
     }

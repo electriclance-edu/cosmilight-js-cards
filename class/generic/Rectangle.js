@@ -7,7 +7,8 @@ class Rectangle extends Shape {
         this.height = options.height;
         this.radius = options.radius ? options.radius : 10;
     }
-    getCorners(center) {
+    // Given the center of the rectangle, returns the corners of that rectangle.
+    getCorners(c = new Point(0,0)) {
         let topLeft = new Point(
             c.x - this.width/2,
             c.y + this.height/2
@@ -31,5 +32,8 @@ class Rectangle extends Shape {
             bottomRight,
             bottomLeft
         ];
+    }
+    get size() {
+        return (this.width + this.height) / 2;
     }
 }

@@ -64,6 +64,12 @@ class PhysicsBody {
                 body.phys.pos.y + body.bounds.height/2
             );
             return (a1.x < b2.x) && (a2.x > b1.x) && (a1.y < b2.y) && (a2.y > b1.y);
+        } else if (this.bounds.type == "Rectangle" && body.bounds.type == "Circle") {
+            return rectangleIntersectsCircle(this.bounds.getCorners(this.phys.pos),body.phys.pos,body.bounds.rad);
+        } else if (this.bounds.type == "Circle" && body.bounds.type == "Rectangle") {
+            return rectangleIntersectsCircle(body.bounds.getCorners(body.phys.pos),this.phys.pos,this.bounds.rad);
+        } else if (body.bounds.type == "Circle" && this.bounds.type == "Circle") {
+            return dist(body.phys.pos,this.phys.pos) < body.bounds.rad + this.bounds.rad;
         }
         return false;
     }
@@ -74,6 +80,8 @@ class PhysicsBody {
             let isWithinX = Math.abs(clientPos.x - point.x) < this.bounds.width / 2;
             let isWithinY = Math.abs(clientPos.y - point.y) < this.bounds.height / 2;
             return isWithinX && isWithinY;
+        } else if (this.bounds.type == "Circle") {
+            return dist(point,clientPos) < this.bounds.rad;
         } else {
             return false;
         }
