@@ -53,6 +53,16 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight-credits",[
         tags:[]
     },
     {
+        id:"credits_kimi",
+        lore:{
+            mainTitle:"Kimi",
+            role:"Help",
+            description:"For the amazing quotes and indirect inspiration.",
+        },
+        colorName:"credits-person",
+        tags:[]
+    },
+    {
         id:"credits_lanceChiu",
         lore:{
             mainTitle:"Lance",

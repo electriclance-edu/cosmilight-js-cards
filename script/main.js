@@ -410,7 +410,6 @@ document.addEventListener('mousedown', (e) => {
   PhysicsBodyHandler.onmousedown(e.button);
 
   if (e.target.id == "EyeTab") {
-    console.log(e.target.id);
     if (e.button == 2) {
       FogHandler.clearRay(mouseAngle);
     } else if (e.button == 1) {

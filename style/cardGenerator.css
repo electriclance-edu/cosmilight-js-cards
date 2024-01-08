@@ -12,7 +12,9 @@ body * {
 .card {
     position: relative;
     user-select: none;
-    height:99vh;
+    height:97vh;
+    margin-top:1vh;
+    margin-left:1vh;
     pointer-events:none;
     border-radius:5vh;
     aspect-ratio:75/100;

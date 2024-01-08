@@ -652,9 +652,6 @@ TOOLTIP SELECTORS
 .TooltipTab {
   --color:var(--bg-white);
   position:absolute;
-  top:50%;
-  left:70%;
-  transform:translate(-50%,-50%);
   width:400px;
   border-width:2px;
   z-index:90000;
@@ -663,6 +660,9 @@ TOOLTIP SELECTORS
   display:block;
   box-shadow:-1px -1px 5px rgba(255, 0, 51, 0.5),
              1px 1px 5px rgba(0, 38, 255, 0.5);
+}
+.Tabs .tab.TooltipTab {
+  transform:translate(-50%,0);
 }
 .TooltipTab.state-hidden {
   display:none;
@@ -1021,46 +1021,6 @@ DARK OVERLAY SELECTORS
 }
 .DarkOverlay.state-invisible {
   opacity:0;
-}
-.CardSelection {
-  padding:20px;
-}
-.cardSelection-cardContainer {
-  width:fit-content;
-  max-width:100%;
-  flex-wrap:wrap;
-}
-.cardSelection-cardContainer .card {
-  margin:0 30px;
-  margin-bottom:100px;
-  transition:0.2s scale, 0.2s filter;
-  filter: drop-shadow(0 0 0 transparent);
-}
-.cardSelection-cardContainer .card .card-desc {
-  width:calc(100% + 54px);
-  transform:translatex(-27px);
-}
-.cardSelection-cardContainer .card:hover {
-  filter: drop-shadow(0 0 60px rgb(255,255,255,0.6)) brightness(1.2);
-  scale:1.05;
-}
-.cardSelection-cardContainer .spacer {
-  opacity:1;
-  background-color:rgb(200,200,200);
-  width:15px;
-  height:15px;
-  transform:translatey(-47px) rotate(45deg);
-}
-.cardSelection-cardContainer .card .card-desc b {
-  color:var(--bg);
-  filter:brightness(2) saturate(0.5);
-}
-.cardSelection-cardContainer .card .card-desc .card-desc-technical {
-  margin-top:5px;
-}
-.cardSelection-desc {
-  margin-top:5px;
-  margin-bottom:30px;
 }
 .areaFragment {
   --size:230px;

@@ -188,7 +188,45 @@ class GUIHandler {
     static minimizeDOM() {
         document.getElementById("Screen-Start").remove();
     }
-    static openTooltipTab(card) {
-        
+    static openTooltipTab(loc,card) {
+        // render information based on cards
+        let header = document.getElementById("TooltipTab-Header");
+        header.innerHTML = "";
+        let ctype = card.type;
+        if (ctype.lore.superTitle) {
+            let superTitle = document.createElement("p");
+            superTitle.classList.add("txt-size-small");
+            superTitle.classList.add("headerFont-thin");
+            superTitle.classList.add("superTitle");
+            superTitle.innerHTML = ctype.lore.superTitle;
+            header.appendChild(superTitle);
+        }
+        let title = document.createElement("p");
+        title.classList.add("txt-size-header");
+        title.classList.add("headerFont");
+        title.classList.add("title");
+        title.innerHTML = ctype.lore.mainTitle;
+        header.appendChild(title);
+        if (ctype.lore.subTitle) {
+            let subTitle = document.createElement("p");
+            subTitle.classList.add("txt-size-small");
+            subTitle.classList.add("headerFont-thin");
+            subTitle.classList.add("subTitle");
+            subTitle.innerHTML = ctype.lore.subtitle;
+            header.appendChild(subTitle);
+        }
+
+        let ldesc = document.getElementById("TooltipTab-LDescription");
+        ldesc.innerHTML = ctype.lore.description;
+        let tdesc = document.getElementById("TooltipTab-TDescription");
+        tdesc.innerHTML = ctype.lore.technical_description;
+
+        // render title
+        // render description
+        GUIHandler.toggleTab("TooltipTab",loc);
+        GUIHandler.currentlyOpenedTooltipObjectId = card.uniqueId;
+        // DO NOT PRIORITIZE ANYTHING AFTER THIS POINT
+        // how to manage different kinds of tooltips?
+        // generate "effects" of cards
     }
 }

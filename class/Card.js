@@ -1,4 +1,5 @@
 class Card {
+    static totalCards = 0;
     constructor(id) {
         if (CardType.typeExists(id)) {
             this.id = id;
@@ -14,6 +15,7 @@ class Card {
             Game.addOnTickObject(this);
         }
         this.initializeStats(this.type.stats);
+        this.index = ++Card.totalCards;
         GameEventHandler.onCreation(this);
     }
     initializeStats(statArray = []) {
@@ -27,6 +29,9 @@ class Card {
     }
     remove() {
         this.inventory.removeCard(this.inventoryId);
+    }
+    get uniqueId() {
+        return this.index + 0.001;
     }
     get type() {
         return CardType.getById(this.id);

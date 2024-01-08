@@ -38,15 +38,14 @@ class PhysicsBodyHandler {
             bounds:new Circle({rad:75}),
             pos:new Point(-300,0),
             interactionBounds:new Circle({rad:10}),
-            obj:new Card("debug_map")
+            obj:new Card("eye"),
+            sprite:"resources/img/cards/part/heart.png"
         }));
-        // PhysicsBodyHandler.addBody(new PhysicsBody({
-        //     bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
-        //     pos:new Point(-300,0),
-        //     interactionBounds:new Circle({rad:10}),
-        //     obj:new Card("debug_map"),
-        //     sprite:"resources/img/sprites/noSpriteRectangle.png"
-        // }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Rectangle({width:150,height:200,radius:10}),
+            pos:new Point(-300,0),
+            interactionBounds:new Circle({rad:10})
+        }));
         for (var i = 0; i < 20; i++) {
             PhysicsBodyHandler.addBody(new PhysicsBody({
                 bounds:new Circle({rad:20}),
@@ -130,6 +129,15 @@ class PhysicsBodyHandler {
             if (!dist(PhysicsBodyHandler.selectionStartPoint,PhysicsBodyHandler.selectedBody.phys.pos) < 0.001) {
                 PhysicsBodyHandler.endClickAttempt();
                 return;
+            }
+        } else if (PhysicsBodyHandler.clickType == "right") {
+            if (PhysicsBodyHandler.clickedObject.obj instanceof Card) {
+                GUIHandler.openTooltipTab(
+                    PhysicsBodyHandler.getClientPos(
+                        PhysicsBodyHandler.clickedObject
+                    ).shiftY(PhysicsBodyHandler.clickedObject.bounds.size),
+                    PhysicsBodyHandler.clickedObject.obj
+                );
             }
         }
         if (new Date().getTime() - PhysicsBodyHandler.clickStartTime < PhysicsBodyHandler.clickMillisecondLength) {

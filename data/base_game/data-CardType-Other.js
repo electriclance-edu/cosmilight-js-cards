@@ -22,51 +22,6 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         tags:["item","spellpaper"]
     },
     {
-        id:"debug_map",
-        lore:{
-            superTitle:"Debug",
-            mainTitle:"Map",
-            description:"",
-            technical_description:"<span class='input'>Click</span> to open a default Plains area expedition.",
-        },
-        colorName:"item",
-        tags:["item","spellpaper"],
-        interactions:{
-            "onCreation":(e)=>{
-                e.invoker.externalInformation.bodyPart_activationState = false;
-            },
-            "onClick":(e)=>{
-                console.log("debug_map detected onclick :)");
-                // var area;
-                // GUIHandler.displayArea(area);
-            },
-            "onPhysicsKeyHover":(e)=>{
-                console.log(`debug_map detected onkeyhover, of key ${e.key} :)`);
-                if (e.key == "Space") {
-                    let state = e.invoker.externalInformation.bodyPart_activationState;
-                    state = !e.invoker.externalInformation.bodyPart_activationState;
-                    e.invoker.externalInformation.bodyPart_activationState = state;
-                    
-                    globalInitialize();
-                    GUIHandler.toggleTab("EyeTab",PhysicsBodyHandler.getClientPos(e.body),state);
-
-                    if (state) {
-                        e.body.bounds.radius = 250;
-                        e.body.tags["immovable"] = true;
-                        e.body.tags["visible"] = false;
-                        PhysicsBodyHandler.retryCollisionForce(e.body);
-                    } else {
-                        e.body.bounds.radius = 75;
-                        e.body.tags["immovable"] = false;
-                        e.body.tags["visible"] = true;
-                    }
-                }
-                // var area;
-                // GUIHandler.displayArea(area);
-            }
-        }
-    },
-    {
         id:"expend_knowledge",
         lore:{
             superTitle:"Unlock",
