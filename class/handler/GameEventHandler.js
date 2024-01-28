@@ -19,7 +19,9 @@ class GameEventHandler {
         }
     }
     static validEventArguments(...args) {
-        return args.every((elem)=>!!elem);
+        return args.every((elem)=>{
+            return !(elem === undefined)
+        });
     }
     static verifyArgs(requiredArgs,type) {
         if (!GameEventHandler.validEventArguments(...requiredArgs)) {
@@ -124,6 +126,29 @@ class GameEventHandler {
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
+    static onMouseUp(invoker,button) {
+        var gameEvent = {
+            type:"onMouseUp",
+            invoker:invoker,
+            button:button
+        };
+
+        GameEventHandler.verifyArgs([invoker,button],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    static onMouseDown(invoker,button) {
+        var gameEvent = {
+            type:"onMouseDown",
+            invoker:invoker,
+            button:button
+        };
+
+        GameEventHandler.verifyArgs([invoker,button],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    stati
     static onClick(invoker,button) {
         var gameEvent = {
             type:"onClick",

@@ -21,6 +21,8 @@ function onload() {
   setTimeout(() => {
     initialize();
     PhysicsBodyHandler.addManyBodies();
+
+    GUIHandler.updatePlayerStatElement("blood",30,50);
   },0);
 }
 function globalInitialize() {
@@ -408,6 +410,10 @@ document.addEventListener('mousedown', (e) => {
   mouseState = ["left","middle","right"][e.button];
 
   PhysicsBodyHandler.onmousedown(e.button);
+
+  // if (mouseState == "left") {
+  //   GUIHandler.toggleTab("TooltipTab",new Point(0,0),false);
+  // }
 
   if (e.target.id == "EyeTab") {
     if (e.button == 2) {

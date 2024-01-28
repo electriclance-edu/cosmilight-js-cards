@@ -26,6 +26,7 @@ class PhysicsBody {
         intersecting:false,
         immovable:false,
         visible:true,
+        hovered:false,
         type:["draggable","tabbable"]
     };
     obj = undefined;

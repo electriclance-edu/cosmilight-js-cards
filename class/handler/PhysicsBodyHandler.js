@@ -4,6 +4,7 @@ class PhysicsBodyHandler {
     static canvasCenter;
     static bodies = [];
     static images = {};
+    static titledBody;
     static intersectedBody; // Body that is currently intersecting with the selectedBody.
     static selectedBody; // Body that is currently being held by the player.
     static selectionOffset; // When a body is held, it is moved to the position of the mouse + selectionOffset to correct for where exactly the cursor was clicking relative to the center.
@@ -35,32 +36,39 @@ class PhysicsBodyHandler {
     }
     static addManyBodies() {
         PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Circle({rad:75}),
+            bounds:new Circle({rad:80}),
             pos:new Point(-300,0),
             interactionBounds:new Circle({rad:10}),
             obj:new Card("eye"),
-            sprite:"resources/img/cards/part/heart.png"
+            sprite:"resources/img/cards/part/eye.png"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:150,height:200,radius:10}),
+            bounds:new Circle({rad:80}),
             pos:new Point(-300,0),
-            interactionBounds:new Circle({rad:10})
+            interactionBounds:new Circle({rad:10}),
+            obj:new Card("heart"),
+            sprite:"resources/img/cards/part/heart.png"
         }));
-        for (var i = 0; i < 20; i++) {
-            PhysicsBodyHandler.addBody(new PhysicsBody({
-                bounds:new Circle({rad:20}),
-                // bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
-                pos:new Point(-300,0),
-                interactionBounds:new Circle({rad:30}),
-                sprite:"resources/img/sprites/noSpriteCircle.png"
-            }));
-            PhysicsBodyHandler.addBody(new PhysicsBody({
-                // bounds:new Circle({rad:20}),
-                bounds:new Rectangle({width:40,height:40,radius:10}),
-                pos:new Point(-300,0),
-                interactionBounds:new Circle({rad:30})
-            }));
-        }
+        // PhysicsBodyHandler.addBody(new PhysicsBody({
+        //     bounds:new Rectangle({width:150,height:200,radius:10}),
+        //     pos:new Point(-300,0),
+        //     interactionBounds:new Circle({rad:10})
+        // }));
+        // for (var i = 0; i < 100; i++) {
+        //     PhysicsBodyHandler.addBody(new PhysicsBody({
+        //         bounds:new Circle({rad:20}),
+        //         // bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
+        //         pos:new Point(-300,0),
+        //         interactionBounds:new Circle({rad:30}),
+        //         sprite:"resources/img/sprites/noSpriteCircle.png"
+        //     }));
+        //     PhysicsBodyHandler.addBody(new PhysicsBody({
+        //         // bounds:new Circle({rad:20}),
+        //         bounds:new Rectangle({width:40,height:40,radius:10}),
+        //         pos:new Point(-300,0),
+        //         interactionBounds:new Circle({rad:30})
+        //     }));
+        // }
     }
     static addBody(body) {
         PhysicsBodyHandler.bodies.push(body);
@@ -132,12 +140,15 @@ class PhysicsBodyHandler {
             }
         } else if (PhysicsBodyHandler.clickType == "right") {
             if (PhysicsBodyHandler.clickedObject.obj instanceof Card) {
-                GUIHandler.openTooltipTab(
-                    PhysicsBodyHandler.getClientPos(
-                        PhysicsBodyHandler.clickedObject
-                    ).shiftY(PhysicsBodyHandler.clickedObject.bounds.size),
+                GUIHandler.openTitleTab(
                     PhysicsBodyHandler.clickedObject.obj
                 );
+                // GUIHandler.openTooltipTab(
+                //     PhysicsBodyHandler.getClientPos(
+                //         PhysicsBodyHandler.clickedObject
+                //     ).shiftY(PhysicsBodyHandler.clickedObject.bounds.size),
+                //     PhysicsBodyHandler.clickedObject.obj
+                // );
             }
         }
         if (new Date().getTime() - PhysicsBodyHandler.clickStartTime < PhysicsBodyHandler.clickMillisecondLength) {
@@ -155,13 +166,29 @@ class PhysicsBodyHandler {
             GameEventHandler.onClick(body.obj,button);
         }
     }
+    static displayControls() {
+        PhysicsBodyHandler.bodies.forEach((body)=>{
+            if (body.obj) {
+                console.log(body.obj.technicalDescription);
+            }
+        })
+    }
     static onmouseup() {
+        if (!PhysicsBodyHandler.clickedObject) {
+            return;
+        }
+        if (PhysicsBodyHandler.clickedObject.obj) {
+            GameEventHandler.onMouseUp(PhysicsBodyHandler.clickedObject,PhysicsBodyHandler.clickType);
+        }
         PhysicsBodyHandler.attemptOnclick();
         PhysicsBodyHandler.unselectBody();
     }
     static onmousedown(button) {
         PhysicsBodyHandler.bodies.toReversed().every((body)=>{
             if (body.pointWithinBound(mousePosition)) {
+                if (body.obj) {
+                    GameEventHandler.onMouseDown(body,button);
+                }
                 if (button == 0) PhysicsBodyHandler.selectBody(body);
                 else if (button == 2) PhysicsBodyHandler.startOnclickAttempt(body,2);
                 return false;
@@ -250,6 +277,16 @@ class PhysicsBodyHandler {
     static renderAllBodies() {
         PhysicsBodyHandler.canvasClear();
         
+        PhysicsBodyHandler.bodies.toReversed().every((body)=>{
+            if (body.pointWithinBound(mousePosition)) {
+                body.tags["hovered"] = true;
+                return false;
+            } else {
+                body.tags["hovered"] = false;
+                return true;
+            }
+        });
+        
         PhysicsBodyHandler.bodies.forEach((body)=>{ 
             if (!body.tags["visible"]) return false;
             // Get top-left position of image for positioning
@@ -276,6 +313,15 @@ class PhysicsBodyHandler {
                                                body.tags["selected"] ? "#ff4664" : 
                                                "#1bada1";
             PhysicsBodyHandler.ctx.lineWidth = 2;
+
+            if (body.tags["hovered"]) {
+                PhysicsBodyHandler.ctx.shadowColor = "rgba(255,255,255,0.5)";
+                PhysicsBodyHandler.ctx.shadowBlur = 10;
+            } else {
+                PhysicsBodyHandler.ctx.shadowColor = "rgba(0,0,0,0.3)";
+                PhysicsBodyHandler.ctx.shadowBlur = 25;
+            }
+
             if (body.bounds.type == "Rectangle") {
                 let transformedBound = new Rectangle({
                     width:body.bounds.width * body.graphics.scale,

@@ -25,7 +25,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
         colorName:"storage",
         tags:["storage"],
         stats:[
-            new Stat("itemStorage",{value:10})
+            new Stat("cardStorageCapacity",{value:10})
         ],
         other:{
             inventory:new Inventory()

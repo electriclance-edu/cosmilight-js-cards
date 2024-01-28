@@ -30,12 +30,12 @@ class Player {
         };
         this.tags = [];
         this.stats = {
-            // "health":new Stat("health",{value:30,max:30}),
+            "blood":new Stat("blood",{value:20,max:50}),
             // "water":new Stat("water",{value:20,max:20}),
             // "glow":new Stat("glow",{value:10,max:20}),
-            "knowledge":new Stat("knowledge",{value:0,max:10}),
-            "unlocks":new Stat("unlocks",{value:0,max:26}),
-            "interactionDistance":new Stat("interactionDistance",{value:1}),
+            // "knowledge":new Stat("knowledge",{value:0,max:10}),
+            // "unlocks":new Stat("unlocks",{value:0,max:26}),
+            // "interactionDistance":new Stat("interactionDistance",{value:1}),
         };
         /*
         **research**

@@ -36,10 +36,10 @@ Tooltips = 90,000
   --color-spell-damaging: #cf365c;
   --color-energy: #8753c3;
   --color-energy-complement: #db4885;
-  --color-health: #f52787;
-  --color-health-complement: #d8afaf;
-  --color-water: #94e6ff;
-  --color-water-complement: #6b4afc;
+  --color-health: #ff1884;
+  --color-health-complement: #ff97d7;
+  --color-water: #6b4afc;
+  --color-water-complement: #94e6ff;
   --color-fire: #ff4664;
   --color-fire-complement: #ffce46;
   --color-item: #bc9cc8;
@@ -62,7 +62,7 @@ Tooltips = 90,000
   --card-height: 17vh; /*default 200px, rougly 20vh*/
   --tile-width:6vw;
   --tile-height:6vw;
-  --visionRadius:3; /*Diameter of GraphicsLayer in tile units*/
+  --visionRadius:3.5; /*Diameter of GraphicsLayer in tile units*/
 }
 /*###########
 TAG SELECTORS
@@ -91,10 +91,13 @@ body {
   background-image: url("../resources/img/void-bg-darkened.png");
   background-size: cover;
   background-position: center;
-  width:100vw; /*Maintain aspect ratio*/
+  width:100vw;
+  height:100vh;
+  /* width:100vw;
   height:56.25vw;
   max-height:100vh;
   max-width:177.78vh;
+  overflow:hidden; */
 }
 .blackFont {
   font-family: "Rubik";
@@ -720,6 +723,60 @@ TOOLTIP SELECTORS
   pointer-events:none;
   user-select:none;
   z-index:9999;
+}
+/*#############
+STAT SELECTORS
+#############*/
+.Stats {
+  width:100%;
+  height:30px;
+  position:absolute;
+  top:0;
+  left:0;
+  display:flex;
+  padding:0 5px;
+  box-sizing:border-box;
+  justify-content:center;
+}
+.Stats .stat {
+  width:100%;
+  height:100%;
+  max-width:30%;
+  margin:10px 5px;
+  box-sizing:border-box;
+  display:flex;
+  align-items:center;
+  border-radius:5px;
+  justify-content:space-between;
+  overflow:hidden;
+  position:relative;
+}
+.Stats .stat:before {
+  content:"";
+  display:block;
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:linear-gradient(90deg, var(--color-main) 0%, var(--color-comp) 100%);
+  z-index:-2;
+  filter:brightness(0.3) saturate(1.5);
+}
+.Stats .stat:after {
+  content:"";
+  display:block;
+  position:absolute;
+  width:calc(100% * (var(--amt) / var(--max)));
+  height:100%;
+  background:var(--color-main);
+  z-index:-1;
+  transition:0.2s width;
+}
+.Stats .stat p {
+  text-shadow:0 0 10px rgba(0,0,0,0.5);
+  margin:0 10px;
+}
+.Stats .stat .statAmt {
+  float:right;
 }
 /*#############
 TAB SELECTORS

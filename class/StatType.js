@@ -3,7 +3,7 @@ class StatType {
     constructor(id,props) {
         this.id = id;
         this.name = props.lore.name;
-        this.desc = props.lore.desc;
+        this.lore = props.lore;
         this.style = {};
         this.style.fillColor = props.style.fillColor;
         this.style.fillColorComplement = props.style.fillColorComplement;

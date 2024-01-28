@@ -4,7 +4,7 @@ class Card {
         if (CardType.typeExists(id)) {
             this.id = id;
         } else {
-            console.warn(`Card.constructor(): Card instanced with given type ${id}, however no such CardType with the given id exists.`)
+            console.warn(`Card.constructor(): Card instanced with given type '${id}', however no such CardType exists.`)
         }
         this.externalInformation = {
             inventory:{},

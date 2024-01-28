@@ -2,11 +2,35 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
     {
         id:"heart",
         lore:{
+            superTitle:"Old",
             mainTitle:"Heart",
-            description:"ba dum ba dum ba dum",
+            description:"You can barely feel it throb.",
         },
         colorName:"part",
-        tags:["part","starCard"]
+        tags:["part","starCard"],
+        interactions:{
+            "onPhysicsKeyHover":(e)=>{
+                if (e.key == "Space") {
+                    let blood = Game.player.getStat("blood"); 
+                    
+                    if (blood.value < blood.max) {
+                        blood.increment(5);
+                        GUIHandler.updatePlayerStatElement("blood");
+                    } else {
+                        PhysicsBodyHandler.addBody(new PhysicsBody({
+                            bounds:new Rectangle({width:100,height:100,radius:10}),
+                            pos:new Point(e.body.phys.pos.x, e.body.phys.pos.y),
+                            interactionBounds:new Circle({rad:10}),
+                            // obj:new Card("flesh"),
+                            sprite:"resources/img/cards/item/wood.png"
+                        }));
+                        
+                        blood.increment(-blood.max);
+                        GUIHandler.updatePlayerStatElement("blood");
+                    }
+                }
+            }
+        }
     },
     {
         id:"eye",
@@ -35,15 +59,14 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
                     
                     GUIHandler.toggleTab("EyeTab",PhysicsBodyHandler.getClientPos(e.body),state);
                     recalcGraphicsLayer();
-                    // globalInitialize();
 
                     if (state) {
-                        e.body.bounds.rad = graphicsDisplaySize / 2;
+                        e.body.bounds.rad = graphicsDisplaySize / 2 - 20;
                         e.body.tags["immovable"] = true;
                         e.body.tags["visible"] = false;
                         PhysicsBodyHandler.retryCollisionForce(e.body);
                     } else {
-                        e.body.bounds.rad = 75;
+                        e.body.bounds.rad = 100;
                         e.body.tags["immovable"] = false;
                         e.body.tags["visible"] = true;
                     }

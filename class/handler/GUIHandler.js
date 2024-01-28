@@ -188,6 +188,71 @@ class GUIHandler {
     static minimizeDOM() {
         document.getElementById("Screen-Start").remove();
     }
+    static openTitleTab(card) {
+        // render information based on cards
+        // render title
+        let header = document.getElementById("TitleTab-Header");
+        header.innerHTML = "";
+        let ctype = card.type;
+        if (ctype.lore.superTitle) {
+            let superTitle = document.createElement("p");
+            superTitle.classList.add("txt-size-small");
+            superTitle.classList.add("headerFont-thin");
+            superTitle.classList.add("superTitle");
+            superTitle.innerHTML = ctype.lore.superTitle;
+            header.appendChild(superTitle);
+        }
+        let title = document.createElement("p");
+        title.classList.add("txt-size-header");
+        title.classList.add("headerFont");
+        title.classList.add("title");
+        title.innerHTML = ctype.lore.mainTitle;
+        header.appendChild(title);
+        if (ctype.lore.subTitle) {
+            let subTitle = document.createElement("p");
+            subTitle.classList.add("txt-size-small");
+            subTitle.classList.add("headerFont-thin");
+            subTitle.classList.add("subTitle");
+            subTitle.innerHTML = ctype.lore.subtitle;
+            header.appendChild(subTitle);
+        }
+
+        // render description
+        let ldesc = document.getElementById("TitleTab-LDescription");
+        ldesc.innerHTML = ctype.lore.description;
+
+        GUIHandler.toggleTab("TitleTab",new Point(0,0));
+        GUIHandler.currentlyOpenedTitleObjectId = card.uniqueId;
+    }
+    static updatePlayerStatElement(id) {
+        let elem = document.getElementById(`${id}StatElement`);
+        let stat = Game.player.getStat(id);
+        let amt = stat.value;
+        let max = stat.max;
+
+        if (!elem) {
+            elem = document.createElement("div");
+            elem.id = `${id}StatElement`;
+            elem.className = "stat";
+            let statType = StatType.getById(id);
+            elem.style.setProperty("--color-main",statType.style.fillColor);
+            elem.style.setProperty("--color-comp",statType.style.fillColorComplement);
+            elem.style.setProperty("--max",max);
+
+            // let name = document.createElement("p");
+            // name.className = "statName headerFont";
+            // name.innerHTML = statType.name.toUpperCase();
+            let amt = document.createElement("p");
+            amt.className = "statAmt";
+            
+            // elem.appendChild(name);
+            elem.appendChild(amt);
+
+            document.getElementById("Stats").appendChild(elem);
+        }
+        elem.style.setProperty("--amt",amt);
+        elem.querySelector(".statAmt").innerHTML = `${amt}/${max}`;
+    }
     static openTooltipTab(loc,card) {
         // render information based on cards
         let header = document.getElementById("TooltipTab-Header");
@@ -219,7 +284,7 @@ class GUIHandler {
         let ldesc = document.getElementById("TooltipTab-LDescription");
         ldesc.innerHTML = ctype.lore.description;
         let tdesc = document.getElementById("TooltipTab-TDescription");
-        tdesc.innerHTML = ctype.lore.technical_description;
+        tdesc.innerHTML = ctype.lore.technical_description || "";
 
         // render title
         // render description
