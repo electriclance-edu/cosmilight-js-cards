@@ -809,37 +809,28 @@ TAB SELECTORS
 .EyeTab {
   display:inline-block;
 }
-.GraphicsLayer {
-  z-index:6000;
-  pointer-events:none;
-  user-select:none;
-  width:calc(var(--visionRadius) * 2 * var(--tile-width));
-  height:calc(var(--visionRadius) * 2 * var(--tile-height));
-  overflow:hidden;
-  position:relative;
-  border-radius:10000px;
-  margin:8px;
-  /* box-shadow:20px 20px 40px rgba(0,0,0,0.3),
-             -20px -20px 40px rgba(255,255,255,0.1); */
-  -webkit-mask:radial-gradient(circle, black 65%, transparent 70%);
-}
-.GraphicsLayer > * {
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  height:100%;
-}
 .GameBoard {
   width:100%;
   height:100%;
 }
 .PhysicsBodyCanvas {
+  position:absolute;
+  top:0;
+  left:0;
   width:100%;
   height:100%;
+  z-index:99;
 }
-.FogCanvas {
-  image-rendering:pixelated;
+.LightCanvas {
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:100;
+}
+.EffectCanvas {
+  position:absolute;
+  top:0;
+  left:0;
 }
 .effect-swish {
   --unit-width:2;

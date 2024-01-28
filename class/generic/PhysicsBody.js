@@ -32,8 +32,8 @@ class PhysicsBody {
     obj = undefined;
 
     constructor(options) {
-        this.obj = options.obj || null;
         this.id = PhysicsBody.id++;
+        this.obj = options.obj || null;
         this.phys.pos = options.pos || new Point(0,0);
         this.phys.vel = options.vel || new Vector(3,270);
         this.physConsts.friction = options.friction || 0.1;

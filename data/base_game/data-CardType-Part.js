@@ -58,7 +58,6 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
                     e.invoker.externalInformation.bodyPart_activationState = state;
                     
                     GUIHandler.toggleTab("EyeTab",PhysicsBodyHandler.getClientPos(e.body),state);
-                    recalcGraphicsLayer();
 
                     if (state) {
                         e.body.bounds.rad = graphicsDisplaySize / 2 - 20;

@@ -6,9 +6,6 @@ var tileHeight = undefined;
 var visionRadius = undefined;
 var defaultPersistence = undefined;
 var mousePosition = new Point(0,0);
-var graphicsLayerLoc; // Stores the center of the Eye body part's display element.
-var mouseAngle; // Stores the current angle of the mouse relative to the center of the Eye body part.
-var mouseState; // String, either left, middle, right, none, depending on state of mouse event
 var disableContextMenu = true;
 var keyShiftPressed = false;
 var graphicsDisplaySize;
@@ -28,18 +25,11 @@ function onload() {
 function globalInitialize() {
   GUIHandler.initialize();
   LightHandler.initialize();
-  FogHandler.initialize();
+  EffectHandler.initialize();
   PhysicsBodyHandler.initialize();
-  TileHandler.initialize();
-}
-function recalcGraphicsLayer() {
-  const boundingBox = document.getElementById("GraphicsLayer").getBoundingClientRect();
-  graphicsLayerLoc = new Point((boundingBox.left + boundingBox.right) / 2, (boundingBox.top + boundingBox.bottom) / 2);
-  graphicsDisplaySize = document.getElementById("GraphicsLayer").offsetWidth;
 }
 function onresize() {
   retrieveCSSConstants();
-  recalcGraphicsLayer();
   globalInitialize();
 
   windowHeight = window.innerHeight;
@@ -50,7 +40,6 @@ function initialize() {
   new Game().start();
   retrieveCSSConstants();
 
-  recalcGraphicsLayer();
   setTimeout(()=>{
   
     document.addEventListener('mousemove', (e) => {
@@ -60,9 +49,6 @@ function initialize() {
       let contentPosition = document.getElementById("Content").getBoundingClientRect();
       if (document.body.clientWidth / document.body.clientHeight < 16.0/9.0) mousePosition = new Point(e.clientX,e.clientY - contentPosition.top); // When there is excess vertical space, translate clientY by that excess space
       else mousePosition = new Point(e.clientX - contentPosition.left,e.clientY); // When there is excess horizontal space, translate clientX by that excess space
-      // Perform BodyPart-Hand stuff
-      let cursor = new Point(e.clientX,e.clientY);
-      mouseAngle = angleBetween(cursor,graphicsLayerLoc);
     });
   },16);
 
@@ -399,7 +385,6 @@ window.addEventListener("resize", (e) => {
 });
 function doResize() {
   LightHandler.initialize();
-  FogHandler.initialize();
 }
 document.addEventListener('contextmenu', event => {if (disableContextMenu && !keyShiftPressed) event.preventDefault()});
 document.addEventListener('mouseup',(e)=>{

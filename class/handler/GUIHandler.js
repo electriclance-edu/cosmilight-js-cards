@@ -20,11 +20,10 @@ class GUIHandler {
             Game.player.translate(x,y);
         }
         
-        FogHandler.renderAllFog();
         LightHandler.renderAllLight();
+        EffectHandler.render();
         PhysicsBodyHandler.physicsTimestep();
         PhysicsBodyHandler.renderAllBodies();
-        TileHandler.renderTiles();
     }
     static toggleTab(id,loc = new Point(window.offsetWidth/2,window.offsetHeight/2),setState = "none") {
         let tab = document.getElementById(id);

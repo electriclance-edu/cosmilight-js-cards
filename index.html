@@ -14,6 +14,7 @@
     <script src="class/generic/Rectangle.js"></script>
     <script src="class/generic/Point.js"></script>
     <script src="class/generic/PhysicsBody.js"></script>
+    <script src="class/generic/Effect.js"></script>
     <script src="class/generic/LightPoint.js"></script>
     <script src="class/game/Game.js"></script>
     <script src="class/game/Player.js"></script>
@@ -31,10 +32,8 @@
     <script src="class/FogCircle.js"></script>
     <script src="script/main.js" defer></script>
     <script src="class/handler/FPSHandler.js" defer></script>
-    <script src="class/handler/TileHandler.js" defer></script>
     <script src="class/handler/PhysicsBodyHandler.js" defer></script>
     <script src="class/handler/LightHandler.js" defer></script>
-    <script src="class/handler/FogHandler.js" defer></script>
     <script src="class/handler/EffectHandler.js" defer></script>
     <script src="class/handler/DataHandler.js" defer></script>
     <script src="data/base_game/data-CardType-Credits.js" defer></script>
@@ -52,7 +51,7 @@
   <body class="bg-darkblue" onload="onload()" onresize="onresize()">
     <div class="Content" id="Content">
       <!-- <h1 class="debug-fps txt-white" id="debug-fps">FPS: </h1> -->
-      <div class="fillWindow Vignette"></div>
+      <!-- <div class="fillWindow Vignette"></div> -->
       <div class="ScreenContainer fillWindow" id="ScreenContainer">
         <div class="Screen-Start state-disabled screen flex-centered fillWindow" id="Screen-Start">
           <div class="flex-centered flex-column pos-absolute">
@@ -124,31 +123,23 @@
         </div>
         <div class="Screen-GameBoard screen fillWindow" id="Screen-Game">
           <div class="GameBoard">
+            <canvas id="LightCanvas"       class="LightCanvas"      ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
+            <canvas                        class="EffectCanvas"     ></canvas>
             <canvas id="PhysicsBodyCanvas" class="PhysicsBodyCanvas"></canvas>
-          </div>
-          <div class="DarkOverlay fillWindow state-invisible flex-centered" id="DarkOverlay">
-            <div class="darkOverlay-bg fillWindow" id="darkOverlay-bg">
-              <div class="starLayer starLayerOne"></div>
-              <div class="starLayer starLayerTwo"></div>
-              <div class="starLayer starLayerThree"></div>
-            </div>
-            <div class="controls darkOverlay-onclickVanishable-controls" id="DarkOverlay-cancelSelectionControls">
-              <p><span class="input">Click</span> on the reddened sides to cancel the selection.</p>
-            </div>
-            <div class="AreaFragmentDisplay flex-column flex-centered" id="AreaFragmentDisplay">
-              <p class="headerFont txt-size-header txt-lined cardSelection-title" id="cardSelection-title">Area</p>
-              <div class="areaFragment">
-                <div class="areaFragment-bg"></div>
-                <div class="areaFragment-icon"></div>
-              </div>
-            </div>
-            <div class="CardSelection flex-column flex-centered" id="CardSelection">
-              <p class="headerFont txt-size-header txt-lined cardSelection-title" id="cardSelection-title">Title</p>
-              <p class="cardSelection-desc txt-italic filter-aberration" id="cardSelection-desc">Desc</p>
-              <div class="cardSelection-cardContainer flex-row flex-centered" id="cardSelection-cardContainer">
-
-              </div>
-            </div>
           </div>
           <div class="Stats" id="Stats">
             <!-- <div id="bloodStatElement" class="stat" style="--color-main:var(--color-health);--color-comp:var(--color-health-complement);--amt:60;--max:100">
@@ -178,13 +169,6 @@
           </div>
           <div class="Tabs">
             <div id="EyeTab" class="EyeTab tab state-closed">
-              <div class="GraphicsLayer" id="GraphicsLayer">
-                <canvas id="TileCanvas"      class="TileCanvas"     ></canvas>
-                <canvas id="StructureCanvas" class="StructureCanvas"></canvas>
-                <canvas id="FogCanvas"       class="FogCanvas"      ></canvas>
-                <canvas id="LightCanvas"     class="LightCanvas"    ></canvas>
-                <div id="EffectLayer" class="EffectLayer"></div>
-              </div>
             </div>
             <div id="TitleTab" class="TitleTab tab state-closed filter-aberration">
               <div id="TitleTab-header">

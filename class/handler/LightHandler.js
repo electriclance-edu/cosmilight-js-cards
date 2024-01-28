@@ -1,22 +1,17 @@
 class LightHandler {
-    static dark = new RGBA(15,0,30,0.75);
+    static dark = new RGBA(15,0,30,0.7);
     // static dark = new RGBA(9,0,22,0.1);
     // static dark = new RGBA(9,0,22,0.9);
     // static dark = new RGBA(7,0,15,1);
     static lightPoints = {
         "player":new LightPoint(0,0,{strength:3,waver:0.01,color:new RGBA(0,0,0,0),faintness:1}),
-        // "fire":new LightPoint(0,0,{strength:2,waver:0.12,color:new RGBA(255,100,50,0.1)}),
-        // "#2,2":new LightPoint(2,2,{strength:1.5,waver:0.1,color:new RGBA(255,0,200,0.1)}),
-        // "#-1,1":new LightPoint(-1,1,{strength:1,waver:0.05,color:new RGBA(0,0,0,0)}),
-        // "#3,-2":new LightPoint(3,-2,{strength:1,waver:0.1,color:new RGBA(0,0,0,0)}),
-        // "#-2,-2":new LightPoint(-2,-2,{strength:3,waver:0.2,color:new RGBA(0,0,0,0)}),
     };
     static canvas;
     static canvasCenter;
     static initialize() {
         var canvas = document.getElementById("LightCanvas");
-        canvas.width = graphicsDisplaySize;
-        canvas.height = graphicsDisplaySize;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         LightHandler.canvas = canvas;
         LightHandler.canvasCenter = new Point(LightHandler.canvas.width/2,LightHandler.canvas.height/2);
 
@@ -49,6 +44,9 @@ class LightHandler {
         LightHandler.canvasSetBase();
 
         var lightPointIds = Object.keys(LightHandler.lightPoints);
+
+        let translated = Point.translate(LightHandler.canvasCenter,mousePosition);
+        LightHandler.moveLight("player",-translated.x,translated.y);
 
         lightPointIds.forEach((id) => {
             let light = LightHandler.getLight(id);
@@ -85,8 +83,7 @@ class LightHandler {
         // Squish/stretch the canvas vertically becasue tileHeight may not necessarily equal tileWidth
         // Important for renderLight() which renders light gradients with both x,y lengths equal to tileWidth
         var translatedLight = Point.translate(new Point(light.x,light.y),Game.player.location);
-        const square = generateSquare(new Point(translatedLight.x * tileWidth, -translatedLight.y * tileHeight),strength);
-        const trueSquareCenter = new Point(light.x * tileWidth, light.y * tileHeight);
+        const square = generateSquare(new Point(translatedLight.x, -translatedLight.y),strength);
         square.center = decentralizePoint(LightHandler.canvasCenter, square.center);
         square.cornerA = decentralizePoint(LightHandler.canvasCenter, square.cornerA);
         square.cornerB = decentralizePoint(LightHandler.canvasCenter, square.cornerB);
