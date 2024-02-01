@@ -16,6 +16,33 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
                     if (blood.value < blood.max) {
                         blood.increment(5);
                         GUIHandler.updatePlayerStatElement("blood");
+                        
+                        EffectHandler.addEffect(new Effect({
+                            lifespan:100,
+                            // startPt:mpos, linearAngle:randInt(360), displacement:100 + randInt(20) * explosionSize,
+                            startPt:e.body.phys.pos.copy(), endPt:new Point(0,window.innerHeight / 2),
+                            startSize:10, endSize:30,
+                            startOpacity:1, endOpacity:0,
+                            spinSpeed:12
+                        }));
+                        for (var i = 0; i < 3; i++) {
+                            EffectHandler.addEffect(new Effect({
+                                lifespan:30 + randInt(10),
+                                startPt:e.body.phys.pos.copy(), linearAngle:randInt(360), displacement:100 + randInt(50),
+                                // startPt:mpos, endPt:new Point(0,0),
+                                startSize:3, endSize:5 + randInt(5),
+                                startOpacity:0.3, endOpacity:0,
+                                spinSpeed:12
+                            }));
+                            EffectHandler.addEffect(new Effect({
+                                lifespan:50 + randInt(20),
+                                startPt:e.body.phys.pos.copy(), linearAngle:randInt(360), displacement:100 + randInt(50),
+                                // startPt:mpos, endPt:new Point(0,0),
+                                startSize:5, endSize:50 + randInt(50),
+                                startOpacity:0.0005 + randFloat(0.01), endOpacity:0,
+                                spinSpeed:12
+                            }));
+                        }
                     } else {
                         PhysicsBodyHandler.addBody(new PhysicsBody({
                             bounds:new Rectangle({width:100,height:100,radius:10}),

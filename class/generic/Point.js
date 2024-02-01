@@ -3,6 +3,9 @@ class Point {
         this.x = x;
         this.y = y;
     }
+    copy() {
+        return new Point(this.x,this.y);
+    }
     // Translates a point given a dx and dy.
     static translate(point,translator) {
         var translated = new Point(point.x,point.y);

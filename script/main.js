@@ -24,9 +24,9 @@ function onload() {
 }
 function globalInitialize() {
   GUIHandler.initialize();
+  PhysicsBodyHandler.initialize();
   LightHandler.initialize();
   EffectHandler.initialize();
-  PhysicsBodyHandler.initialize();
 }
 function onresize() {
   retrieveCSSConstants();

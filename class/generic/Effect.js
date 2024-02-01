@@ -23,6 +23,7 @@ class Effect {
         this.endOpacity = options.endOpacity;
         
         // Style parameters.
+        this.inherentNumber = randInt(1000);
         this.color = options.color || new RGBA(255,255,255);
         this.spinSpeed = options.spinSpeed || 10;
         
@@ -31,6 +32,28 @@ class Effect {
         this.pos = options.startPt;
         this.size = options.startSize;
         this.opacity = options.startOpacity;
+
+        // Parameters for the associated light point
+        if (options.lightPointProperties) {
+            this.lightPoint = new LightPoint(
+                this.pos.x,
+                this.pos.y,
+                options.lightPointProperties
+            );
+        } else {
+            this.lightPoint = new LightPoint(
+                this.pos.x,
+                this.pos.y,
+                {
+                    strength:this.size / 2,
+                    waver:0.1,
+                    color:new RGBA(255,255,255,0.1),
+                    faintness:randFloat(0.3)
+                }
+            );
+
+        }
+        LightHandler.addLight(`effect${this.id}`,this.lightPoint);
 
         // Emergent parameters, calculated from the basal parameters.
         if (!options.endPt) {
@@ -47,8 +70,16 @@ class Effect {
         this.deltaSize = this.endSize - this.startSize;
         this.deltaOpacity = this.endOpacity - this.startOpacity;
     }
+    getLightPoint() {
+        return this.lightPoint;
+    }
     getPosAtLifetime(lifetime) {
-        return Point.angleTranslate(this.startPt,this.linearAngle,this.displacement / this.lifespan * lifetime).shiftY(Math.sin(lifetime / this.lifespan * this.spinSpeed)*10).shiftX(Math.cos(lifetime / this.lifespan)*10);
+        if (this.inherentNumber % 2 == 0) {
+            return Point.angleTranslate(this.startPt,this.linearAngle,this.displacement / this.lifespan * lifetime).shiftY(Math.sin(lifetime / this.lifespan * this.spinSpeed)*20).shiftX(Math.cos(lifetime / this.lifespan)*20);
+        } else {
+            return Point.angleTranslate(this.startPt,this.linearAngle,this.displacement / this.lifespan * lifetime).shiftY(Math.cos(lifetime / this.lifespan * this.spinSpeed)*20).shiftX(Math.sin(lifetime / this.lifespan)*20);
+
+        }
     }
     getSizeAtLifetime(lifetime) {
         return this.startSize + (this.deltaSize / this.lifespan)*lifetime;
