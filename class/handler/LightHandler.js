@@ -4,8 +4,8 @@ class LightHandler {
     // static dark = new RGBA(9,0,22,0.9);
     // static dark = new RGBA(7,0,15,1);
     static lightPoints = {
-        "player":new LightPoint(0,0,{strength:3,waver:0.01,color:new RGBA(0,0,0,0),faintness:1}),
-        "player2":new LightPoint(0,0,{strength:2,waver:0.1,color:new RGBA(150,50,230,0.1),faintness:1}),
+        "player":new LightPoint(0,0,{strength:300,waver:1,color:new RGBA(0,0,0,0),faintness:0.5}),
+        "player2":new LightPoint(0,0,{strength:200,waver:10,color:new RGBA(150,50,230,0.1),faintness:0.5}),
     };
     static canvas;
     static canvasCenter;
@@ -21,17 +21,23 @@ class LightHandler {
     }
     static moveLight(id,x,y) {
         let point = this.getLight(id);
-        point.setX(x);
-        point.setY(y);
+        if (point) {
+            point.setX(x);
+            point.setY(y);
+        }
     }
     static addLight(id,lightPoint) {
         this.lightPoints[id] = lightPoint;
+        this.lightPoints[id].age = 0;
     }
     static removeLight(id) {
-        delete this.lightPoints[id];
+        this.lightPoints[id].delete = true;
     }
     static getLight(id) {
-        return LightHandler.lightPoints[id];
+        if (LightHandler.lightPoints[id]) {
+            return LightHandler.lightPoints[id];
+        } 
+        return false;
     }
     static canvasClear() {
         LightHandler.canvas.getContext("2d").clearRect(0, 0, LightHandler.canvas.width, LightHandler.canvas.height);
@@ -60,6 +66,8 @@ class LightHandler {
             let light = LightHandler.getLight(id);
             let strength = LightHandler.renderLightStrength(light);
 
+            light.age++;
+
             if (strength <= 0.05) {
                 return;
             }
@@ -77,19 +85,27 @@ class LightHandler {
 
             let square = LightHandler.renderLightPosition(light,strength);
             LightHandler.renderLightColor(light,strength,square);
+
+            if (light.delete) {
+                light.strength -= 0.05;
+                light.strength *= 0.9;
+                light.faintness *= 0.9;
+                
+                if (light.strength < 0.05) {
+                    delete this.lightPoints[id];
+                }
+            }
         });
     }
     static renderLightStrength(light) {
-        var strength = light.getStrength(); //units: in tiles
+        var strength = light.getStrength(); //units: in pixels
         if (light.doesWaver()) {
-            strength = light.getRandomWaveredStrength(); //units: in tiles
+            strength = light.getRandomWaveredStrength(); //units: in pixels
         }
-        return tileWidth * strength;
+        return strength;
     }
     static renderLightPosition(light,strength) {
         var ctx = LightHandler.canvas.getContext("2d");
-        // Squish/stretch the canvas vertically becasue tileHeight may not necessarily equal tileWidth
-        // Important for renderLight() which renders light gradients with both x,y lengths equal to tileWidth
         var translatedLight = Point.translate(new Point(light.x,light.y),Game.player.location);
         const square = generateSquare(new Point(translatedLight.x, -translatedLight.y),strength);
         square.center = decentralizePoint(LightHandler.canvasCenter, square.center);
@@ -125,9 +141,11 @@ class LightHandler {
             square.center.y / LightHandler.zoomFactor,
             square.width / 2 / LightHandler.zoomFactor
         );
-        gradient_mask.addColorStop(0.2,`rgba(0,0,0,${1 * light.faintness})`);
-        gradient_mask.addColorStop(0.55,`rgba(0,0,0,${0.7 * light.faintness})`);
-        gradient_mask.addColorStop(0.7,`rgba(0,0,0,${0.4 * light.faintness})`);
+
+        let perceivedFaintness = light.faintness * (Math.min(100,light.age) / 100);
+        gradient_mask.addColorStop(0.2,`rgba(0,0,0,${1 * perceivedFaintness})`);
+        gradient_mask.addColorStop(0.55,`rgba(0,0,0,${0.7 * perceivedFaintness})`);
+        gradient_mask.addColorStop(0.7,`rgba(0,0,0,${0.4 * perceivedFaintness})`);
         gradient_mask.addColorStop(1,`rgba(0,0,0,0)`);
         ctx.fillStyle = gradient_mask;
         ctx.globalCompositeOperation = "destination-out";

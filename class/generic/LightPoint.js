@@ -1,10 +1,12 @@
 class LightPoint extends Point {
     constructor(x,y,properties) {
         super(x,y);
-        this.strength = properties.strength;
+        this.strength = properties.strength; // in pixels
         this.waver = properties.waver;
-        this.color = properties.color ? properties.color : new RGBA(0,0,0,0);
-        this.faintness = properties.faintness ? properties.faintness : 1;
+        this.color = properties.color || new RGBA(0,0,0,0);
+        this.faintness = properties.faintness || 1;
+        this.delete = false;
+        this.age = 0;
     }
     getStrength() {
         return this.strength;

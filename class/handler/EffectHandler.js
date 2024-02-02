@@ -59,9 +59,9 @@ class EffectHandler {
         let mpos = Point.translate(mousePosition,EffectHandler.canvasCenter);
         mpos.x *= -1;
         mpos.y *= -1;
-        if (perceivedFrame % 100 == 0) {
+        if (perceivedFrame % 300 == 0) {
             EffectHandler.addEffect(new Effect({
-                lifespan:randInt(500) + 100,
+                lifespan:randInt(1000) + 1000,
                 startPt:new Point(
                     randInt(window.innerWidth) - window.innerWidth/2,
                     randInt(window.innerHeight) - window.innerHeight/2
@@ -70,13 +70,96 @@ class EffectHandler {
                 displacement:randInt(500),
                 // startPt:mpos, endPt:new Point(0,0),
                 startSize:1, endSize:3,
-                startOpacity:randFloat(0.1), endOpacity:randFloat(0.2),
+                startOpacity:randFloat(0.05), endOpacity:randFloat(0.2),
                 spinSpeed:5,
                 lightPointProperties:{
-                    strength:randFloat(0.2) + 0.1,
+                    strength:randFloat(10) + 10,
                     waver:0.1,
                     color:new RGBA(255,255,255,0.1),
-                    faintness:randFloat(0.3)
+                    faintness:1//randFloat(0.3)
+                }
+            }));
+        }
+        if (perceivedFrame % 500 == 0) {
+            EffectHandler.addEffect(new Effect({
+                lifespan:randInt(1000) + 1000,
+                startPt:new Point(
+                    randInt(window.innerWidth) - window.innerWidth/2,
+                    randInt(window.innerHeight) - window.innerHeight/2
+                ), 
+                linearAngle:randInt(360), 
+                displacement:randInt(100),
+                // startPt:mpos, endPt:new Point(0,0),
+                startSize:200, endSize:0,
+                startOpacity:0, endOpacity:0,
+                spinSpeed:5,
+                lightPointProperties:{
+                    strength:randInt(300) + 100,
+                    waver:0.1,
+                    faintness:0.5//randFloat(0.3)
+                }
+            }));
+        }
+        if (perceivedFrame % 500 == 0) {
+            EffectHandler.addEffect(new Effect({
+                lifespan:randInt(100) + 100,
+                startPt:new Point(
+                    randInt(window.innerWidth) - window.innerWidth/2,
+                    randInt(window.innerHeight) - window.innerHeight/2
+                ), 
+                linearAngle:randInt(360), 
+                displacement:600,
+                // startPt:mpos, endPt:new Point(0,0),
+                startSize:0, endSize:2,
+                startOpacity:0.3, endOpacity:0,
+                spinSpeed:5,
+                lightPointProperties:{
+                    strength:randFloat(5) + 5,
+                    waver:0.1,
+                    color:new RGBA(255,255,255,0.01),
+                    faintness:0.1//randFloat(0.3)
+                }
+            }));
+        }
+        if (perceivedFrame % 50 == 0) {
+            EffectHandler.addEffect(new Effect({
+                lifespan:randInt(1000) + 1000,
+                startPt:new Point(
+                    randInt(window.innerWidth) - window.innerWidth/2,
+                    randInt(window.innerHeight) - window.innerHeight/2
+                ), 
+                linearAngle:randInt(360), 
+                displacement:randInt(100),
+                // startPt:mpos, endPt:new Point(0,0),
+                startSize:1, endSize:3,
+                startOpacity:randFloat(0.001), endOpacity:randFloat(0.01),
+                spinSpeed:5,
+                lightPointProperties:{
+                    strength:randFloat(5) + 5,
+                    waver:0.1,
+                    color:new RGBA(255,255,255,0.01),
+                    faintness:0.1//randFloat(0.3)
+                }
+            }));
+        }
+        if (perceivedFrame % 100 == 0) {
+            EffectHandler.addEffect(new Effect({
+                lifespan:randInt(1000) + 1000,
+                startPt:new Point(
+                    randInt(window.innerWidth) - window.innerWidth/2,
+                    randInt(window.innerHeight) - window.innerHeight/2
+                ), 
+                linearAngle:randInt(360), 
+                displacement:randInt(100),
+                // startPt:mpos, endPt:new Point(0,0),
+                startSize:1, endSize:3,
+                startOpacity:randFloat(0.05), endOpacity:randFloat(0.1),
+                spinSpeed:5,
+                lightPointProperties:{
+                    strength:randFloat(10) + 10,
+                    waver:0.1,
+                    color:new RGBA(255,255,255,0.01),
+                    faintness:0.5//randFloat(0.3)
                 }
             }));
         }
@@ -158,6 +241,7 @@ class EffectHandler {
                 if (effect.lifetime >= effect.lifespan) {
                     if (effect.lightPoint) LightHandler.removeLight(`effect${effect.id}`);
                     EffectHandler.effects.splice(i,1);
+                    break;
                 }
     
                 // Render

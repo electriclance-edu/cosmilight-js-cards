@@ -9,7 +9,7 @@ class Effect {
     id;
     
     constructor(options) {
-        this.id = Effect.id++;
+        this.id = ++Effect.id;
         this.lifespan = options.lifespan;
         
         // Basal parameters.
@@ -28,7 +28,7 @@ class Effect {
         this.spinSpeed = options.spinSpeed || 10;
         
         // State parameters, ones that are used to track the current progress of the effect.
-        this.lifetime = 0;
+        this.lifetime = options.lifetime || 0;
         this.pos = options.startPt;
         this.size = options.startSize;
         this.opacity = options.startOpacity;
@@ -40,28 +40,17 @@ class Effect {
                 this.pos.y,
                 options.lightPointProperties
             );
-        } else {
-            this.lightPoint = new LightPoint(
-                this.pos.x,
-                this.pos.y,
-                {
-                    strength:this.size / 2,
-                    waver:0.1,
-                    color:new RGBA(255,255,255,0.1),
-                    faintness:randFloat(0.3)
-                }
-            );
-
         }
         LightHandler.addLight(`effect${this.id}`,this.lightPoint);
 
         // Emergent parameters, calculated from the basal parameters.
         if (!options.endPt) {
-            if (!(options.linearAngle === undefined) && options.displacement) {
+            if (!(options.linearAngle === undefined) && !(options.displacement === undefined)) {
                 this.linearAngle = options.linearAngle + 180;
                 this.displacement = options.displacement;
             } else {
-                console.warn("Effect.constructor(): Attempted to construct effect without supplying a valid [endPt] or [angle and displacement].")
+                console.warn("Effect.constructor(): Attempted to construct effect without supplying a valid [endPt] or [angle and displacement].",options,this.linearAngle,this.displacement);
+                console.error("Stack trace");
             }
         } else {
             this.linearAngle = -angleBetween(this.startPt,this.endPt) + 180;
