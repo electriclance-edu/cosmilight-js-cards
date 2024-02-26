@@ -4,7 +4,7 @@ class EffectHandler {
     ];
     static canvases;
     static canvasCenter;
-    static zoomFactor = 1;
+    static zoomFactor = 5;
 
     static initialize() {
         var canvases = document.getElementsByClassName("EffectCanvas");
@@ -235,6 +235,11 @@ class EffectHandler {
             for (var j = 0; j < repeatRenders; j++) {
                 // Update effect
                 effect.lifetime += 1 / repeatRenders;
+
+                if (effect.lifetime < 0) {
+                    continue;
+                }
+
                 effect.size = effect.getSizeAtLifetime(effect.lifetime);
                 effect.opacity = effect.getOpacityAtLifetime(Math.pow(effect.lifetime / effect.lifespan,Math.E) * effect.lifespan);
                 effect.pos = effect.getPosAtLifetime(Math.pow(effect.lifetime / effect.lifespan,Math.E / 6) * effect.lifespan);

@@ -126,6 +126,39 @@ class GameEventHandler {
 
         GameEventHandler.callInteractions(gameEvent,invoker.interactions);
     }
+    static onPhysicsDrag(invoker,body) {
+        var gameEvent = {
+            type:"onPhysicsHoverEnter",
+            invoker:invoker,
+            body:body
+        };
+
+        GameEventHandler.verifyArgs([invoker,body],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    static onPhysicsHoverEnter(invoker,body) {
+        var gameEvent = {
+            type:"onPhysicsHoverEnter",
+            invoker:invoker,
+            body:body
+        };
+
+        GameEventHandler.verifyArgs([invoker,body],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
+    static onPhysicsHoverExit(invoker,body) {
+        var gameEvent = {
+            type:"onPhysicsHoverExit",
+            invoker:invoker,
+            body:body
+        };
+
+        GameEventHandler.verifyArgs([invoker,body],gameEvent.type);
+
+        GameEventHandler.callInteractions(gameEvent,invoker.interactions);
+    }
     static onMouseUp(invoker,button) {
         var gameEvent = {
             type:"onMouseUp",

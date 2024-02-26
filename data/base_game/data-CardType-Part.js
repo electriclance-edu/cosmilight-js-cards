@@ -5,10 +5,15 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             superTitle:"Old",
             mainTitle:"Heart",
             description:"You can barely feel it throb.",
+            technical_description:`<span class='input'>Space</span> while hovering to activate.\n
+                                   Produces blood.`,
         },
         colorName:"part",
         tags:["part","starCard"],
         interactions:{
+            "onPhysicsSpawn":(e)=>{
+
+            },
             "onPhysicsKeyHover":(e)=>{
                 if (e.key == "Space") {
                     let blood = Game.player.getStat("blood"); 
@@ -96,7 +101,7 @@ DataHandler.addObjectToLoad("CardType","baseCosmilight",[
             superTitle:"Half-Opened",
             mainTitle:"Eyeball",
             description:"Be wary of what you let into the window of the soul.",
-            technical_description:`<span class='input'>Space</span> while hovering to activate this body part.\n
+            technical_description:`<span class='input'>Space</span> while hovering to activate.\n
                                    Allows you to see the world.`,
         },
         colorName:"item",

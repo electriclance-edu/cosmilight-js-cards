@@ -43,11 +43,11 @@ class PhysicsBodyHandler {
             sprite:"resources/img/cards/part/eye.png"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Circle({rad:80}),
+            bounds:new Circle({rad:100}),
             pos:new Point(-300,0),
             interactionBounds:new Circle({rad:10}),
             obj:new Card("heart"),
-            sprite:"resources/img/cards/part/heart.png"
+            sprite:"resources/img/sprites/heart.png"
         }));
         // PhysicsBodyHandler.addBody(new PhysicsBody({
         //     bounds:new Rectangle({width:150,height:200,radius:10}),
@@ -138,18 +138,6 @@ class PhysicsBodyHandler {
                 PhysicsBodyHandler.endClickAttempt();
                 return;
             }
-        } else if (PhysicsBodyHandler.clickType == "right") {
-            if (PhysicsBodyHandler.clickedObject.obj instanceof Card) {
-                GUIHandler.openTitleTab(
-                    PhysicsBodyHandler.clickedObject.obj
-                );
-                // GUIHandler.openTooltipTab(
-                //     PhysicsBodyHandler.getClientPos(
-                //         PhysicsBodyHandler.clickedObject
-                //     ).shiftY(PhysicsBodyHandler.clickedObject.bounds.size),
-                //     PhysicsBodyHandler.clickedObject.obj
-                // );
-            }
         }
         if (new Date().getTime() - PhysicsBodyHandler.clickStartTime < PhysicsBodyHandler.clickMillisecondLength) {
             PhysicsBodyHandler.onclick(PhysicsBodyHandler.clickedObject,PhysicsBodyHandler.clickType);
@@ -183,6 +171,11 @@ class PhysicsBodyHandler {
         PhysicsBodyHandler.attemptOnclick();
         PhysicsBodyHandler.unselectBody();
     }
+    static onmousemove() {
+        // if (PhysicsBodyHandler.selectedBody) {
+        //     GameEventHandler.onPhysicsDrag(PhysicsBodyHandler.selectedBody);
+        // } 
+    }
     static onmousedown(button) {
         PhysicsBodyHandler.bodies.toReversed().every((body)=>{
             if (body.pointWithinBound(mousePosition)) {
@@ -195,6 +188,23 @@ class PhysicsBodyHandler {
             }
             return true;
         });
+    }
+    static onhoverenter(body) {
+        if (body.obj instanceof Card) {
+            GUIHandler.openTitleTab(body.obj);
+        }
+        if (body.obj) {
+            GameEventHandler.onPhysicsHoverEnter(body.obj,body);
+        }
+
+    }
+    static onhoverexit(body) {
+        if (body.obj instanceof Card) {
+            GUIHandler.closeTitleTab();
+        }
+        if (body.obj) {
+            GameEventHandler.onPhysicsHoverExit(body.obj,body);
+        }
     }
     static setZoom(delta) {
         // PhysicsBodyHandler.zoom -= delta * 0.1;
@@ -279,9 +289,15 @@ class PhysicsBodyHandler {
         
         PhysicsBodyHandler.bodies.toReversed().every((body)=>{
             if (body.pointWithinBound(mousePosition)) {
+                if (!body.tags["hovered"]) {
+                    PhysicsBodyHandler.onhoverenter(body);
+                }
                 body.tags["hovered"] = true;
                 return false;
             } else {
+                if (body.tags["hovered"]) {
+                    PhysicsBodyHandler.onhoverexit(body);
+                }
                 body.tags["hovered"] = false;
                 return true;
             }

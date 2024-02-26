@@ -43,6 +43,7 @@ function initialize() {
   setTimeout(()=>{
   
     document.addEventListener('mousemove', (e) => {
+      PhysicsBodyHandler.onmousemove();
       // Update mousePosition
       // MousePosition encodes the cursor's position on the gameboard.
       // This may differ from the cursor's actual position on the screen (when the screen isnt of a 16:9 aspect ratio), so it has to be corrected.
