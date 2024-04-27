@@ -13,8 +13,6 @@ class Stat {
         this.#value = selectFirstDefined(props.value,0);
         this.#max = selectFirstDefined(props.max,100);
         this.#min = selectFirstDefined(props.min,0);
-
-        this.renderElem = undefined;
     }
     copy() {
         return new Stat(this.typeId,{
@@ -63,9 +61,6 @@ class Stat {
         if (limited) {
             this.value = clamp(val, this.min, this.max);
         }
-        if (!!this.renderElem) {
-            GUIHandler.updateStatElem(this.value,this.max,this.renderElem);
-        }
     }
     cyclicIncrement(amt) {
         this.increment(1,false);
@@ -76,9 +71,6 @@ class Stat {
         this.value += amt;
         if (limited) {
             this.value = clamp(this.value, this.min, this.max);
-        }
-        if (!!this.renderElem) {
-            GUIHandler.updateStatElem(this.value,this.max,this.renderElem);
         }
     }
 }

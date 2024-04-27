@@ -163,63 +163,6 @@ class EffectHandler {
                 }
             }));
         }
-        // const explosionSize = 4;
-        // if (perceivedFrame % 10 == 0) {
-        //     EffectHandler.addEffect(new Effect({
-        //         lifespan:100,
-        //         // startPt:mpos, linearAngle:randInt(360), displacement:100 + randInt(20) * explosionSize,
-        //         startPt:mpos, endPt:new Point(0,0),
-        //         startSize:10, endSize:30,
-        //         startOpacity:1, endOpacity:0,
-        //         spinSpeed:12
-        //     }));
-        // }
-        // if (perceivedFrame % 25 == 0) {
-        //     EffectHandler.addEffect(new Effect({
-        //         lifespan:100,
-        //         startPt:mpos, linearAngle:randInt(360), displacement:200 + randInt(100) * explosionSize,
-        //         // startPt:mpos, endPt:new Point(0,0),
-        //         startSize:10, endSize:30,
-        //         startOpacity:0.5, endOpacity:0,
-        //         spinSpeed:12
-        //     }));
-        // }
-        // if (perceivedFrame % 7 == 0) {
-        //     EffectHandler.addEffect(new Effect({
-        //         lifespan:60,
-        //         // startPt:mpos, 
-        //         // linearAngle:-angleBetween(mpos,new Point(0,0)), 
-        //         // displacement:dist(mpos,new Point(0,0)) * (randFloat(0.3) + 0.85),
-        //         startPt:mpos, linearAngle:randInt(360), displacement:50 + randInt(50) * explosionSize,
-        //         // startPt:new Point(0,0), endPt:new Point(200,200),
-        //         startSize:0, endSize:10 + randInt(10),
-        //         startOpacity:0.5 * (randFloat(1) + 0.5), endOpacity:0,
-        //     }));
-        // }
-        // if (perceivedFrame % 5 == 0) {
-        //     EffectHandler.addEffect(new Effect({
-        //         lifespan:randInt(40) + 10,
-        //         // startPt:mpos, 
-        //         // linearAngle:-angleBetween(mpos,new Point(0,0)), 
-        //         // displacement:50 + randInt(50),
-        //         startPt:mpos, linearAngle:randInt(360), displacement:20 + randInt(20) * explosionSize,
-        //         startSize:5, endSize:10 + randInt(5),
-        //         startOpacity:0.05, endOpacity:0,
-        //         color:new RGBA(60,80,127.49999999999)
-        //     }));
-        // }
-        // if (perceivedFrame % 3 == 0) {
-        //     EffectHandler.addEffect(new Effect({
-        //         lifespan:randInt(100) + 10,
-        //         // startPt:mpos, 
-        //         // linearAngle:-angleBetween(mpos,new Point(0,0))    , 
-        //         // displacement:50 + randInt(50),
-        //         startPt:mpos, linearAngle:randInt(360), displacement:50 + randInt(50) * explosionSize,
-        //         startSize:5, endSize:50 + randInt(50),
-        //         startOpacity:0.005, endOpacity:0,
-        //         color:new RGBA(60,80,127.49999999999)
-        //     }));
-        // }
         let canvas = EffectHandler.canvases[perceivedFrame % EffectHandler.canvases.length];
         let ctx = canvas.getContext("2d")
         ctx.shadowColor = "rgba(255,255,255,1)";

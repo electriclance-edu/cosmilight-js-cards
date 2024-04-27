@@ -92,7 +92,7 @@ function integerRaytrace(endA,endB) {
 
     return coordinates;
 }
-// Given an array TODO of coordinates, returns a set including all the neighbors of those coordinates. Includes diagonals.
+// Given an array of coordinates, returns a set including all the neighbors of those coordinates. Includes diagonals.
 function inflateCoordinateArray(coords) {
     let inflated = new Set();
 
@@ -119,36 +119,11 @@ function radToDeg(rad) {
 //Returns an array of all integer coordinates that intersect with a given square.
 function squareIntersectingIntCoords(center,radius) {
     var square = generateSquare(center,radius);
-    // console.log(FogHandler.canvasCenter);
-    let debugtime = 1000;
-    // createDot(
-    //     (square.cornerA.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
-    //     (square.cornerA.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
-    //     null,
-    //     debugtime
-    // );
-    // createDot(
-    //     (square.cornerB.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
-    //     (square.cornerB.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
-    //     null,
-    //     debugtime
-    // );
+
     square.cornerA.x = roundAway(square.cornerA.x,square.center.x);
     square.cornerA.y = roundAway(square.cornerA.y,square.center.y);
     square.cornerB.x = roundAway(square.cornerB.x,square.center.x);
     square.cornerB.y = roundAway(square.cornerB.y,square.center.y);
-    // createDot(
-    //     (square.cornerA.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
-    //     (square.cornerA.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
-    //     "blue",
-    //     debugtime
-    // );
-    // createDot(
-    //     (square.cornerB.x - Game.player.location.x) * tileWidth + FogHandler.canvasCenter.x,
-    //     (square.cornerB.y - Game.player.location.y) * tileHeight + FogHandler.canvasCenter.y,
-    //     "blue",
-    //     debugtime
-    // );
 
     var points = [];
     // CornerB is the +x+y corner. CornerA is the -x-y corner.

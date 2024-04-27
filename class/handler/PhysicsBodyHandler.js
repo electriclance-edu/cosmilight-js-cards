@@ -40,14 +40,21 @@ class PhysicsBodyHandler {
             pos:new Point(-300,0),
             interactionBounds:new Circle({rad:10}),
             obj:new Card("eye"),
-            sprite:"resources/img/cards/part/eye.png"
+            sprite:"resources/img/debug.gif"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Circle({rad:100}),
             pos:new Point(-300,0),
             interactionBounds:new Circle({rad:10}),
             obj:new Card("heart"),
-            sprite:"resources/img/sprites/heart.png"
+            sprite:"resources/img/debug.gif"
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:50}),
+            pos:new Point(randInt(500),randInt(500)),
+            interactionBounds:new Circle({rad:10}),
+            obj:new Card("sap"),
+            sprite:"resources/img/debug.gif"
         }));
         // PhysicsBodyHandler.addBody(new PhysicsBody({
         //     bounds:new Rectangle({width:150,height:200,radius:10}),

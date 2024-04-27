@@ -20,8 +20,6 @@ class DataHandler {
     // Loader functions, functions from each class that are constructor aliases
     static loaders = {
         CardType:CardType.load,
-        TileType:TileType.load,
-        StructureType:StructureType.load,
         StatType:StatType.load,
     }
     static sources = [];

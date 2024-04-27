@@ -11,9 +11,6 @@ class Card {
         };
         this.inventory = undefined;
 
-        if (this.type.hasOwnProperty("interactions")) {
-            Game.addOnTickObject(this);
-        }
         this.initializeStats(this.type.stats);
         this.index = ++Card.totalCards;
         GameEventHandler.onCreation(this);

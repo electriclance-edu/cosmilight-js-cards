@@ -7,9 +7,6 @@ class Game {
 
     constructor() {
         Game.current = this;
-        this.onTickObjects = [];
-        this.#world = new World();
-        this.#player = new Player();
         this.time = 0;
     }
     start() {
@@ -21,24 +18,13 @@ class Game {
         // Game time loop
         setInterval(()=>{
             Game.#current.time++;
-            Game.onTickObjects.forEach((obj)=>{
-                GameEventHandler.onTick(obj,Game.#current.time);
-            });
         },16);
-    }
-    static addOnTickObject(obj) {
-        if (obj.interactions.hasOwnProperty("onTick")) {
-            Game.onTickObjects.push(obj);
-        }
     }
     static set current(obj) {
         Game.#current = obj;
     }
     static get current() {
         return Game.#current;
-    }
-    static get onTickObjects() {
-        return Game.#current.onTickObjects;
     }
     static set world(world) {
         Game.#current.#world = world;
