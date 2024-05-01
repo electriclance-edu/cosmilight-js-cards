@@ -4,8 +4,8 @@ class LightHandler {
     // static dark = new RGBA(9,0,22,0.9);
     // static dark = new RGBA(7,0,15,1);
     static lightPoints = {
-        "player":new LightPoint(0,0,{strength:1000,waver:1,color:new RGBA(0,0,0,0),faintness:0.5}),
-        "player2":new LightPoint(0,0,{strength:700,waver:10,color:new RGBA(150,50,230,0.1),faintness:0.5}),
+        "player":new LightPoint(0,0,{strength:1500,waver:1,color:new RGBA(0,0,0,0),faintness:0.5}),
+        "player2":new LightPoint(0,0,{strength:1000,waver:10,color:new RGBA(150,50,230,0.1),faintness:0.9}),
     };
     static canvas;
     static canvasCenter;

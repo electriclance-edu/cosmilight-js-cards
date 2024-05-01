@@ -27,7 +27,7 @@ class PhysicsBody {
         immovable:false,
         visible:true,
         hovered:false,
-        type:["draggable","tabbable"]
+        type:["draggable","tabbable"] 
     };
     obj = undefined;
 
@@ -44,8 +44,53 @@ class PhysicsBody {
         this.bounds = options.bounds || new Rectangle({width:50,height:50});
         this.interactionBounds = options.interactionBounds || new Circle({rad:25});
         this.sprite = options.sprite || `resources/img/sprites/noSprite${this.bounds.type}.png`;
+        this.next = null;
+        this.prev = null;
     }
 
+    bindTo(next) {
+        // If the object is already in the chain of bounded objects, do not bind.
+        if (!this.getBoundList().every((body)=>body.id != next.id)) return false;
+
+        // If there is a next, clear out all the nexts after that first
+        if (this.next) {
+            this.breakBinds();
+        }
+        this.next = next;
+        next.prev = this;
+    }
+    breakBinds() {
+        let pointer = this;
+        let newNext = pointer.next;
+        pointer.next = null;
+        while (newNext) {
+            pointer = newNext;
+            newNext = pointer.next;
+            pointer.next = null;
+            pointer.prev = null;
+        }
+    }
+    getHead() {
+        let pointer = this;
+        let prev = pointer.prev;
+        while (prev) {
+            pointer = prev;
+            prev = pointer.prev;
+        }
+        // pointer is now head
+        return pointer;
+    }
+    getBoundList() {
+        let pointer = this.getHead();
+        let list = [pointer];
+        let next = pointer.next;
+        while (next) {
+            pointer = next;
+            next = pointer.next;
+            list.push(pointer);
+        }
+        return list;
+    }
     intersects(body) {
         if (body.bounds.type == "Rectangle" && this.bounds.type == "Rectangle") {
             let a1 = new Point(
@@ -83,12 +128,34 @@ class PhysicsBody {
             return isWithinX && isWithinY;
         } else if (this.bounds.type == "Circle") {
             return dist(point,clientPos) < this.bounds.rad;
-        } else {
-            return false;
         }
-
+        return false;
+    }
+    getCorners() {
+        // Currently not translated
+        let relativeCorners = this.bounds.getCorners();
+        let worldCorners = [];
+        relativeCorners .forEach((relCorner)=>{
+            worldCorners.push(decentralizePoint(relCorner,this.phys.pos));
+        });
+        return worldCorners;
+    }
+    // Strong intersection is when the center of a body is within the bounds of another.
+    stronglyIntersects(body) {
+        if (this.bounds.type == "Rectangle") {
+            return pointIntersectsRectangle(body.phys.pos,this.getCorners());
+        } else if (this.bounds.type == "Circle") {
+            return dist(body.phys.pos,this.phys.pos) < this.bounds.rad;
+        }
+        return false;
     }
     applyForce(vec) {
         this.phys.vel = Vector.add(this.phys.vel,vec);
+    }
+    getBindingPoint() {
+        return this.phys.pos.copy().shiftX(-this.bounds.width);
+    }
+    getBoundPoint() {
+        return this.phys.pos.copy().shiftX(this.bounds.width);
     }
 }

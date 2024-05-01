@@ -178,9 +178,6 @@ GENERAL SELECTORS
   flex-basis: 100%;
   height: 0;
 }
-.flex-expand {
-  flex-grow:1;
-}
 .txt-size-small {
   font-size:0.8em;
 }
