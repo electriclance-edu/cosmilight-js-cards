@@ -98,6 +98,13 @@ class PhysicsBodyHandler {
             sprite:"resources/img/tokens/limb.png",
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/lumen.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:400,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:400,height:150}),
