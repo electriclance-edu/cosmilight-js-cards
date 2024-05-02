@@ -19,7 +19,6 @@ class PhysicsBodyHandler {
         canvas.height = canvas.offsetHeight;
         PhysicsBodyHandler.canvas = canvas;
         PhysicsBodyHandler.ctx = canvas.getContext("2d");
-        PhysicsBodyHandler.canvasCenter = new Point(PhysicsBodyHandler.canvas.width/2,PhysicsBodyHandler.canvas.height/2);
 
         // DEBUG
         // PhysicsBodyHandler.addBody(new PhysicsBody({
@@ -36,83 +35,140 @@ class PhysicsBodyHandler {
     }
     static addManyBodies() {
         PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:150,height:400}),
-            pos:new Point(-300,0),
-            interactionBounds:new Rectangle({width:150,height:400}),
-            obj:new Card("forest"),
-            sprite:"resources/img/cards/area/forest.png"
-        }));
-        PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:150,height:400}),
-            pos:new Point(-300,0),
-            interactionBounds:new Rectangle({width:150,height:400}),
-            obj:new Card("plains"),
-            sprite:"resources/img/cards/area/plains.png"
-        }));
-        PhysicsBodyHandler.addBody(new PhysicsBody({
-            bounds:new Rectangle({width:150,height:400}),
-            pos:new Point(-300,0),
-            interactionBounds:new Rectangle({width:150,height:400}),
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
             obj:new Card("caves"),
-            sprite:"resources/img/cards/area/caves.png"
+            sprite:"resources/img/tokens/life.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/life.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/life.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/light.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/light.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/light.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/limb.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/limb.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Circle({rad:45}),
+            pos:new Point(0,0),
+            interactionBounds:new Circle({rad:45}),
+            obj:new Card("caves"),
+            sprite:"resources/img/tokens/limb.png",
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Rectangle({width:400,height:150}),
+            pos:new Point(-300,0),
+            interactionBounds:new Rectangle({width:400,height:150}),
+            obj:new Card("forest"),
+            sprite:"resources/img/cards/area/forest.png",
+            bindType:"area"
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Rectangle({width:400,height:150}),
+            pos:new Point(-300,0),
+            interactionBounds:new Rectangle({width:400,height:150}),
+            obj:new Card("plains"),
+            sprite:"resources/img/cards/area/plains.png",
+            bindType:"area"
+        }));
+        PhysicsBodyHandler.addBody(new PhysicsBody({
+            bounds:new Rectangle({width:400,height:150}),
+            pos:new Point(-300,0),
+            interactionBounds:new Rectangle({width:400,height:150}),
+            obj:new Card("caves"),
+            sprite:"resources/img/cards/area/caves.png",
+            bindType:"area"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:150,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:150,height:150}),
             obj:new Card("nature-sin"),
-            sprite:"resources/img/cards/situations/sin/nature.png"
+            sprite:"resources/img/cards/situations/sin/nature.png",
+            bindType:"situation"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:150,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:150,height:150}),
             obj:new Card("moon-sin"),
-            sprite:"resources/img/cards/situations/sin/open.png"
+            sprite:"resources/img/cards/situations/sin/open.png",
+            bindType:"situation"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:150,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:150,height:150}),
             obj:new Card("stone-sin"),
-            sprite:"resources/img/cards/situations/sin/ruins.png"
+            sprite:"resources/img/cards/situations/sin/ruins.png",
+            bindType:"situation"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:150,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:150,height:150}),
             obj:new Card("nature-static"),
-            sprite:"resources/img/cards/situations/static/nature.png"
+            sprite:"resources/img/cards/situations/static/nature.png",
+            bindType:"situation"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:150,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:150,height:150}),
             obj:new Card("moon-static"),
-            sprite:"resources/img/cards/situations/static/open.png"
+            sprite:"resources/img/cards/situations/static/open.png",
+            bindType:"situation"
         }));
         PhysicsBodyHandler.addBody(new PhysicsBody({
             bounds:new Rectangle({width:150,height:150}),
             pos:new Point(-300,0),
             interactionBounds:new Rectangle({width:150,height:150}),
             obj:new Card("stone-static"),
-            sprite:"resources/img/cards/situations/static/ruins.png"
+            sprite:"resources/img/cards/situations/static/ruins.png",
+            bindType:"situation"
         }));
-        // for (var i = 0; i < 100; i++) {
-        //     PhysicsBodyHandler.addBody(new PhysicsBody({
-        //         bounds:new Circle({rad:20}),
-        //         // bounds:new Rectangle({width:150*0.7,height:200*0.7,radius:10}),
-        //         pos:new Point(-300,0),
-        //         interactionBounds:new Circle({rad:30}),
-        //         sprite:"resources/img/sprites/noSpriteCircle.png"
-        //     }));
-        //     PhysicsBodyHandler.addBody(new PhysicsBody({
-        //         // bounds:new Circle({rad:20}),
-        //         bounds:new Rectangle({width:40,height:40,radius:10}),
-        //         pos:new Point(-300,0),
-        //         interactionBounds:new Circle({rad:30})
-        //     }));
-        // }
     }
     static addBody(body) {
         PhysicsBodyHandler.bodies.push(body);
@@ -138,23 +194,25 @@ class PhysicsBodyHandler {
             selected.phys.vel = new Vector(0.02,270);
             selected.tags["selected"] = false;
 
-            if (!selected.prev) {
-                // Check if object is strongly intersecting with an object
-                PhysicsBodyHandler.bodies.find((nearby)=>{
-                    if (nearby.id == selected.id) return false; // If they are the same object, they cannot intersect
-                    let isStrongIntersecting = nearby.stronglyIntersects(selected);
-                    if (isStrongIntersecting) {
-                        // If so, bind those objects together
-                        nearby.bindTo(selected);
-                        return true;
-                    }
-                    return false;
-                });
-            } else {
-                if (selected.prev) {
-                    if (dist(selected.phys.pos,selected.prev.getBindingPoint()) > 150) {
-                        selected.prev.next = null;
-                        selected.prev = null;
+            if (selected.bindType) {
+                if (!selected.prev) {
+                    // Check if object is strongly intersecting with an object
+                    PhysicsBodyHandler.bodies.find((nearby)=>{
+                        if (nearby.id == selected.id) return false; // If they are the same object, they cannot intersect
+                        let isStrongIntersecting = nearby.stronglyIntersects(selected);
+                        if (isStrongIntersecting) {
+                            // If so, attempt to bind those objects together
+                            nearby.bindTo(selected);
+                            return true;
+                        }
+                        return false;
+                    });
+                } else {
+                    if (selected.prev) {
+                        if (dist(selected.phys.pos,selected.prev.getBindingPoint()) > selected.bounds.genericWidth) {
+                            selected.prev.next = null;
+                            selected.prev = null;
+                        }
                     }
                 }
             }
@@ -278,7 +336,7 @@ class PhysicsBodyHandler {
         // PhysicsBodyHandler.zoom = Math.max(PhysicsBodyHandler.zoom,0.5);
     }
     static getClientPos(body) {
-        return Point.translate(PhysicsBodyHandler.canvasCenter,body.phys.pos);
+        return Point.translate(ScreenCenter,body.phys.pos);
     }
     static physicsTimestep() {
         if (PhysicsBodyHandler.selectedBody) {
@@ -291,7 +349,7 @@ class PhysicsBodyHandler {
             if (Math.abs(body.phys.pos.x) > PhysicsBodyHandler.canvas.width / 2 || 
             Math.abs(body.phys.pos.y) > PhysicsBodyHandler.canvas.height / 2) {
                 let clientPos = PhysicsBodyHandler.getClientPos(body);
-                body.applyForce(new Vector(10,angleBetween(PhysicsBodyHandler.canvasCenter,clientPos)));
+                body.applyForce(new Vector(10,angleBetween(ScreenCenter,clientPos)));
             }
             // Check if intersecting with selectedBody
             if (PhysicsBodyHandler.selectedBody) {
@@ -311,8 +369,10 @@ class PhysicsBodyHandler {
                 PhysicsBodyHandler.bodies.forEach((nearby)=>{
                     if (nearby.id == body.id) return false;
                     if (nearby.tags["intersecting"]) return false;
-                    if (body.prev) {
-                        if (body.prev.id == nearby.id) return false;
+                    if (body.bindType) {
+                        if (body.prev) {
+                            if (body.prev.id == nearby.id) return false;
+                        }
                     }
                     if (PhysicsBodyHandler.selectedBody) if (PhysicsBodyHandler.selectedBody.id == body.id) return false;
                     if (PhysicsBodyHandler.selectedBody) if (nearby.id == PhysicsBodyHandler.selectedBody.id) return false;
@@ -340,14 +400,19 @@ class PhysicsBodyHandler {
             }
 
             // If bound to an object, move that object towards its prev.
-            if (body.prev) {
-                body.applyForce(
-                    new Vector(
-                        Point.translate(body.phys.pos,body.prev.getBindingPoint()).toVector().mag * 500,
-                        angleBetween(body.phys.pos,body.prev.getBindingPoint())
-                    )
-                );
-                body.phys.vel.mag *= 0.001;
+            if (body.prev && !body.tags.selected) {
+                //// Absolute setting solution. 
+                body.phys.pos = body.prev.getBindingPoint();
+                
+                //// Force-based solution
+                // body.applyForce(
+                //     new Vector(
+                //         Point.translate(body.phys.pos,body.prev.getBindingPoint()).toVector().mag,
+                //         angleBetween(body.phys.pos,body.prev.getBindingPoint())
+                //     )
+                // );
+                // // body.phys.vel.mag = Math.sqrt(body.phys.vel.mag);
+                // body.phys.vel.mag *= 0.6;
             }
         });
     }
@@ -388,7 +453,7 @@ class PhysicsBodyHandler {
         PhysicsBodyHandler.bodies.forEach((body)=>{ 
             if (!body.tags["visible"]) return false;
             // Get top-left position of image for positioning
-            var topLeftPos = Point.translate(PhysicsBodyHandler.canvasCenter,body.phys.pos);
+            var topLeftPos = Point.translate(ScreenCenter,body.phys.pos);
             
             if (body.tags["selected"]) body.graphics.scale = Math.min(body.graphics.scale * 1.05,1.1);
             else body.graphics.scale = Math.max(body.graphics.scale / 1.05,1);
@@ -427,6 +492,8 @@ class PhysicsBodyHandler {
                 PhysicsBodyHandler.ctx.shadowColor = "rgba(255,255,255,0.5)";
                 PhysicsBodyHandler.ctx.shadowBlur = 25;
             }
+
+            PhysicsBodyHandler.ctx.save();
 
             // Draw object
             if (body.bounds.type == "Rectangle") {
@@ -480,6 +547,7 @@ class PhysicsBodyHandler {
             } else {
                 console.warn(`PhysicsBodyHandler.renderAllBodies(): Attempted to render body of unknown bounds type '${body.bounds.type}'.`);
             }
+            PhysicsBodyHandler.ctx.restore();
             // PhysicsBodyHandler.ctx.drawImage(PhysicsBodyHandler.images[body.sprite],topLeftPos.x,topLeftPos.y,transformedBound.width,transformedBound.height);
         });
     }

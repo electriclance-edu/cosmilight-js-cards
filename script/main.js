@@ -6,6 +6,9 @@ var tileHeight = undefined;
 var visionRadius = undefined;
 var defaultPersistence = undefined;
 var mousePosition = new Point(0,0);
+var ScreenCenter = new Point(0,0);
+var moveScreenCenterFrom = null;
+var unmovedScreenCenter = new Point(0,0);
 var disableContextMenu = true;
 var keyShiftPressed = false;
 var graphicsDisplaySize;
@@ -36,6 +39,7 @@ function onresize() {
 function initialize() {
   DataHandler.loadAllData();
   new Game().start();
+  ScreenCenter = new Point(window.innerWidth/2,window.innerHeight/2);
   retrieveCSSConstants();
 
   setTimeout(()=>{
@@ -48,6 +52,11 @@ function initialize() {
       let contentPosition = document.getElementById("Content").getBoundingClientRect();
       if (document.body.clientWidth / document.body.clientHeight < 16.0/9.0) mousePosition = new Point(e.clientX,e.clientY - contentPosition.top); // When there is excess vertical space, translate clientY by that excess space
       else mousePosition = new Point(e.clientX - contentPosition.left,e.clientY); // When there is excess horizontal space, translate clientX by that excess space
+
+      if (e.buttons % 2 == 0 && e.buttons != 0) {
+        ScreenCenter.x = unmovedScreenCenter.x - (moveScreenCenterFrom.x - mousePosition.x);
+        ScreenCenter.y = unmovedScreenCenter.y - (moveScreenCenterFrom.y - mousePosition.y);
+      };
     });
   },16);
 
@@ -145,7 +154,7 @@ window.addEventListener("resize", (e) => {
   doResize();
 });
 function doResize() {
-  LightHandler.initialize();
+  ScreenCenter = new Point(window.innerWidth/2,window.innerHeight/2);
 }
 document.addEventListener('contextmenu', event => {if (disableContextMenu && !keyShiftPressed) event.preventDefault()});
 document.addEventListener('mouseup',(e)=>{
@@ -156,6 +165,13 @@ document.addEventListener('mousedown', (e) => {
   mouseState = ["left","middle","right"][e.button];
 
   PhysicsBodyHandler.onmousedown(e.button);
+
+  if (e.buttons % 2 == 0 && e.buttons != 0) {
+    moveScreenCenterFrom = mousePosition;
+    unmovedScreenCenter = ScreenCenter.copy();
+  } else {
+    moveScreenCenterFrom = null;
+  }
 
   if (e.target.id == "EyeTab") {
     if (e.button == 2) {

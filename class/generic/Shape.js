@@ -5,4 +5,8 @@ class Shape {
         this.type = type;
         this.position = position;
     }
+    get genericWidth() {
+        if (this.type == "Circle") return this.rad * 2;
+        else if (this.type == "Rectangle") return this.width;
+    }
 }

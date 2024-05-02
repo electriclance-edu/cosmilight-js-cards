@@ -14,8 +14,6 @@ class EffectHandler {
             canvas.height = window.innerHeight / EffectHandler.zoomFactor;
         });
         EffectHandler.canvases = canvases;
-        EffectHandler.canvasCenter = new Point(window.innerWidth/2,window.innerHeight/2);
-
         // EffectHandler.addEffect(new Effect({
         //     lifespan:30000000,
         //     startPt: new Point(0,0), linearAngle:45, displacement:250,
@@ -56,7 +54,7 @@ class EffectHandler {
     }
     static render() {
         const perceivedFrame = Math.floor(GUIHandler.frame / 1);
-        let mpos = Point.translate(mousePosition,EffectHandler.canvasCenter);
+        let mpos = Point.translate(mousePosition,ScreenCenter);
         mpos.x *= -1;
         mpos.y *= -1;
         if (perceivedFrame % 300 == 0) {
@@ -193,7 +191,7 @@ class EffectHandler {
                 }
     
                 // Render
-                var topLeftPos = Point.translate(EffectHandler.canvasCenter,effect.pos);
+                var topLeftPos = Point.translate(ScreenCenter,effect.pos);
     
                 ctx.beginPath();
                 ctx.fillStyle = `rgba(${effect.color.r},${effect.color.g},${effect.color.b},${effect.opacity})`;

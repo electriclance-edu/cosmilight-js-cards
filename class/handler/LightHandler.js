@@ -15,7 +15,6 @@ class LightHandler {
         canvas.width = window.innerWidth / LightHandler.zoomFactor; 
         canvas.height = window.innerHeight / LightHandler.zoomFactor;
         LightHandler.canvas = canvas;
-        LightHandler.canvasCenter = new Point(LightHandler.canvas.width/2,LightHandler.canvas.height/2);
 
         LightHandler.renderAllLight();
     }
@@ -58,7 +57,7 @@ class LightHandler {
 
         var lightPointIds = Object.keys(LightHandler.lightPoints);
 
-        let translated = Point.translate(LightHandler.canvasCenter,mousePosition);
+        let translated = Point.translate(ScreenCenter,mousePosition);
         LightHandler.moveLight("player",-translated.x,translated.y);
         LightHandler.moveLight("player2",-translated.x,translated.y);
 
@@ -108,9 +107,9 @@ class LightHandler {
         var ctx = LightHandler.canvas.getContext("2d");
         var translatedLight = new Point(light.x,light.y);
         const square = generateSquare(new Point(translatedLight.x, -translatedLight.y),strength);
-        square.center = decentralizePoint(LightHandler.canvasCenter, square.center);
-        square.cornerA = decentralizePoint(LightHandler.canvasCenter, square.cornerA);
-        square.cornerB = decentralizePoint(LightHandler.canvasCenter, square.cornerB);
+        square.center = decentralizePoint(ScreenCenter, square.center);
+        square.cornerA = decentralizePoint(ScreenCenter, square.cornerA);
+        square.cornerB = decentralizePoint(ScreenCenter, square.cornerB);
         return square;
     }
     //create color gradient

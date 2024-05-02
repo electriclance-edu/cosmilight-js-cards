@@ -29,6 +29,7 @@ class PhysicsBody {
         hovered:false,
         type:["draggable","tabbable"] 
     };
+    bindType = ["situation","area"] || null;
     obj = undefined;
 
     constructor(options) {
@@ -44,17 +45,22 @@ class PhysicsBody {
         this.bounds = options.bounds || new Rectangle({width:50,height:50});
         this.interactionBounds = options.interactionBounds || new Circle({rad:25});
         this.sprite = options.sprite || `resources/img/sprites/noSprite${this.bounds.type}.png`;
+        this.bindType = options.bindType || null;
         this.next = null;
         this.prev = null;
     }
 
     bindTo(next) {
+        // If either of the objects have no bindType, do not bind.
+        if (!this.bindType || !next.bindType) return false;
         // If the object is already in the chain of bounded objects, do not bind.
         if (!this.getBoundList().every((body)=>body.id != next.id)) return false;
+        // If the bindType does not match, do not bind.
+        if (this.bindType != next.bindType) return false;
 
         // If there is a next, clear out all the nexts after that first
         if (this.next) {
-            this.breakBinds();
+            this.breakBind();
         }
         this.next = next;
         next.prev = this;
@@ -69,6 +75,10 @@ class PhysicsBody {
             pointer.next = null;
             pointer.prev = null;
         }
+    }
+    breakBind() {
+        this.next.prev = null;
+        this.next = null;
     }
     getHead() {
         let pointer = this;
@@ -120,7 +130,7 @@ class PhysicsBody {
         return false;
     }
     pointWithinBound(point) {
-        let clientPos = Point.translate(PhysicsBodyHandler.canvasCenter,this.phys.pos);
+        let clientPos = Point.translate(ScreenCenter,this.phys.pos);
         if (this.bounds.type == "Rectangle") {
             // Check if point is within given rectangle positioned around center
             let isWithinX = Math.abs(clientPos.x - point.x) < this.bounds.width / 2;
@@ -153,9 +163,11 @@ class PhysicsBody {
         this.phys.vel = Vector.add(this.phys.vel,vec);
     }
     getBindingPoint() {
-        return this.phys.pos.copy().shiftX(-this.bounds.width);
+        if (this.bindType == "situation") return this.phys.pos.copy().shiftX(-this.bounds.width + 1); // horizontal binding
+        else if (this.bindType == "area") return this.phys.pos.copy().shiftY(-this.bounds.height + 1); // vertical binding
     }
     getBoundPoint() {
-        return this.phys.pos.copy().shiftX(this.bounds.width);
+        if (this.bindType == "situation") return this.phys.pos.copy().shiftX(this.bounds.width - 1); // horizontal binding
+        else if (this.bindType == "area") return this.phys.pos.copy().shiftY(this.bounds.height - 1); // vertical binding
     }
 }
