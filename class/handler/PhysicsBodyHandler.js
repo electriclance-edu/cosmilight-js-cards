@@ -371,7 +371,7 @@ class PhysicsBodyHandler {
                 PhysicsBodyHandler.unintersectBody(body);
             }
 
-            if (body.phys.vel.mag > 0.01) {
+            if (body.phys.vel.mag > 0.01 || true) {
                 // Apply push/collision force
                 PhysicsBodyHandler.bodies.forEach((nearby)=>{
                     if (nearby.id == body.id) return false;

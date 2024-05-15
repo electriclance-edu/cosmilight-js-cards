@@ -64,6 +64,8 @@ class PhysicsBody {
         }
         this.next = next;
         next.prev = this;
+
+        EffectHandler.explode(this.getBindingPoint());
     }
     breakBinds() {
         let pointer = this;
@@ -75,10 +77,12 @@ class PhysicsBody {
             pointer.next = null;
             pointer.prev = null;
         }
+        EffectHandler.explode(this.getBindingPoint());
     }
     breakBind() {
         this.next.prev = null;
         this.next = null;
+        EffectHandler.explode(this.getBindingPoint());
     }
     getHead() {
         let pointer = this;

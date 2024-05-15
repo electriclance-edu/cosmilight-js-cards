@@ -52,6 +52,62 @@ class EffectHandler {
         // ctx.putImageData(data,0,0);
         // ctx.restore();
     }
+    static explode(pos) {
+        EffectHandler.addEffect(new Effect({
+            lifespan:100,
+            // startPt:mpos, linearAngle:randInt(360), displacement:100 + randInt(20) * explosionSize,
+            startPt:pos.copy(), endPt:new Point(0,window.innerHeight / 2),
+            startSize:10, endSize:30,
+            startOpacity:1, endOpacity:0,
+            spinSpeed:12,
+            lightPointProperties:{
+                strength:75,
+                waver:0.1,
+                faintness:1
+            }
+        }));
+        for (var i = 0; i < 3; i++) {
+            EffectHandler.addEffect(new Effect({
+                lifetime:-randInt(10),
+                lifespan:30 + randInt(10),
+                startPt:pos.copy(), linearAngle:randInt(360), displacement:100 + randInt(50),
+                startSize:3, endSize:5 + randInt(5),
+                startOpacity:0.3, endOpacity:0,
+                spinSpeed:12,
+                lightPointProperties:{
+                    strength:30,
+                    waver:0.1,
+                    faintness:1
+                }
+            }));
+            EffectHandler.addEffect(new Effect({
+                lifetime:-randInt(10),
+                lifespan:10 + randInt(20),
+                startPt:pos.copy(), linearAngle:randInt(360), displacement:150 + randInt(50),
+                startSize:1, endSize:3 + randInt(5),
+                startOpacity:0.3, endOpacity:0,
+                spinSpeed:0,
+                lightPointProperties:{
+                    strength:30,
+                    waver:0.1,
+                    faintness:1
+                }
+            }));
+            EffectHandler.addEffect(new Effect({
+                lifetime:-randInt(10),
+                lifespan:50 + randInt(20),
+                startPt:pos.copy(), linearAngle:randInt(360), displacement:100 + randInt(50),
+                startSize:5, endSize:75 + randInt(50),
+                startOpacity:0.0005 + randFloat(0.01), endOpacity:0,
+                spinSpeed:12,
+                lightPointProperties:{
+                    strength:100,
+                    waver:0.1,
+                    faintness:1
+                }
+            }));
+        }
+    }
     static render() {
         const perceivedFrame = Math.floor(GUIHandler.frame / 1);
         let mpos = Point.translate(mousePosition,ScreenCenter);

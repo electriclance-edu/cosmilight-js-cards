@@ -280,6 +280,15 @@ body .Tabs .tab.TitleTab {
   width:100%;
   height:100%;
   image-rendering:pixelated;
+  z-index:100;
+}
+.LogTab {
+  position:absolute;
+  left:30px;
+  bottom:30px;
+}
+.LogTab > * {
+  text-shadow:0 0 10px white, 0 0 5px white;
 }
 /*#########
 FONTS
