@@ -4,7 +4,9 @@
   "description": "a game in a dark world",
   "main": "index.js",
   "scripts": {
-    "test": "console.log(\"hello!\")"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "repository": {
     "type": "git",
@@ -16,18 +18,18 @@
     "url": "https://github.com/electriclance-edu/cosmilight-js-cards/issues"
   },
   "homepage": "https://github.com/electriclance-edu/cosmilight-js-cards#readme",
-  "babel": {
-    "presets": [
-      [
-        "@babel/preset-react",
-        {
-          "runtime": "automatic",
-          "importSource": "@vanilla-jsx"
-        }
-      ]
-    ]
-  },
   "dependencies": {
-    "html-to-image": "^1.11.11"
+    "electron-squirrel-startup": "^1.0.1",
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-squirrel": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-fuses": "^7.4.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^30.0.5"
   }
 }
